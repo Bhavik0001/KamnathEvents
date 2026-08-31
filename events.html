@@ -1,0 +1,762 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventHub | Explore Events</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <style>
+      :root {
+        --primary: #ff5a36;
+        --primary-hover: #e04826;
+        --primary-light: #ffeae5;
+        --dark: #0f172a;
+        --text-gray: #475569;
+        --light-bg: #f8fafc;
+        --card-border: #e2e8f0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #fff;
+        color: var(--dark);
+        line-height: 1.6;
+      }
+      .brand-font {
+        font-family: "Cinzel", serif;
+      }
+      /* GENERAL BUTTON TRANSITION & HOVER EFFECTS */
+      .btn {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      /* ================= NAVBAR ================= */
+      .navbar-custom {
+        background: rgba(15, 23, 42, 0.97);
+        backdrop-filter: blur(10px);
+      }
+      .navbar-custom .navbar-brand {
+        font-family: "Cinzel", serif;
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .navbar-custom .navbar-brand span {
+        color: var(--primary);
+      }
+      .navbar-custom .nav-link {
+        color: #cbd5e1 !important;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+      .navbar-custom .nav-link:hover,
+      .navbar-custom .nav-link.active {
+        color: var(--primary) !important;
+        transform: translateY(-1px);
+      }
+      /* BUTTON STYLES & HOVER EFFECTS */
+      .btn-coral {
+        --bs-btn-color: #fff;
+        --bs-btn-bg: var(--primary);
+        --bs-btn-border-color: var(--primary);
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-bg: var(--primary-hover);
+        --bs-btn-hover-border-color: var(--primary-hover);
+        box-shadow: 0 4px 12px rgba(255, 90, 54, 0.25);
+      }
+      .btn-coral:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 90, 54, 0.4) !important;
+      }
+      .btn-outline-coral {
+        --bs-btn-color: var(--primary);
+        --bs-btn-border-color: var(--primary);
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-bg: var(--primary);
+        --bs-btn-hover-border-color: var(--primary);
+      }
+      .btn-outline-coral:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 90, 54, 0.3) !important;
+      }
+      /* ================= HERO ================= */
+      .hero {
+        margin-top: 65px;
+        min-height: 45vh;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.85) 100%), url("{% static 'images/event.jpg' %}") center/cover no-repeat;
+      }
+      .hero h1 {
+        font-family: "Cinzel", serif;
+        font-size: clamp(32px, 4vw, 52px);
+      }
+      .hero p {
+        color: #cbd5e1;
+        font-size: clamp(15px, 2vw, 18px);
+        max-width: 700px;
+      }
+      /* ================= SEARCH FILTER & CUSTOM DROPDOWN ARROW ================= */
+      .filter-section {
+        background: #fff;
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        margin-top: -40px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      }
+      .filter-control {
+        background-color: #fff;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      select.filter-control {
+        appearance: auto !important;
+        -webkit-appearance: auto !important;
+        -moz-appearance: auto !important;
+        background-image: none !important;
+        padding-right: 12px !important;
+        cursor: pointer;
+      }
+      .filter-control:focus {
+        background-color: #fff;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.2);
+      }
+      /* ================= EVENTS ================= */
+      .section-bg {
+        background: var(--light-bg);
+      }
+      .event-card,
+      .why-card {
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .event-card:hover,
+      .why-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 20px 30px -10px rgba(255, 90, 54, 0.25) !important;
+      }
+      .event-card img {
+        height: 220px;
+        object-fit: cover;
+        object-position: top center;
+      }
+      .event-type {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      /* ================= FOOTER ================= */
+      footer {
+        background: var(--dark);
+      }
+      footer a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      footer a:hover {
+        color: var(--primary);
+        padding-left: 5px;
+      }
+      .social-btn {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        transition: all 0.3s ease;
+      }
+      .social-btn:hover {
+        background: var(--primary) !important;
+        color: #fff !important;
+        border-color: var(--primary) !important;
+        transform: translateY(-4px);
+        box-shadow: 0 5px 15px rgba(255, 90, 54, 0.4);
+      }
+      /* ================= EVENT DETAILS MODAL ================= */
+      .event-details-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 3000;
+        background: rgba(15, 23, 42, 0.75);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .event-details-modal.show {
+        display: flex;
+      }
+      .event-details-box {
+        width: min(650px, 95%);
+        max-height: 90vh;
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+        position: relative;
+        animation: eventModalShow 0.3s ease;
+      }
+      @keyframes eventModalShow {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .event-details-image {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        object-position: top center;
+        display: block;
+      }
+      .event-details-content {
+        padding: 28px;
+      }
+      .event-details-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.75);
+        color: #fff;
+        font-size: 18px;
+        z-index: 5;
+      }
+      .event-details-close:hover {
+        background: var(--primary);
+      }
+      .event-details-title {
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .event-details-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .event-info-item {
+        background: var(--light-bg);
+        padding: 12px 15px;
+        border-radius: 10px;
+      }
+      .event-info-item i {
+        color: var(--primary);
+        margin-right: 7px;
+      }
+      @media (max-width: 576px) {
+        .event-details-image {
+          width: 100%;
+          height: 240px;
+          object-fit: cover;
+          object-position: top center;
+        }
+        .event-details-content {
+          padding: 20px;
+        }
+        .event-details-info {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ================= NAVBAR (LOGO + CENTER LINKS) ================= -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top shadow-sm">
+      <div class="container-fluid px-lg-5">
+        <!-- BRAND LOGO -->
+        <a class="navbar-brand" href="{% url 'index' %}">Kamnath<span>Events</span></a>
+        <!-- MOBILE MENU BUTTON -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- CENTERED LINKS -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto gap-lg-4 text-center py-2 pe-lg-5">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link active" href="{% url 'events' %}">Events</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- ================= HERO ================= -->
+    <section class="hero d-flex align-items-center text-center text-white py-5">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <h1 class="fw-bold mb-3">Explore Amazing Events</h1>
+            <p class="mx-auto mb-0">Discover concerts, seminars, food festivals, sports events, workshops and many more exciting events happening near you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ================= SEARCH FILTER ================= -->
+    <div class="container px-4">
+      <section class="filter-section p-4">
+        <form class="row g-3 align-items-end">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label fw-semibold small text-uppercase">Search Event</label>
+            <input type="text" id="searchEvent" class="form-control filter-control" placeholder="Search event name..." />
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-semibold small text-uppercase">Category</label>
+            <select id="categoryFilter" class="form-select filter-control">
+              <option value="All" selected>All</option>
+              <option value="Music">Music</option>
+              <option value="Business">Business</option>
+              <option value="Food">Food</option>
+              <option value="Technology">Technology</option>
+              <option value="Sports">Sports</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Art">Art</option>
+              <option value="Comedy">Comedy</option>
+              <option value="Workshop">Workshop</option>
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-semibold small text-uppercase">City</label>
+            <select id="cityFilter" class="form-select filter-control">
+              <option value="Ahmedabad" selected>Ahmedabad</option>
+              <option value="Surat">Surat</option>
+              <option value="Vadodara">Vadodara</option>
+              <option value="Rajkot">Rajkot</option>
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-semibold small text-uppercase">Date</label>
+            <input type="date" id="dateFilter" class="form-control filter-control" />
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <button type="submit" class="btn btn-coral w-100 py-2"><i class="fa-solid fa-filter me-1"></i> Search</button>
+          </div>
+        </form>
+      </section>
+    </div>
+    <!-- ================= EVENTS ================= -->
+    <section class="py-5 section-bg mt-4">
+      <div class="container py-4">
+        <div class="text-center mb-5">
+          <h2 class="fw-bold display-6">Events</h2>
+          <p class="text-secondary">Explore concerts, seminars, festivals and workshops happening near you.</p>
+        </div>
+        <div class="row g-4" id="eventsContainer">
+          <!-- Event 1 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Summer Music Festival" data-category="Music" data-city="Ahmedabad" data-date="2026-07-25">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/music.jpg'%}" class="card-img-top" alt="Music" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Music</span>
+                <h3 class="h5 fw-semibold">Summer Music Festival</h3>
+                <p class="text-secondary">Enjoy an unforgettable night with live music, famous artists and amazing performances.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 25 July 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Ahmedabad</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹799</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Summer Music Festival" data-category="Music" data-date="25 July 2026" data-city="Ahmedabad" data-price="799" data-image="{% static 'images/music.jpg' %}" data-description="Enjoy an unforgettable night with live music, famous artists and amazing performances.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 2 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Startup Business Summit" data-category="Business" data-city="Surat" data-date="2026-07-30">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/business.jpg'%}" class="card-img-top" alt="Business" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Business</span>
+                <h3 class="h5 fw-semibold">Startup Business Summit</h3>
+                <p class="text-secondary">Meet successful entrepreneurs and investors. Learn business growth strategies.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 30 July 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Surat</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹999</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Startup Business Summit" data-category="Business" data-date="30 July 2026" data-city="Surat" data-price="999" data-image="{% static 'images/business.jpg' %}" data-description="Meet successful entrepreneurs and investors. Learn business growth strategies.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 3 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Food Carnival" data-category="Food" data-city="Vadodara" data-date="2026-08-05">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/food.jpg'%}" class="card-img-top" alt="Food" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Festival</span>
+                <h3 class="h5 fw-semibold">Food Carnival</h3>
+                <p class="text-secondary">Taste delicious cuisines, cooking shows, food competitions and live entertainment.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 5 Aug 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Vadodara</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹699</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Food Carnival" data-category="Festival" data-date="5 Aug 2026" data-city="Vadodara" data-price="699" data-image="{% static 'images/food.jpg' %}" data-description="Taste delicious cuisines, cooking shows, food competitions and live entertainment.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 4 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Tech Innovation Expo" data-category="Technology" data-city="Ahmedabad" data-date="2026-08-10">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/tech.jpg'%}" class="card-img-top" alt="Tech" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Technology</span>
+                <h3 class="h5 fw-semibold">Tech Innovation Expo</h3>
+                <p class="text-secondary">Discover the latest innovations in AI, Robotics, Cloud Computing and emerging technologies.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 10 Aug 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Ahmedabad</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹1199</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Tech Innovation Expo" data-category="Technology" data-date="10 Aug 2026" data-city="Ahmedabad" data-price="1199" data-image="{% static 'images/tech.jpg' %}" data-description="Discover the latest innovations in AI, Robotics, Cloud Computing and emerging technologies.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 5 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="FIFA World Cup League" data-category="Sports" data-city="Rajkot" data-date="2026-08-18">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/football.jpg'%}" class="card-img-top" alt="Sports" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Sports</span>
+                <h3 class="h5 fw-semibold">FIFA World Cup League</h3>
+                <p class="text-secondary">Watch thrilling football action with top teams competing for the FIFA World Cup trophy.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 18 Aug 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Rajkot</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹2999</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="FIFA World Cup League" data-category="Sports" data-date="18 Aug 2026" data-city="Rajkot" data-price="2999" data-image="{% static 'images/football.jpg' %}" data-description="Watch thrilling football action with top teams competing for the FIFA World Cup trophy.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 6 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Fashion Week 2026" data-category="Fashion" data-city="Surat" data-date="2026-08-22">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/fashion.jpg'%}" class="card-img-top" alt="Fashion" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Fashion</span>
+                <h3 class="h5 fw-semibold">Fashion Week 2026</h3>
+                <p class="text-secondary">Explore designer collections, runway shows and celebrity appearances.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 22 Aug 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Surat</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹1499</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Fashion Week 2026" data-category="Fashion" data-date="22 Aug 2026" data-city="Surat" data-price="1499" data-image="{% static 'images/fashion.jpg' %}" data-description="Explore designer collections, runway shows and celebrity appearances.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 7 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Modern Art Exhibition" data-category="Art" data-city="Vadodara" data-date="2026-08-28">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/art.jpg'%}" class="card-img-top" alt="Art" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Art</span>
+                <h3 class="h5 fw-semibold">Modern Art Exhibition</h3>
+                <p class="text-secondary">Experience beautiful paintings, sculptures and creative artwork by talented artists.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 28 Aug 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Vadodara</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹499</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Modern Art Exhibition" data-category="Art" data-date="28 Aug 2026" data-city="Vadodara" data-price="499" data-image="{% static 'images/art.jpg' %}" data-description="Experience beautiful paintings, sculptures and creative artwork by talented artists.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 8 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Stand-up Comedy Night" data-category="Comedy" data-city="Ahmedabad" data-date="2026-09-02">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/comedy.jpg'%}" class="card-img-top" alt="Comedy" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Comedy</span>
+                <h3 class="h5 fw-semibold">Stand-up Comedy Night</h3>
+                <p class="text-secondary">Laugh with India's top comedians in a fun-filled live comedy show.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 2 Sept 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Ahmedabad</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹599</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Stand-up Comedy Night" data-category="Comedy" data-date="2 Sept 2026" data-city="Ahmedabad" data-price="599" data-image="{% static 'images/comedy.jpg' %}" data-description="Laugh with India's top comedians in a fun-filled live comedy show.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Event 9 -->
+          <div class="col-md-6 col-lg-4 event-item" data-name="Photography Workshop" data-category="Workshop" data-city="Surat" data-date="2026-09-08">
+            <div class="event-card card h-100 overflow-hidden shadow-sm">
+              <img src="{% static 'images/photograph.jpg'%}" class="card-img-top" alt="Workshop" />
+              <div class="card-body d-flex flex-column p-4">
+                <span class="event-type badge rounded-pill align-self-start mb-3">Workshop</span>
+                <h3 class="h5 fw-semibold">Photography Workshop</h3>
+                <p class="text-secondary">Learn professional photography, camera techniques and photo editing from experts.</p>
+                <div class="d-flex justify-content-between border-top pt-3 mb-3 small text-secondary">
+                  <span><i class="fa-solid fa-calendar me-1" style="color: var(--primary)"></i> 8 Sept 2026</span>
+                  <span><i class="fa-solid fa-location-dot me-1" style="color: var(--primary)"></i> Surat</span>
+                </div>
+                <div class="fs-4 fw-bold mb-3" style="color: var(--primary)">₹899</div>
+                <div class="d-flex gap-2 mt-auto">
+                  <button type="button" class="btn btn-outline-coral rounded-pill flex-fill view-details-btn" data-name="Photography Workshop" data-category="Workshop" data-date="8 Sept 2026" data-city="Surat" data-price="899" data-image="{% static 'images/photograph.jpg' %}" data-description="Learn professional photography, camera techniques and photo editing from experts.">View Details</button>
+                  <a href="#" class="btn btn-coral rounded-pill flex-fill">Book Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ================= EVENT DETAILS MODAL ================= -->
+    <div id="eventDetailsModal" class="event-details-modal">
+      <div class="event-details-box">
+        <!-- Close Button -->
+        <button type="button" class="event-details-close" id="closeEventDetails"><i class="fa-solid fa-xmark"></i></button>
+        <!-- Event Image -->
+        <img id="detailsImage" class="event-details-image" src="" alt="Event" />
+        <div class="event-details-content">
+          <!-- Category -->
+          <span id="detailsCategory" class="event-type badge rounded-pill mb-3"></span>
+          <!-- Title -->
+          <h2 id="detailsTitle" class="event-details-title"></h2>
+          <!-- Information -->
+          <div class="event-details-info">
+            <div class="event-info-item"><i class="fa-solid fa-calendar"></i> <strong>Date:</strong> <span id="detailsDate"></span></div>
+            <div class="event-info-item"><i class="fa-solid fa-location-dot"></i> <strong>Location:</strong> <span id="detailsCity"></span></div>
+            <div class="event-info-item"><i class="fa-solid fa-ticket"></i> <strong>Price:</strong> ₹<span id="detailsPrice"></span></div>
+            <div class="event-info-item"><i class="fa-solid fa-calendar-check"></i> <strong>Status:</strong> Available</div>
+          </div>
+          <!-- Description -->
+          <h5 class="fw-bold mb-2">About This Event</h5>
+          <p id="detailsDescription" class="text-secondary"></p>
+          <!-- Book Button -->
+          <button type="button" id="detailsBookButton" class="btn btn-coral rounded-pill w-100 mt-3 py-2"><i class="fa-solid fa-ticket me-2"></i> Book Now</button>
+        </div>
+      </div>
+    </div>
+    <!-- ================= WHY CHOOSE US ================= -->
+    <section class="py-5 bg-white">
+      <div class="container py-4 text-center">
+        <h2 class="fw-bold display-6">Why Choose Kamnath Events?</h2>
+        <p class="text-secondary mb-5">We make event booking simple, secure and enjoyable.</p>
+        <div class="row g-4">
+          <div class="col-sm-6 col-lg-3">
+            <div class="why-card card h-100 p-4 shadow-sm text-center">
+              <i class="fa-solid fa-ticket fa-3x mb-3" style="color: var(--primary)"></i>
+              <h3 class="h5 fw-semibold">Easy Booking</h3>
+              <p class="text-secondary mb-0">Book tickets in just a few clicks without any hassle.</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="why-card card h-100 p-4 shadow-sm text-center">
+              <i class="fa-solid fa-credit-card fa-3x mb-3" style="color: var(--primary)"></i>
+              <h3 class="h5 fw-semibold">Secure Payment</h3>
+              <p class="text-secondary mb-0">Safe online payment with trusted payment methods.</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="why-card card h-100 p-4 shadow-sm text-center">
+              <i class="fa-solid fa-headset fa-3x mb-3" style="color: var(--primary)"></i>
+              <h3 class="h5 fw-semibold">24/7 Support</h3>
+              <p class="text-secondary mb-0">Our support team is always ready to help you.</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="why-card card h-100 p-4 shadow-sm text-center">
+              <i class="fa-solid fa-calendar-check fa-3x mb-3" style="color: var(--primary)"></i>
+              <h3 class="h5 fw-semibold">Instant Confirmation</h3>
+              <p class="text-secondary mb-0">Receive your ticket instantly after successful booking.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ================= NEWSLETTER ================= -->
+    <section class="py-5 bg-white border-top">
+      <div class="container py-4 text-center">
+        <h2 class="fw-bold display-6">Stay Updated</h2>
+        <p class="text-secondary">Subscribe to get updates about upcoming events.</p>
+        <form class="row g-2 justify-content-center mt-3">
+          <div class="col-12 col-md-6 col-lg-5">
+            <input type="email" class="form-control form-control-lg rounded-pill" placeholder="Enter your email" required />
+          </div>
+          <div class="col-12 col-md-auto">
+            <button type="submit" class="btn btn-coral btn-lg rounded-pill px-4">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer text-white pt-5 pb-3">
+      <div class="container">
+        <div class="row g-4 pb-4">
+          <div class="col-md-6 col-lg-3">
+            <h2 class="brand-font fs-3">Kamnath <span style="color: var(--primary)">Events</span></h2>
+            <p class="text-secondary mt-3">Discover amazing events, book tickets, and enjoy unforgettable experiences.</p>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <h3 class="h6 fw-semibold">Quick Links</h3>
+            <div class="d-flex flex-column gap-2 mt-3">
+              <a href="{% url 'index' %}">Home</a>
+              <a href="{% url 'events' %}">Events</a>
+              <a href="{% url 'about' %}">About</a>
+              <a href="{% url 'contact' %}">Contact</a>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <h3 class="h6 fw-semibold">Contact</h3>
+            <div class="d-flex flex-column gap-2 mt-3 text-secondary">
+              <p class="mb-0"><i class="fa-solid fa-location-dot me-2"></i> Ahmedabad, Gujarat</p>
+              <p class="mb-0"><i class="fa-solid fa-phone me-2"></i> +91 83206 70817</p>
+              <p class="mb-0"><i class="fa-solid fa-envelope me-2"></i> support@Kamnathevents.com</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <h3 class="h6 fw-semibold">Follow Us</h3>
+            <div class="d-flex gap-2 mt-3">
+              <a href="#" class="social-btn rounded-circle border border-secondary"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social-btn rounded-circle border border-secondary"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="social-btn rounded-circle border border-secondary"><i class="fab fa-x-twitter"></i></a>
+              <a href="#" class="social-btn rounded-circle border border-secondary"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="border-top border-secondary pt-3 text-center text-secondary small">© 2026 Kamnath Events. All Rights Reserved.</div>
+      </div>
+    </footer>
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector(".filter-section form");
+      const searchInput = document.getElementById("searchEvent");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const cityFilter = document.getElementById("cityFilter");
+      const dateFilter = document.getElementById("dateFilter");
+      const events = document.querySelectorAll(".event-item");
+      const eventsContainer = document.getElementById("eventsContainer");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        filterEvents();
+        eventsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      function filterEvents() {
+        const searchValue = searchInput.value.toLowerCase().trim();
+        const categoryValue = categoryFilter.value;
+        const cityValue = cityFilter.value;
+        const dateValue = dateFilter.value;
+        let found = false;
+        const oldMessage = document.getElementById("noEventMessage");
+        if (oldMessage) {
+          oldMessage.remove();
+        }
+        events.forEach(function (event) {
+          const eventName = event.dataset.name.toLowerCase();
+          const eventCategory = event.dataset.category;
+          const eventCity = event.dataset.city;
+          const eventDate = event.dataset.date;
+          const searchMatch = searchValue === "" || eventName.includes(searchValue);
+          const categoryMatch = categoryValue === "All" || eventCategory === categoryValue;
+          const cityMatch = cityValue === "All" || eventCity === cityValue;
+          const dateMatch = dateValue === "" || eventDate === dateValue;
+          if (searchMatch && categoryMatch && cityMatch && dateMatch) {
+            event.style.display = "";
+            found = true;
+          } else {
+            event.style.display = "none";
+          }
+        });
+        if (!found) {
+          const message = document.createElement("div");
+          message.id = "noEventMessage";
+          message.className = "col-12 text-center py-5";
+          message.innerHTML = `<i class="fa-solid fa-calendar-xmark fa-3x mb-3" style="color: var(--primary);"></i><h3 class="fw-bold">No Events Found</h3><p class="text-secondary mb-0">Try changing your search or filter options.</p>`;
+          eventsContainer.appendChild(message);
+        }
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const modal = document.getElementById("eventDetailsModal");
+      const closeButton = document.getElementById("closeEventDetails");
+      const detailsImage = document.getElementById("detailsImage");
+      const detailsTitle = document.getElementById("detailsTitle");
+      const detailsCategory = document.getElementById("detailsCategory");
+      const detailsDate = document.getElementById("detailsDate");
+      const detailsCity = document.getElementById("detailsCity");
+      const detailsPrice = document.getElementById("detailsPrice");
+      const detailsDescription = document.getElementById("detailsDescription");
+      const viewButtons = document.querySelectorAll(".view-details-btn");
+      viewButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          detailsImage.src = this.dataset.image;
+          detailsTitle.textContent = this.dataset.name;
+          detailsCategory.textContent = this.dataset.category;
+          detailsDate.textContent = this.dataset.date;
+          detailsCity.textContent = this.dataset.city;
+          detailsPrice.textContent = this.dataset.price;
+          detailsDescription.textContent = this.dataset.description;
+          modal.classList.add("show");
+          document.body.style.overflow = "hidden";
+        });
+      });
+      closeButton.addEventListener("click", function () {
+        modal.classList.remove("show");
+        document.body.style.overflow = "";
+      });
+      modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          modal.classList.remove("show");
+          document.body.style.overflow = "";
+        }
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          modal.classList.remove("show");
+          document.body.style.overflow = "";
+        }
+      });
+    });
+  </script>
+</html>

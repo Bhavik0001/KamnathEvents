@@ -1,0 +1,1269 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kamnath Events | Admin Dashboard</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #FF5A36;
+            --primary-hover: #E04826;
+            --primary-light: #FFEAE5;
+            --dark: #0F172A;
+            --dark-2: #111827;
+            --text-gray: #64748B;
+            --light-bg: #F8FAFC;
+            --border: #E2E8F0;
+            --success: #16A34A;
+            --warning: #D97706;
+            --danger: #DC2626;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--light-bg);
+            color: var(--dark);
+        }
+
+        .brand-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        .admin-layout {
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--dark);
+            z-index: 1030;
+            padding: 24px 16px;
+            transition: .3s ease;
+        }
+
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            padding: 0 12px;
+            display: block;
+            margin-bottom: 35px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .admin-label {
+            color: #94A3B8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .nav-link {
+            color: #CBD5E1;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: .25s ease;
+        }
+
+        .sidebar .nav-link i {
+            width: 23px;
+            margin-right: 8px;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: var(--primary);
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            bottom: 20px;
+            left: 16px;
+            right: 16px;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 72px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .topbar h5 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            transition: .3s ease;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(15,23,42,.08);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 13px;
+        }
+
+        /* CARDS / TABLES */
+        .panel {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-header h6 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #F8FAFC;
+            color: #475569;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .event-thumb {
+            width: 48px;
+            height: 38px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #E2E8F0;
+        }
+
+        .badge-soft-success {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .badge-soft-warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .badge-soft-danger {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .badge-soft-primary {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+        }
+
+        .btn-coral {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            border-radius: 9px;
+        }
+
+        .btn-coral:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: #fff;
+        }
+
+        .btn-outline-coral {
+            color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 9px;
+        }
+
+        .btn-outline-coral:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #475569;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .search-box {
+            max-width: 280px;
+        }
+
+        /* REPORT CARDS */
+        .report-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            height: 100%;
+        }
+
+        .report-value {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        /* MOBILE */
+        .sidebar-toggle {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .topbar-user-text {
+                display: none;
+            }
+
+            .panel-header {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .search-box {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <a href="#" class="brand">
+            Kamnath<span>Events</span>
+        </a>
+
+        <div class="admin-label">Administration</div>
+
+        <nav>
+            <a class="nav-link active" data-section="dashboard">
+                <i class="fa-solid fa-chart-pie"></i> Dashboard
+            </a>
+
+            <a class="nav-link" data-section="events">
+                <i class="fa-solid fa-calendar-days"></i> Event Management
+            </a>
+
+            <a class="nav-link" data-section="categories">
+                <i class="fa-solid fa-layer-group"></i> Categories
+            </a>
+
+            <a class="nav-link" data-section="bookings">
+                <i class="fa-solid fa-ticket"></i> Bookings
+            </a>
+
+            <a class="nav-link" data-section="customers">
+                <i class="fa-solid fa-users"></i> Customers
+            </a>
+
+            <a class="nav-link" data-section="contacts">
+                <i class="fa-solid fa-envelope"></i> Contact Inquiries
+            </a>
+
+            <a class="nav-link" data-section="reports">
+                <i class="fa-solid fa-chart-column"></i> Reports
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a class="nav-link" href="{% url 'index' %}">
+                <i class="fa-solid fa-globe"></i> View Website
+            </a>
+
+            <a class="nav-link" href="{% url 'index' %}">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-light sidebar-toggle" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <h5 id="topTitle">Dashboard Overview</h5>
+                    <small class="text-secondary">Kamnath Events Administration</small>
+                </div>
+            </div>
+
+            <div class="admin-user">
+                <div class="text-end topbar-user-text">
+                    <div class="fw-semibold small">Administrator</div>
+                    <small class="text-secondary">Admin</small>
+                </div>
+                <div class="admin-avatar">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+            </div>
+
+        </header>
+
+
+        <div class="content">
+
+            <!-- ================= DASHBOARD ================= -->
+            <section class="page-section active" id="dashboard">
+
+                <div class="mb-4">
+                    <h2 class="page-title">Dashboard Overview</h2>
+                    <p class="page-subtitle">Manage your events, bookings and customers from one place.</p>
+                </div>
+
+                <div class="row g-4 mb-4">
+
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Total Events</div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-ticket"></i></div>
+                            <div class="stat-number">108</div>
+                            <div class="stat-label">Total Bookings</div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-number">84</div>
+                            <div class="stat-label">Registered Customers</div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">New Inquiries</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-lg-8">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h6>Recent Bookings</h6>
+                                <button class="btn btn-sm btn-outline-coral" data-section-button="bookings">View All</button>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Customer</th>
+                                            <th>Event</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#101</td>
+                                            <td>Bhavik Anjani</td>
+                                            <td>Tech Expo 2026</td>
+                                            <td>30 Jul 2026</td>
+                                            <td><span class="badge badge-soft-success">Confirmed</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#102</td>
+                                            <td>Samar Rathod</td>
+                                            <td>Music Night</td>
+                                            <td>02 Aug 2026</td>
+                                            <td><span class="badge badge-soft-warning">Pending</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#103</td>
+                                            <td>Deep Pavasiya</td>
+                                            <td>Food Festival</td>
+                                            <td>05 Aug 2026</td>
+                                            <td><span class="badge badge-soft-success">Confirmed</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h6>Quick Actions</h6>
+                            </div>
+
+                            <div class="p-3 d-grid gap-2">
+                                <button class="btn btn-coral" data-section-button="events">
+                                    <i class="fa-solid fa-plus me-2"></i>Add New Event
+                                </button>
+
+                                <button class="btn btn-outline-coral" data-section-button="categories">
+                                    <i class="fa-solid fa-layer-group me-2"></i>Manage Categories
+                                </button>
+
+                                <button class="btn btn-outline-coral" data-section-button="customers">
+                                    <i class="fa-solid fa-users me-2"></i>View Customers
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- ================= EVENTS ================= -->
+            <section class="page-section" id="events">
+
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="page-title">Event Management</h2>
+                        <p class="page-subtitle">Add, update, delete and view events.</p>
+                    </div>
+
+                    <button class="btn btn-coral" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                        <i class="fa-solid fa-plus me-2"></i>Add New Event
+                    </button>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h6>Event List</h6>
+
+                        <div class="input-group search-box">
+                            <span class="input-group-text bg-white">
+                                <i class="fa-solid fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Search events...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                    <th>Venue</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="event-thumb d-flex align-items-center justify-content-center">
+                                                <i class="fa-solid fa-image text-secondary"></i>
+                                            </div>
+                                            <strong>Tech Expo 2026</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-soft-primary">Technology</span></td>
+                                    <td>15 Aug 2026</td>
+                                    <td>Ahmedabad</td>
+                                    <td>₹1,500</td>
+                                    <td>
+                                        <button class="action-btn me-1" title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class="action-btn" title="Delete" onclick="deleteItem('event')">
+                                            <i class="fa-solid fa-trash text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="event-thumb d-flex align-items-center justify-content-center">
+                                                <i class="fa-solid fa-image text-secondary"></i>
+                                            </div>
+                                            <strong>Music Night</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-soft-primary">Music</span></td>
+                                    <td>20 Aug 2026</td>
+                                    <td>Ahmedabad</td>
+                                    <td>₹999</td>
+                                    <td>
+                                        <button class="action-btn me-1" title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class="action-btn" title="Delete" onclick="deleteItem('event')">
+                                            <i class="fa-solid fa-trash text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="event-thumb d-flex align-items-center justify-content-center">
+                                                <i class="fa-solid fa-image text-secondary"></i>
+                                            </div>
+                                            <strong>Food Festival</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-soft-primary">Food</span></td>
+                                    <td>25 Aug 2026</td>
+                                    <td>Ahmedabad</td>
+                                    <td>₹500</td>
+                                    <td>
+                                        <button class="action-btn me-1" title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class="action-btn" title="Delete" onclick="deleteItem('event')">
+                                            <i class="fa-solid fa-trash text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= CATEGORIES ================= -->
+            <section class="page-section" id="categories">
+
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="page-title">Category Management</h2>
+                        <p class="page-subtitle">Manage event categories.</p>
+                    </div>
+
+                    <button class="btn btn-coral" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                        <i class="fa-solid fa-plus me-2"></i>Add Category
+                    </button>
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="panel p-4">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="fw-bold">Music</div>
+                                    <small class="text-secondary">Concerts and live music</small>
+                                </div>
+                                <span class="badge badge-soft-primary">12 Events</span>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-coral me-1">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="panel p-4">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="fw-bold">Technology</div>
+                                    <small class="text-secondary">Tech expos and conferences</small>
+                                </div>
+                                <span class="badge badge-soft-primary">8 Events</span>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-coral me-1">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="panel p-4">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="fw-bold">Food</div>
+                                    <small class="text-secondary">Food festivals and shows</small>
+                                </div>
+                                <span class="badge badge-soft-primary">6 Events</span>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-coral me-1">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <div class="panel p-4">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="fw-bold">Sports</div>
+                                    <small class="text-secondary">Sports competitions</small>
+                                </div>
+                                <span class="badge badge-soft-primary">5 Events</span>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-coral me-1">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- ================= BOOKINGS ================= -->
+            <section class="page-section" id="bookings">
+
+                <div class="mb-4">
+                    <h2 class="page-title">Booking Management</h2>
+                    <p class="page-subtitle">View booking details and manage booking status.</p>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h6>All Bookings</h6>
+
+                        <select class="form-select search-box">
+                            <option>All Status</option>
+                            <option>Confirmed</option>
+                            <option>Pending</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Event</th>
+                                    <th>Booking Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>#101</td>
+                                    <td>Bhavik Anjani</td>
+                                    <td>Tech Expo 2026</td>
+                                    <td>30 Jul 2026</td>
+                                    <td><span class="badge badge-soft-success">Confirmed</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">View</button>
+                                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>#102</td>
+                                    <td>Samar Rathod</td>
+                                    <td>Music Night</td>
+                                    <td>02 Aug 2026</td>
+                                    <td><span class="badge badge-soft-warning">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">View</button>
+                                        <button class="btn btn-sm btn-success">Approve</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>#103</td>
+                                    <td>Deep Pavasiya</td>
+                                    <td>Food Festival</td>
+                                    <td>05 Aug 2026</td>
+                                    <td><span class="badge badge-soft-success">Confirmed</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">View</button>
+                                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= CUSTOMERS ================= -->
+            <section class="page-section" id="customers">
+
+                <div class="mb-4">
+                    <h2 class="page-title">Customer Management</h2>
+                    <p class="page-subtitle">Add, update, view and search customer details.</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h6>Registered Customers</h6>
+
+                        <div class="input-group search-box">
+                            <span class="input-group-text bg-white">
+                                <i class="fa-solid fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" placeholder="Search customer...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Bookings</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="fw-semibold">Bhavik Anjani</td>
+                                    <td>bhavik@gmail.com</td>
+                                    <td>5</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">View</button>
+                                        <button class="btn btn-sm btn-light">Edit</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td class="fw-semibold">Samar Rathod</td>
+                                    <td>samar@gmail.com</td>
+                                    <td>3</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">View</button>
+                                        <button class="btn btn-sm btn-light">Edit</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td class="fw-semibold">Deep Pavasiya</td>
+                                    <td>deep@gmail.com</td>
+                                    <td>2</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">View</button>
+                                        <button class="btn btn-sm btn-light">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= CONTACTS ================= -->
+            <section class="page-section" id="contacts">
+
+                <div class="mb-4">
+                    <h2 class="page-title">Contact Inquiries</h2>
+                    <p class="page-subtitle">View messages submitted through the Contact page.</p>
+                </div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h6>Contact Messages</h6>
+                        <span class="badge badge-soft-warning">6 New</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td class="fw-semibold">Bhavik Anjani</td>
+                                    <td>bhavik@gmail.com</td>
+                                    <td>I want to know about the upcoming events.</td>
+                                    <td><span class="badge badge-soft-warning">New</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">
+                                            <i class="fa-solid fa-reply me-1"></i>Reply
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="fw-semibold">Samar Rathod</td>
+                                    <td>samar@gmail.com</td>
+                                    <td>Please provide details about the music event.</td>
+                                    <td><span class="badge badge-soft-success">Read</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-coral">
+                                            <i class="fa-solid fa-eye me-1"></i>View
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- ================= REPORTS ================= -->
+            <section class="page-section" id="reports">
+
+                <div class="mb-4">
+                    <h2 class="page-title">Reports & Analytics</h2>
+                    <p class="page-subtitle">Overview of events, bookings, customers and activity.</p>
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="report-card">
+                            <i class="fa-solid fa-calendar-days text-primary mb-3 fs-4"></i>
+                            <div class="report-value">12</div>
+                            <div class="text-secondary small">Total Events</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="report-card">
+                            <i class="fa-solid fa-ticket text-primary mb-3 fs-4"></i>
+                            <div class="report-value">108</div>
+                            <div class="text-secondary small">Total Bookings</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="report-card">
+                            <i class="fa-solid fa-users text-primary mb-3 fs-4"></i>
+                            <div class="report-value">84</div>
+                            <div class="text-secondary small">Customers</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-xl-3">
+                        <div class="report-card">
+                            <i class="fa-solid fa-indian-rupee-sign text-primary mb-3 fs-4"></i>
+                            <div class="report-value">₹1.8L</div>
+                            <div class="text-secondary small">Booking Value</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel mt-4">
+                    <div class="panel-header">
+                        <h6>Event Performance</h6>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Category</th>
+                                    <th>Bookings</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>Tech Expo 2026</td>
+                                    <td>Technology</td>
+                                    <td>42</td>
+                                    <td><span class="badge badge-soft-success">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Music Night</td>
+                                    <td>Music</td>
+                                    <td>35</td>
+                                    <td><span class="badge badge-soft-success">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Food Festival</td>
+                                    <td>Food</td>
+                                    <td>31</td>
+                                    <td><span class="badge badge-soft-success">Active</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+</div>
+
+
+<!-- ================= ADD EVENT MODAL ================= -->
+<div class="modal fade" id="addEventModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="fa-solid fa-calendar-plus me-2 text-primary"></i>
+                    Add New Event
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form>
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Event Title</label>
+                            <input type="text" class="form-control" placeholder="Enter event title" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Category</label>
+                            <select class="form-select" required>
+                                <option value="">Select category</option>
+                                <option>Music</option>
+                                <option>Business</option>
+                                <option>Food</option>
+                                <option>Technology</option>
+                                <option>Sports</option>
+                                <option>Workshop</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Event Date</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Venue</label>
+                            <input type="text" class="form-control" placeholder="Enter venue" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Price</label>
+                            <input type="number" class="form-control" placeholder="Enter price" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Event Image</label>
+                            <input type="file" class="form-control" accept="image/*">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" rows="4" placeholder="Enter event details"></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-coral">
+                        <i class="fa-solid fa-check me-2"></i>Save Event
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= CATEGORY MODAL ================= -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form>
+                <div class="modal-body">
+                    <label class="form-label fw-semibold">Category Name</label>
+                    <input type="text" class="form-control" placeholder="Example: Wedding" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-coral">Save Category</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const navLinks = document.querySelectorAll('.sidebar .nav-link[data-section]');
+    const sections = document.querySelectorAll('.page-section');
+    const topTitle = document.getElementById('topTitle');
+
+    const titles = {
+        dashboard: 'Dashboard Overview',
+        events: 'Event Management',
+        categories: 'Category Management',
+        bookings: 'Booking Management',
+        customers: 'Customer Management',
+        contacts: 'Contact Inquiries',
+        reports: 'Reports & Analytics'
+    };
+
+    function showSection(sectionName) {
+        sections.forEach(section => {
+            section.classList.toggle('active', section.id === sectionName);
+        });
+
+        navLinks.forEach(link => {
+            link.classList.toggle('active', link.dataset.section === sectionName);
+        });
+
+        topTitle.textContent = titles[sectionName] || 'Admin Dashboard';
+
+        if (window.innerWidth < 992) {
+            document.getElementById('sidebar').classList.remove('show');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function () {
+            showSection(this.dataset.section);
+        });
+    });
+
+    document.querySelectorAll('[data-section-button]').forEach(button => {
+        button.addEventListener('click', function () {
+            showSection(this.dataset.sectionButton);
+        });
+    });
+
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('show');
+    });
+
+    function deleteItem(type) {
+        if (confirm('Are you sure you want to delete this ' + type + '?')) {
+            alert(type.charAt(0).toUpperCase() + type.slice(1) + ' deleted successfully.');
+        }
+    }
+</script>
+
+</body>
+</html>
