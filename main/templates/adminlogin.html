@@ -189,7 +189,7 @@
       </div>
       {% endif %}
 
-      <form method="POST">
+      <form method="POST" autocomplete="off">
         {% csrf_token %}
 
         <div class="mb-3">
@@ -198,7 +198,7 @@
             name="username"
             class="form-control"
             placeholder="Enter admin username"
-            autocomplete="username"
+            autocomplete="off"
             required
           />
         </div>
@@ -210,11 +210,10 @@
             id="password"
             class="form-control"
             placeholder="Enter admin password"
-            autocomplete="current-password"
+            autocomplete="off"
             required
           />
 
-          <!-- Custom eye button -->
           <button
             type="button"
             class="eye-btn"

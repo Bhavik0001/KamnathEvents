@@ -871,15 +871,32 @@
           exclusive offers, and early bird ticket discounts delivered directly
           to your inbox.
         </p>
-        <form class="row g-2 justify-content-center mt-4">
+        {% if subscribe_success %}
+        <script>
+          alert("{{ subscribe_success }}");
+        </script>
+        {% endif %} {% if subscribe_error %}
+        <script>
+          alert("{{ subscribe_error }}");
+        </script>
+        {% endif %}
+        <form
+          method="POST"
+          action="{% url 'subscribe' %}"
+          class="row g-2 justify-content-center mt-4"
+        >
+          {% csrf_token %}
+
           <div class="col-12 col-md-6 col-lg-5">
             <input
               type="email"
+              name="email"
               class="form-control form-control-lg rounded-pill"
               placeholder="Enter your email address"
               required
             />
           </div>
+
           <div class="col-12 col-md-auto">
             <button
               type="submit"
@@ -891,7 +908,6 @@
         </form>
       </div>
     </section>
-
     <!-- ================= FOOTER ================= -->
     <footer class="footer text-white pt-5 pb-3">
       <div class="container">

@@ -23,8 +23,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('index/', views.index, name='index'),
+
     path('events/', views.events, name='events'),
+
     path('about/', views.about, name='about'),
+
     path('contact/', views.contact, name='contact'),
 
     path('adminlogin/', views.admin, name='admin_login'),
@@ -32,4 +35,6 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='admin_dashboard'),
 
     path('admin-logout/', views.admin_logout, name='admin_logout'),
+
+    path('subscribe/', views.subscribe, name='subscribe'),
 ]

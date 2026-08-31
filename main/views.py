@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .models import User
-
+from .models import Contact
+from .models import Admin
+from .models import Subscribe
 def index(request):
     return render(request, 'index.html')
 
@@ -117,3 +119,88 @@ def index(request):
         "error": error,
         "success": success
     })
+
+# CONTACT FORM
+
+def contact(request):
+
+    success = None
+
+    if request.method == "POST":
+
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+
+        Contact.objects.create(
+            name=name,
+            email=email,
+            message=message
+        )
+
+        success = "Your message has been sent successfully!"
+
+    return render(
+        request,
+        "contact.html",
+        {
+            "success": success
+        }
+    )
+
+# ADMIN LOGIN 
+  
+def admin(request):
+
+    error = None
+
+    if request.method == "POST":
+
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        try:
+            # Admin table se details check karega
+            admin_user = Admin.objects.get(
+                name=username,
+                password=password
+            )
+
+            # Session me admin details save
+            request.session["admin_id"] = admin_user.id
+            request.session["admin_name"] = admin_user.name
+
+            # Dashboard par redirect
+            return redirect("admin_dashboard")
+
+        except Admin.DoesNotExist:
+            error = "Invalid username or password."
+
+    return render(
+        request,
+        "adminlogin.html",
+        {
+            "error": error
+        }
+    )
+
+# SUBSCRIBE FORM
+def subscribe(request):
+
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+
+        if email:
+            if not Subscribe.objects.filter(email=email).exists():
+
+                Subscribe.objects.create(
+                    email=email
+                )
+
+                request.session["subscribe_success"] = "Successfully subscribed!"
+
+            else:
+                request.session["subscribe_error"] = "This email is already subscribed."
+
+    return redirect(request.META.get("HTTP_REFERER", "index"))

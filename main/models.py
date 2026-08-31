@@ -105,3 +105,12 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.name
+
+class Subscribe(models.Model):
+    email=models.EmailField(max_length=100,unique=True)
+
+    class Meta:
+        db_table="subscribe"
+    
+    def __str__(self):
+        return self.email
