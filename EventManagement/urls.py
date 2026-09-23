@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from main import views
 
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
 
     path('admin/', admin.site.urls),
@@ -34,7 +36,33 @@ urlpatterns = [
 
     path('dashboard/', views.dashboard, name='admin_dashboard'),
 
+    path('add-event/', views.add_event, name='add_event'),
+
+    path('add-category/', views.add_category, name='add_category'),
+
+    path('edit-category/<int:id>/', views.edit_category, name='edit_category'),
+
+    path('delete-category/<int:id>/', views.delete_category, name='delete_category'),
+
+    path('edit-event/<int:id>/', views.edit_event, name='edit_event'),
+
+    path('delete-event/<int:id>/', views.delete_event, name='delete_event'),
+
     path('admin-logout/', views.admin_logout, name='admin_logout'),
 
     path('subscribe/', views.subscribe, name='subscribe'),
+
+    path('book-event/<int:event_id>/',views.book_event, name='book_event'),
+
+    path('approve-booking/<int:booking_id>/',views.approve_booking, name='approve_booking'),
+
+    path('cancel-booking/<int:booking_id>/',views.cancel_booking, name='cancel_booking'),
+
+    
+  
 ]
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

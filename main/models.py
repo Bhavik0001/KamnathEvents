@@ -59,8 +59,8 @@ class Event(models.Model):
     price=models.DecimalField(max_digits=10,decimal_places=2)
     
 
-    image=models.CharField(max_length=255)
-    desciption=models.TextField()
+    image = models.ImageField(upload_to="events/", blank=True, null=True)
+    description=models.TextField()
 
     class Meta:
         db_table="events"
