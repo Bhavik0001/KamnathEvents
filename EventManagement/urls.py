@@ -54,6 +54,8 @@ urlpatterns = [
 
     path('book-event/<int:event_id>/',views.book_event, name='book_event'),
 
+    path('download-ticket/<int:booking_id>/',views.download_ticket, name='download_ticket'),
+
     path('approve-booking/<int:booking_id>/',views.approve_booking, name='approve_booking'),
 
     path('cancel-booking/<int:booking_id>/',views.cancel_booking, name='cancel_booking'),

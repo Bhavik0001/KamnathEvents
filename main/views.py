@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
 from .models import User
 from .models import Contact
 from .models import Admin
@@ -60,8 +62,10 @@ def admin(request):
         "error": error
     })
 
-
+# ==========================
 # ADMIN DASHBOARD
+# ==========================
+
 def dashboard(request):
     events = Event.objects.all()
     categories = Category.objects.all()
@@ -76,7 +80,10 @@ def dashboard(request):
         "users": users
     })
 
+# ==========================
 # LOGOUT
+# ==========================
+
 def admin_logout(request):
     logout(request)
     return redirect("admin_login")
@@ -108,9 +115,9 @@ def index(request):
 
                 error = "Passwords do not match."
 
-            elif User.objects.filter(email=email).exists():
+            elif User.objects.filter(name=name).exists() or User.objects.filter(email=email).exists():
 
-                error = "Email already registered."
+                error = "User with this name or email already exists."
 
             else:
 
@@ -119,7 +126,7 @@ def index(request):
                     email=email,
                     password=password
                 )
-
+                error = "You already have an account! Please login."
                 request.session["user_id"] = user.id
                 request.session["user_name"] = user.name
 
@@ -158,7 +165,10 @@ def index(request):
             "success": success
         }
     )
+# ==========================
 # CONTACT FORM
+# ==========================
+
 
 def contact(request):
 
@@ -185,8 +195,10 @@ def contact(request):
             "success": success
         }
     )
+# ==========================
+# ADMIN LOGIN
+# ==========================
 
-# ADMIN LOGIN 
   
 def admin(request):
 
@@ -222,7 +234,10 @@ def admin(request):
         }
     )
 
-# SUBSCRIBE FORM
+# ==========================
+# SUBSSCRIBE FORM
+# ==========================
+
 def subscribe(request):
 
     if request.method == "POST":
@@ -418,17 +433,21 @@ def book_event(request, event_id):
 
     event = Event.objects.get(id=event_id)
 
-    Booking.objects.create(
+    # CREATE BOOKING
+    booking = Booking.objects.create(
         user=user,
         event=event,
         booking_date=timezone.now().date(),
         status="Confirmed"
     )
 
+    # SUCCESS MESSAGE
     request.session["booking_success"] = "Ticket Booked Successfully!"
 
-    return redirect("events")
+    # SAVE BOOKING ID FOR PDF
+    request.session["ticket_id"] = booking.id
 
+    return redirect("events")
 # ==========================
 # APPROVE BOOKING
 # ==========================
@@ -459,3 +478,369 @@ def cancel_booking(request, booking_id):
 
     return redirect("admin_dashboard")
 
+
+def download_ticket(request, booking_id):
+
+    booking = Booking.objects.get(id=booking_id)
+
+    response = HttpResponse(content_type="application/pdf")
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="Kamnath_Event_Ticket_{booking.id}.pdf"'
+    )
+
+    pdf = canvas.Canvas(response)
+
+    # =====================================================
+    # COLORS
+    # =====================================================
+
+    dark_blue = "#111827"
+    coral = "#ff563d"
+    light_coral = "#fff1ed"
+    light_gray = "#f3f4f6"
+    gray = "#6b7280"
+    white = "#ffffff"
+    green = "#16a34a"
+
+    # =====================================================
+    # PAGE
+    # =====================================================
+
+    page_width = 595
+    page_height = 842
+
+    # =====================================================
+    # OUTER TICKET BOX
+    # =====================================================
+
+    pdf.setFillColor(light_gray)
+    pdf.roundRect(
+        35,
+        90,
+        525,
+        660,
+        18,
+        fill=1,
+        stroke=0
+    )
+
+    # =====================================================
+    # HEADER
+    # =====================================================
+
+    pdf.setFillColor(dark_blue)
+    pdf.roundRect(
+        35,
+        660,
+        525,
+        90,
+        18,
+        fill=1,
+        stroke=0
+    )
+
+    # Cover bottom rounded corners of header
+    pdf.rect(
+        35,
+        660,
+        525,
+        35,
+        fill=1,
+        stroke=0
+    )
+
+    # Logo / Brand
+    pdf.setFillColor(white)
+    pdf.setFont("Helvetica-Bold", 24)
+    pdf.drawString(
+        65,
+        710,
+        "Kamnath"
+    )
+
+    pdf.setFillColor(coral)
+    pdf.drawString(
+        180,
+        710,
+        "Events"
+    )
+
+    # Ticket text
+    pdf.setFillColor(white)
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawRightString(
+        530,
+        710,
+        "EVENT TICKET"
+    )
+
+    # Booking ID
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(
+        65,
+        680,
+        f"Booking ID: #{booking.id}"
+    )
+
+    # =====================================================
+    # EVENT TITLE
+    # =====================================================
+
+    pdf.setFillColor(dark_blue)
+    pdf.setFont("Helvetica-Bold", 18)
+
+    event_title = booking.event.title
+
+    pdf.drawString(
+        65,
+        625,
+        event_title
+    )
+
+    # Category badge
+    pdf.setFillColor(light_coral)
+    pdf.roundRect(
+        65,
+        585,
+        90,
+        25,
+        12,
+        fill=1,
+        stroke=0
+    )
+
+    pdf.setFillColor(coral)
+    pdf.setFont("Helvetica-Bold", 10)
+
+    pdf.drawCentredString(
+        110,
+        593,
+        booking.event.category.category_name
+    )
+
+    # =====================================================
+    # DETAILS AREA
+    # =====================================================
+
+    left_x = 65
+    right_x = 315
+
+    # Row 1
+    pdf.setFillColor(gray)
+    pdf.setFont("Helvetica", 9)
+
+    pdf.drawString(
+        left_x,
+        550,
+        "CUSTOMER"
+    )
+
+    pdf.drawString(
+        right_x,
+        550,
+        "EMAIL"
+    )
+
+    pdf.setFillColor(dark_blue)
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawString(
+        left_x,
+        532,
+        booking.user.name
+    )
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(
+        right_x,
+        532,
+        booking.user.email
+    )
+
+    # Divider
+    pdf.setStrokeColor("#e5e7eb")
+    pdf.line(
+        65,
+        510,
+        530,
+        510
+    )
+
+    # Row 2
+    pdf.setFillColor(gray)
+    pdf.setFont("Helvetica", 9)
+
+    pdf.drawString(
+        left_x,
+        490,
+        "EVENT DATE"
+    )
+
+    pdf.drawString(
+        right_x,
+        490,
+        "VENUE"
+    )
+
+    pdf.setFillColor(dark_blue)
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawString(
+        left_x,
+        472,
+        booking.event.event_date.strftime("%d %b %Y")
+    )
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(
+        right_x,
+        472,
+        booking.event.venue
+    )
+
+    # Divider
+    pdf.setStrokeColor("#e5e7eb")
+    pdf.line(
+        65,
+        450,
+        530,
+        450
+    )
+
+    # Row 3
+    pdf.setFillColor(gray)
+    pdf.setFont("Helvetica", 9)
+
+    pdf.drawString(
+        left_x,
+        430,
+        "TICKET PRICE"
+    )
+
+    pdf.drawString(
+        right_x,
+        430,
+        "BOOKING DATE"
+    )
+
+    pdf.setFillColor(coral)
+    pdf.setFont("Helvetica-Bold", 14)
+
+    pdf.drawString(
+        left_x,
+        408,
+        f"Rs. {booking.event.price}"
+    )
+
+    pdf.setFillColor(dark_blue)
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawString(
+        right_x,
+        408,
+        booking.booking_date.strftime("%d %b %Y")
+    )
+
+    # Divider
+    pdf.setStrokeColor("#e5e7eb")
+    pdf.line(
+        65,
+        385,
+        530,
+        385
+    )
+
+    # =====================================================
+    # STATUS
+    # =====================================================
+
+    pdf.setFillColor(light_coral)
+    pdf.roundRect(
+        65,
+        330,
+        465,
+        40,
+        10,
+        fill=1,
+        stroke=0
+    )
+
+    pdf.setFillColor(gray)
+    pdf.setFont("Helvetica-Bold", 10)
+
+    pdf.drawString(
+        85,
+        345,
+        "BOOKING STATUS"
+    )
+
+    pdf.setFillColor(green)
+    pdf.setFont("Helvetica-Bold", 12)
+
+    pdf.drawRightString(
+        510,
+        345,
+        booking.status
+    )
+
+    # =====================================================
+    # DESCRIPTION
+    # =====================================================
+
+    pdf.setFillColor(dark_blue)
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawString(
+        65,
+        295,
+        "EVENT DESCRIPTION"
+    )
+
+    pdf.setFillColor(gray)
+    pdf.setFont("Helvetica", 9)
+
+    description = booking.event.description
+
+    # Description ko maximum 2 lines me show karna
+    if len(description) > 85:
+        line1 = description[:85]
+        line2 = description[85:170]
+        pdf.drawString(65, 275, line1)
+        pdf.drawString(65, 260, line2)
+    else:
+        pdf.drawString(
+            65,
+            275,
+            description
+        )
+
+    # =====================================================
+    # FOOTER
+    # =====================================================
+
+    pdf.setFillColor(dark_blue)
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawCentredString(
+        page_width / 2,
+        145,
+        "Thank you for booking with Kamnath Events!"
+    )
+
+    pdf.setFillColor(gray)
+    pdf.setFont("Helvetica", 8)
+
+    pdf.drawCentredString(
+        page_width / 2,
+        125,
+        "Please carry this ticket to the event."
+    )
+
+    # =====================================================
+    # SAVE PDF
+    # =====================================================
+
+    pdf.save()
+
+    return response

@@ -311,6 +311,29 @@
           display: none !important;
         }
       }
+      .password-wrapper {
+        position: relative;
+      }
+
+      .password-wrapper .form-control {
+        padding-right: 45px;
+      }
+
+      .password-eye {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #718096;
+        cursor: pointer;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      .password-eye:hover {
+        color: #ff563d;
+      }
     </style>
   </head>
 
@@ -391,9 +414,13 @@
 
     <!-- ================= LOGIN POPUP ================= -->
     {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
+    <script>
+      alert("{{ error }}");
+    </script>
     {% endif %} {% if success %}
-    <div class="alert alert-success">{{ success }}</div>
+    <script>
+      alert("{{ success }}");
+    </script>
     {% endif %}
     <div id="loginModal" class="modal-custom">
       <div class="modal-box bg-white p-4 shadow-lg position-relative">
@@ -405,10 +432,12 @@
         <h2 class="text-center mb-4">Login</h2>
         <form method="POST" autocomplete="off">
           {% csrf_token %}
+
           <input type="hidden" name="form_type" value="login" />
 
           <div class="mb-3">
             <label class="form-label">Email Address</label>
+
             <input
               type="email"
               name="email"
@@ -422,15 +451,22 @@
 
           <div class="mb-3">
             <label class="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              class="form-control"
-              placeholder="Password"
-              autocomplete="new-password"
-              value=""
-              required
-            />
+
+            <div class="password-wrapper">
+              <input
+                type="password"
+                name="password"
+                id="loginPassword"
+                class="form-control"
+                placeholder="Password"
+                required
+              />
+              <i
+                id="loginEye"
+                class="fa-solid fa-eye password-eye"
+                onclick="togglePassword('loginPassword', 'loginEye')"
+              ></i>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-coral w-100">Login</button>
@@ -482,23 +518,43 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              class="form-control"
-              placeholder="Password"
-              required
-            />
+
+            <div class="password-wrapper">
+              <input
+                type="password"
+                name="password"
+                id="signupPassword"
+                class="form-control"
+                placeholder="Password"
+                required
+              />
+
+              <i
+                id="signupEye"
+                class="fa-solid fa-eye password-eye"
+                onclick="togglePassword('signupPassword', 'signupEye')"
+              ></i>
+            </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Confirm Password</label>
-            <input
-              type="password"
-              name="confirm_password"
-              class="form-control"
-              placeholder="Confirm Password"
-              required
-            />
+
+            <div class="password-wrapper">
+              <input
+                type="password"
+                name="confirm_password"
+                id="confirmPassword"
+                class="form-control"
+                placeholder="Confirm Password"
+                required
+              />
+
+              <i
+                id="confirmEye"
+                class="fa-solid fa-eye password-eye"
+                onclick="togglePassword('confirmPassword', 'confirmEye')"
+              ></i>
+            </div>
           </div>
           <button type="submit" class="btn btn-coral w-100">
             Create Account
@@ -1027,7 +1083,7 @@
         </div>
       </div>
     </footer>
-
+    {% if error %} openSignup(); {% endif %}
     <!-- ================= BOOTSTRAP JS ================= -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1048,7 +1104,22 @@
       function closeSignup() {
         document.getElementById("signupModal").classList.remove("show");
       }
+      function togglePassword(inputId, eyeId) {
+        const passwordInput = document.getElementById(inputId);
+        const eyeIcon = document.getElementById(eyeId);
 
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+
+          eyeIcon.classList.remove("fa-eye");
+          eyeIcon.classList.add("fa-eye-slash");
+        } else {
+          passwordInput.type = "password";
+
+          eyeIcon.classList.remove("fa-eye-slash");
+          eyeIcon.classList.add("fa-eye");
+        }
+      }
       function showSignup() {
         closeLogin();
         openSignup();
