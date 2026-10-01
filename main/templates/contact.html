@@ -137,13 +137,13 @@
         background: var(--dark);
       }
 
-      .footer a {
+      footer a {
         color: #94a3b8;
         text-decoration: none;
         transition: all 0.3s ease;
       }
 
-      .footer a:hover {
+      footer a:hover {
         color: var(--primary);
         padding-left: 5px;
       }
@@ -170,9 +170,7 @@
 
   <body>
     <!-- ================= NAVBAR ================= -->
-    <nav
-      class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top shadow-sm"
-    >
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top shadow-sm">
       <div class="container-fluid px-lg-5">
         <!-- BRAND LOGO -->
         <a class="navbar-brand" href="{% url 'index' %}">
@@ -215,9 +213,7 @@
         <div class="contact-card">
           <div class="row g-0">
             <!-- Left Info Side -->
-            <div
-              class="col-lg-5 contact-info-panel p-5 d-flex flex-column justify-content-between"
-            >
+            <div class="col-lg-5 contact-info-panel p-5 d-flex flex-column justify-content-between">
               <div>
                 <h2 class="fw-bold fs-2 mb-3">Contact Us</h2>
                 <p class="text-secondary-light mb-4" style="color: #cbd5e1">
@@ -233,10 +229,7 @@
                       style="color: var(--primary)"
                     ></i>
                     <div>
-                      <h5
-                        class="fw-semibold mb-1"
-                        style="color: var(--primary)"
-                      >
+                      <h5 class="fw-semibold mb-1" style="color: var(--primary)">
                         Email
                       </h5>
                       <p class="mb-0 text-light small">
@@ -251,10 +244,7 @@
                       style="color: var(--primary)"
                     ></i>
                     <div>
-                      <h5
-                        class="fw-semibold mb-1"
-                        style="color: var(--primary)"
-                      >
+                      <h5 class="fw-semibold mb-1" style="color: var(--primary)">
                         Phone
                       </h5>
                       <p class="mb-0 text-light small">+91 83206 70817</p>
@@ -267,10 +257,7 @@
                       style="color: var(--primary)"
                     ></i>
                     <div>
-                      <h5
-                        class="fw-semibold mb-1"
-                        style="color: var(--primary)"
-                      >
+                      <h5 class="fw-semibold mb-1" style="color: var(--primary)">
                         Address
                       </h5>
                       <p class="mb-0 text-light small">
@@ -289,13 +276,13 @@
               </h2>
 
               <form method="POST">
-                {% csrf_token%} {% if success %}
-                <div class="alert alert-success">{{success}}</div>
+                {% csrf_token %}
+                {% if success %}
+                <div class="alert alert-success">{{ success }}</div>
                 {% endif %}
+
                 <div class="mb-3">
-                  <label class="form-label fw-semibold small text-uppercase"
-                    >Your Name</label
-                  >
+                  <label class="form-label fw-semibold small text-uppercase">Your Name</label>
                   <input
                     type="text"
                     name="name"
@@ -306,9 +293,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label fw-semibold small text-uppercase"
-                    >Your Email</label
-                  >
+                  <label class="form-label fw-semibold small text-uppercase">Your Email</label>
                   <input
                     type="email"
                     name="email"
@@ -319,9 +304,7 @@
                 </div>
 
                 <div class="mb-4">
-                  <label class="form-label fw-semibold small text-uppercase"
-                    >Your Message</label
-                  >
+                  <label class="form-label fw-semibold small text-uppercase">Your Message</label>
                   <textarea
                     class="form-control fs-6"
                     name="message"
@@ -395,30 +378,24 @@
               <a
                 href="#"
                 class="social-btn rounded-circle border border-secondary"
-                ><i class="fab fa-facebook-f"></i
-              ></a>
+              ><i class="fab fa-facebook-f"></i></a>
               <a
                 href="#"
                 class="social-btn rounded-circle border border-secondary"
-                ><i class="fab fa-instagram"></i
-              ></a>
+              ><i class="fab fa-instagram"></i></a>
               <a
                 href="#"
                 class="social-btn rounded-circle border border-secondary"
-                ><i class="fab fa-linkedin-in"></i
-              ></a>
+              ><i class="fab fa-linkedin-in"></i></a>
               <a
                 href="#"
                 class="social-btn rounded-circle border border-secondary"
-                ><i class="fab fa-youtube"></i
-              ></a>
+              ><i class="fab fa-youtube"></i></a>
             </div>
           </div>
         </div>
 
-        <div
-          class="border-top border-secondary pt-3 text-center text-secondary small"
-        >
+        <div class="border-top border-secondary pt-3 text-center text-secondary small">
           © 2026 Kamnath Events | All Rights Reserved.
         </div>
       </div>

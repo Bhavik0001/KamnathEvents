@@ -24,7 +24,6 @@
         min-height: 100vh;
         background: #0f172a;
         font-family: Arial, sans-serif;
-
         display: flex;
         align-items: center;
         justify-content: center;
@@ -66,11 +65,9 @@
         border-radius: 50%;
         background: #ffeae5;
         color: #ff5a36;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         font-size: 30px;
         margin: 0 auto 20px;
       }
@@ -96,10 +93,8 @@
         height: 48px;
         border: none;
         border-radius: 9px;
-
         background: #ff5a36;
         color: white;
-
         font-size: 16px;
         font-weight: 600;
       }
@@ -150,16 +145,12 @@
         right: 15px;
         top: 50%;
         transform: translateY(-50%);
-
         border: none;
         background: transparent;
-
         color: #64748b;
         font-size: 18px;
-
         cursor: pointer;
         padding: 5px;
-
         z-index: 10;
       }
 
@@ -246,13 +237,11 @@
         if (password.type === "password") {
           // Show password
           password.type = "text";
-
           eyeIcon.classList.remove("fa-eye");
           eyeIcon.classList.add("fa-eye-slash");
         } else {
           // Hide password
           password.type = "password";
-
           eyeIcon.classList.remove("fa-eye-slash");
           eyeIcon.classList.add("fa-eye");
         }
