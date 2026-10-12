@@ -1,0 +1,759 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}All Events & Live Experiences | Kamnath Events{% endblock %}
+{% block meta_desc %}Browse and book tickets for all live events, music festivals, standup comedy shows, workshops, and sports matches across India.{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ==========================================================================
+     EVENTS CATALOG PAGE STYLES (Light Theme Design System)
+     ========================================================================== */
+
+  .catalog-hero-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .catalog-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--brand-primary);
+  }
+
+  .catalog-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .catalog-breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .catalog-breadcrumb a:hover {
+    color: var(--brand-primary);
+  }
+
+  .catalog-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: #ffe4e6;
+    color: var(--brand-primary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .catalog-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .catalog-lead-text {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 680px;
+    margin-bottom: 16px;
+  }
+
+  /* Catalog Trust / Highlights Ribbon */
+  .catalog-stats-ribbon {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .catalog-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .catalog-stat-item i {
+    color: var(--brand-primary);
+    font-size: 0.85rem;
+  }
+
+  /* In-page Search Bar */
+  .catalog-search-box {
+    position: relative;
+    max-width: 380px;
+    width: 100%;
+  }
+
+  .catalog-search-box input {
+    width: 100%;
+    height: 42px;
+    padding: 8px 14px 8px 38px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    transition: all var(--transition-fast);
+  }
+
+  .catalog-search-box input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+  }
+
+  .catalog-search-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+
+  /* Category Navigation Pills Strip */
+  .catalog-pills-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 8px 2px 16px;
+    margin-bottom: 18px;
+  }
+
+  .catalog-pills-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .catalog-pills-strip .category-chip {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 7px 15px;
+    font-size: 0.84rem;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (max-width: 768px) {
+    .catalog-hero-card {
+      padding: 22px 18px;
+    }
+    .catalog-stats-ribbon {
+      gap: 12px;
+    }
+    .catalog-stat-item {
+      font-size: 0.78rem;
+    }
+    .catalog-search-box {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+  }
+
+  /* ==========================================================================
+     DARK THEME CATALOG PAGE OVERRIDES
+     ========================================================================== */
+  [data-theme="dark"] .catalog-eyebrow,
+  html.dark .catalog-eyebrow {
+    background: rgba(244, 63, 94, 0.16);
+    color: var(--brand-primary);
+  }
+
+  [data-theme="dark"] .catalog-search-box input,
+  html.dark .catalog-search-box input {
+    background: var(--bg-subtle);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+  }
+
+  [data-theme="dark"] .catalog-search-box input:focus,
+  html.dark .catalog-search-box input:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Booking Alert Banner (shown when arriving after booking action) -->
+  {% if booking_success %}
+    <div class="booking-alert-banner {% if booking_confirmed %}confirmed{% else %}pending{% endif %} mb-4">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid {% if booking_confirmed %}fa-circle-check text-success{% else %}fa-clock text-warning{% endif %}" style="font-size: 1.1rem;"></i>
+        <div>
+          <span class="text-dark small fw-bold">{{ booking_success }}</span>
+          {% if ticket_id %}
+            <span class="text-muted small ms-2">(Ticket #BK-{{ ticket_id }})</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        {% if ticket_id %}
+          {% if booking_confirmed %}
+            <a href="{% url 'download_ticket' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+              <i class="fa-solid fa-file-pdf me-1"></i> Download Ticket PDF
+            </a>
+            <a href="{% url 'my_bookings' %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
+              View Tickets
+            </a>
+          {% else %}
+            <a href="{% url 'confirm_booking' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+              <i class="fa-solid fa-circle-check me-1"></i> Confirm Booking
+            </a>
+            <a href="{% url 'user_cancel_booking' ticket_id %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
+              Cancel
+            </a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Catalog Hero / Discovery Header -->
+  <section class="catalog-hero-card" aria-label="Events Discovery Catalog">
+    <div class="catalog-breadcrumb">
+      <a href="{% url 'home' %}"><i class="fa-solid fa-house me-1"></i> Home</a>
+      <i class="fa-solid fa-chevron-right" style="font-size: 0.65rem;"></i>
+      <span class="text-dark fw-medium">All Events</span>
+    </div>
+
+    <div class="row align-items-center justify-content-between g-3">
+      <div class="col-lg-8">
+        <div class="catalog-eyebrow">
+          <i class="fa-solid fa-ticket-simple"></i>
+          <span>Live Discovery Catalog</span>
+        </div>
+
+        <h1 class="catalog-title">
+          Explore Live Events & Experiences
+        </h1>
+
+        <p class="catalog-lead-text">
+          Find concerts, standup comedy shows, business conferences, fashion showcases, and sports matches with live seat reservation and digital QR tickets.
+        </p>
+      </div>
+
+      <div class="col-lg-4 text-lg-end">
+        <div class="catalog-search-box ms-lg-auto">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text"
+                 id="catalogPageSearchInput"
+                 class="search-input"
+                 placeholder="Search by title, artist, venue..."
+                 autocomplete="off"
+                 aria-label="Filter events by keyword">
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats & Guarantees Ribbon -->
+    <div class="catalog-stats-ribbon">
+      <div class="catalog-stat-item">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span><strong class="text-dark">{{ events|length }}</strong> Live Events</span>
+      </div>
+      <div class="catalog-stat-item">
+        <i class="fa-solid fa-layer-group"></i>
+        <span><strong class="text-dark">{{ categories|length }}</strong> Categories</span>
+      </div>
+      <div class="catalog-stat-item">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>100% Verified Digital Passes</span>
+      </div>
+      <div class="catalog-stat-item">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Instant Seat Booking</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Pills Strip for Quick Filtering -->
+  <div class="catalog-pills-strip" aria-label="Category Filters">
+    <button type="button" class="category-chip active" data-category="all">
+      <i class="fa-solid fa-globe me-1"></i> All Events
+    </button>
+    {% for cat in categories %}
+      <button type="button" class="category-chip" data-category="{{ cat.category_name|lower }}">
+        {% if 'music' in cat.category_name|lower or 'concert' in cat.category_name|lower %}
+          <i class="fa-solid fa-music me-1"></i>
+        {% elif 'comedy' in cat.category_name|lower or 'standup' in cat.category_name|lower %}
+          <i class="fa-solid fa-face-laugh-beam me-1"></i>
+        {% elif 'business' in cat.category_name|lower or 'summit' in cat.category_name|lower %}
+          <i class="fa-solid fa-briefcase me-1"></i>
+        {% elif 'fashion' in cat.category_name|lower %}
+          <i class="fa-solid fa-vest me-1"></i>
+        {% elif 'sport' in cat.category_name|lower %}
+          <i class="fa-solid fa-futbol me-1"></i>
+        {% elif 'workshop' in cat.category_name|lower or 'tech' in cat.category_name|lower %}
+          <i class="fa-solid fa-laptop-code me-1"></i>
+        {% elif 'art' in cat.category_name|lower or 'craft' in cat.category_name|lower %}
+          <i class="fa-solid fa-palette me-1"></i>
+        {% elif 'food' in cat.category_name|lower %}
+          <i class="fa-solid fa-utensils me-1"></i>
+        {% else %}
+          <i class="fa-solid fa-tag me-1"></i>
+        {% endif %}
+        {{ cat.category_name }}
+      </button>
+    {% endfor %}
+  </div>
+
+  <!-- Discovery Filter & Sort Bar -->
+  <section aria-label="Filter Controls">
+    <div class="discovery-filter-bar">
+      <div class="filter-left-group">
+        <select class="filter-select" id="categoryFilterSelect" aria-label="Filter by Category">
+          <option value="all">All Categories</option>
+          {% for cat in categories %}
+            <option value="{{ cat.category_name|lower }}">{{ cat.category_name }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="filter-date-chips">
+          <button type="button" class="date-chip-btn active" data-date="all">All Dates</button>
+          <button type="button" class="date-chip-btn" data-date="today">Today</button>
+          <button type="button" class="date-chip-btn" data-date="weekend">This Weekend</button>
+        </div>
+
+        <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <div class="filter-right-group d-flex align-items-center gap-3">
+        <div id="resultsCounter" class="filter-results-counter"></div>
+
+        <select class="filter-select" id="sortFilterSelect" aria-label="Sort events">
+          <option value="featured">Featured First</option>
+          <option value="date-asc">Date: Upcoming First</option>
+          <option value="date-desc">Date: Latest First</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Grid -->
+  <section aria-label="Events Catalog Grid">
+    <div class="events-grid" id="eventsContainer">
+      {% if events %}
+        {% for event in events %}
+          <div class="event-card-wrapper">
+            <article class="event-card"
+                     data-event-id="{{ event.id }}"
+                     data-title="{{ event.title }}"
+                     data-venue="{{ event.venue }}"
+                     data-category="{{ event.category.category_name|lower }}"
+                     data-category-name="{{ event.category.category_name }}"
+                     data-city="{{ event.venue }}"
+                     data-price="{{ event.price|floatformat:0 }}"
+                     data-date="{{ event.event_date|date:'Y-m-d' }}"
+                     data-date-formatted="{{ event.event_date|date:'D, d M Y' }}"
+                     data-date-badge="{{ event.event_date|date:'D, d M' }}"
+                     data-image="{{ event.get_thumbnail_url }}"
+                     data-description="{{ event.description }}"
+                     data-booked="{{ event.total_bookings|default_if_none:event.booking_set.count|default:'12' }}">
+              
+              <div class="card-image-wrapper">
+                <img src="{{ event.get_thumbnail_url }}" alt="{{ event.title }}" class="event-card-img" loading="lazy">
+
+                <div class="card-top-badges">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-category-card">{{ event.category.category_name }}</span>
+                    <span class="badge-date-card">
+                      <i class="fa-regular fa-calendar"></i> {{ event.event_date|date:"D, d M" }}
+                    </span>
+                  </div>
+                  <button type="button"
+                          class="card-like-btn"
+                          aria-label="Save to favorites"
+                          title="Save to Wishlist"
+                          data-event-id="{{ event.id }}"
+                          data-event-title="{{ event.title }}"
+                          data-event-venue="{{ event.venue }}"
+                          data-event-price="{{ event.price }}"
+                          data-event-date="{{ event.event_date|date:'d M Y' }}"
+                          data-event-category="{{ event.category.category_name }}"
+                          data-event-thumbnail="{{ event.get_thumbnail_url }}">
+                    <i class="fa-regular fa-heart"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-content-body">
+                <div class="event-meta-strip">
+                  <div class="event-meta-date-row">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>{{ event.event_date|date:"D, d M Y" }}</span>
+                  </div>
+                  <div class="event-meta-location-row">
+                    <div class="event-venue-item" title="{{ event.venue }}">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span class="event-venue-name">{{ event.venue }}</span>
+                    </div>
+                    <span class="meta-sep-dot">•</span>
+                    <span class="booked-count-badge">
+                      <i class="fa-solid fa-users"></i> {{ event.total_bookings|default_if_none:event.booking_set.count }} booked
+                    </span>
+                  </div>
+                </div>
+
+                <h3 class="event-title">{{ event.title }}</h3>
+                <p class="event-description-text">{{ event.description }}</p>
+
+                <div class="card-footer-strip">
+                  <div class="price-container">
+                    <span class="price-subtext">Starting from</span>
+                    <span class="price-amount">₹{{ event.price|floatformat:0 }}</span>
+                  </div>
+
+                  <button type="button"
+                          class="btn-brand btn-book-card"
+                          data-book-trigger
+                          data-event-id="{{ event.id }}"
+                          data-event-title="{{ event.title }}"
+                          data-event-venue="{{ event.venue }}"
+                          data-event-price="{{ event.price }}"
+                          data-event-date="{{ event.event_date|date:'d M Y' }}"
+                          data-event-category="{{ event.category.category_name }}">
+                    <i class="fa-solid fa-bolt me-1"></i> Book Now
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Fallback curated demo events when database has no events registered yet -->
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="1"
+                   data-title="Gujarat Fashion Week 2026"
+                   data-venue="Grand Ballroom, Ahmedabad"
+                   data-category="fashion"
+                   data-category-name="Fashion"
+                   data-city="Ahmedabad"
+                   data-price="5999"
+                   data-date="2026-09-02"
+                   data-date-formatted="Wed, 02 Sep 2026"
+                   data-date-badge="Wed, 02 Sep"
+                   data-image="{% static 'images/fashion.jpg' %}"
+                   data-description="Experience the latest fashion trends, creative collections and stylish designs presented by talented designers."
+                   data-booked="13">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/fashion.jpg' %}" alt="Gujarat Fashion Week" class="event-card-img" loading="lazy">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Fashion</span>
+                  <span class="badge-date-card"><i class="fa-regular fa-calendar"></i> Wed, 02 Sep</span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 02 Sep 2026</div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Grand Ballroom, Ahmedabad</span></div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 13 booked</span>
+                </div>
+              </div>
+              <h3 class="event-title">Gujarat Fashion Week</h3>
+              <p class="event-description-text">Experience the latest fashion trends, creative collections and stylish designs presented by talented designers.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹5999</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="1" data-event-title="Gujarat Fashion Week" data-event-venue="Grand Ballroom, Ahmedabad" data-event-price="5999" data-event-date="02 Sep 2026" data-event-category="Fashion">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="2"
+                   data-title="Ahmedabad Music Festival"
+                   data-venue="GIFT City Arena, Gandhinagar"
+                   data-category="music"
+                   data-category-name="Music"
+                   data-city="Gandhinagar"
+                   data-price="999"
+                   data-date="2026-10-15"
+                   data-date-formatted="Sat, 15 Oct 2026"
+                   data-date-badge="Sat, 15 Oct"
+                   data-image="{% static 'images/music.jpg' %}"
+                   data-description="Live concert featuring regional indie bands, acoustics, and electric performances with high-energy production."
+                   data-booked="340">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/music.jpg' %}" alt="Ahmedabad Music Festival" class="event-card-img" loading="lazy">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Music</span>
+                  <span class="badge-date-card"><i class="fa-regular fa-calendar"></i> Sat, 15 Oct</span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 15 Oct 2026</div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">GIFT City Arena</span></div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 340 booked</span>
+                </div>
+              </div>
+              <h3 class="event-title">Ahmedabad Music Festival</h3>
+              <p class="event-description-text">Live concert featuring regional indie bands, acoustics, and electric performances with high-energy production.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹999</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="2" data-event-title="Ahmedabad Music Festival" data-event-venue="GIFT City Arena" data-event-price="999" data-event-date="15 Oct 2026" data-event-category="Music">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="3"
+                   data-title="Mumbai Standup Comedy Showcase"
+                   data-venue="Bandra Auditorium, Mumbai"
+                   data-category="comedy"
+                   data-category-name="Comedy"
+                   data-city="Mumbai"
+                   data-price="499"
+                   data-date="2026-10-18"
+                   data-date-formatted="Sun, 18 Oct 2026"
+                   data-date-badge="Sun, 18 Oct"
+                   data-image="{% static 'images/comedy.jpg' %}"
+                   data-description="An evening of hilarious punchlines and standup routines with top comedians delivering non-stop laughs."
+                   data-booked="210">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/comedy.jpg' %}" alt="Standup Comedy" class="event-card-img" loading="lazy">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Comedy</span>
+                  <span class="badge-date-card"><i class="fa-regular fa-calendar"></i> Sun, 18 Oct</span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 18 Oct 2026</div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Bandra Auditorium</span></div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 210 booked</span>
+                </div>
+              </div>
+              <h3 class="event-title">Mumbai Standup Comedy Showcase</h3>
+              <p class="event-description-text">An evening of hilarious punchlines and standup routines with top comedians delivering non-stop laughs.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹499</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="3" data-event-title="Mumbai Standup Comedy Showcase" data-event-venue="Bandra Auditorium" data-event-price="499" data-event-date="18 Oct 2026" data-event-category="Comedy">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="4"
+                   data-title="Bengaluru Tech Summit 2026"
+                   data-venue="Whitefield Convention, Bengaluru"
+                   data-category="business"
+                   data-category-name="Business"
+                   data-city="Bengaluru"
+                   data-price="1499"
+                   data-date="2026-10-24"
+                   data-date-formatted="Sat, 24 Oct 2026"
+                   data-date-badge="Sat, 24 Oct"
+                   data-image="{% static 'images/tech.jpg' %}"
+                   data-description="Annual conference covering product engineering, startup growth, and infrastructure with leading innovators."
+                   data-booked="520">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/tech.jpg' %}" alt="Tech Summit" class="event-card-img" loading="lazy">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Conference</span>
+                  <span class="badge-date-card"><i class="fa-regular fa-calendar"></i> Sat, 24 Oct</span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 24 Oct 2026</div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Whitefield Convention</span></div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 520 booked</span>
+                </div>
+              </div>
+              <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
+              <p class="event-description-text">Annual conference covering product engineering, startup growth, and infrastructure with leading innovators.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹1499</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="4" data-event-title="Bengaluru Tech Summit 2026" data-event-venue="Whitefield Convention" data-event-price="1499" data-event-date="24 Oct 2026" data-event-category="Conference">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      {% endif %}
+
+      <!-- Empty State Card (Triggered by Search & Filter Engine) -->
+      <div class="empty-state-card" id="emptyStateContainer" style="display: none;">
+        <div class="empty-state-icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h3 class="fs-5 text-dark mb-1">No matching events found</h3>
+        <p class="text-secondary small mb-3">Adjust your search keywords, city selection, or category filters to find events.</p>
+        <button type="button" class="btn-secondary-custom" onclick="window.EventFilterEngine && window.EventFilterEngine.resetFilters()">
+          Clear All Filters
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    // 1. Clear any sticky city from localStorage on catalog load unless explicitly requested via ?city=
+    try {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.get('city')) {
+        localStorage.setItem('eventhub_city', 'All Cities');
+      }
+    } catch (e) {}
+
+    // 2. Safeguard: Force reset to All Cities on events catalog page
+    function ensureAllEventsVisible() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var explicitCity = urlParams.get('city');
+      var explicitCategory = urlParams.get('category');
+
+      if (window.EventFilterEngine) {
+        if (!explicitCity || explicitCity.toLowerCase() === 'all' || explicitCity.toLowerCase() === 'all cities') {
+          window.EventFilterEngine.state.city = 'All Cities';
+        }
+        if (!explicitCategory || explicitCategory.toLowerCase() === 'all') {
+          window.EventFilterEngine.state.category = 'all';
+        }
+        window.EventFilterEngine.applyFilters();
+      }
+
+      var cityLabel = document.getElementById('currentCityLabel');
+      if (cityLabel && (!explicitCity || explicitCity.toLowerCase() === 'all' || explicitCity.toLowerCase() === 'all cities')) {
+        cityLabel.textContent = 'All Cities';
+      }
+
+      var cityCards = document.querySelectorAll('.city-card-item');
+      if (cityCards.length && (!explicitCity || explicitCity.toLowerCase() === 'all')) {
+        cityCards.forEach(function (c) {
+          c.classList.toggle('selected', (c.getAttribute('data-city') || '') === 'All Cities');
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        ensureAllEventsVisible();
+        setTimeout(ensureAllEventsVisible, 80);
+      });
+    } else {
+      ensureAllEventsVisible();
+      setTimeout(ensureAllEventsVisible, 80);
+    }
+  })();
+
+  // Sync the dedicated catalog in-page search input with the global EventFilterEngine
+  document.addEventListener('DOMContentLoaded', function () {
+    const catalogInput = document.getElementById('catalogPageSearchInput');
+    const globalInput = document.getElementById('globalSearchInput');
+
+    if (catalogInput) {
+      // Sync initial value if global search already has text
+      if (globalInput && globalInput.value) {
+        catalogInput.value = globalInput.value;
+      }
+
+      catalogInput.addEventListener('input', function (e) {
+        const val = e.target.value;
+        if (globalInput) {
+          globalInput.value = val;
+        }
+        if (window.EventFilterEngine) {
+          window.EventFilterEngine.state.search = val.trim().toLowerCase();
+          window.EventFilterEngine.applyFilters();
+        }
+      });
+
+      if (globalInput) {
+        globalInput.addEventListener('input', function (e) {
+          catalogInput.value = e.target.value;
+        });
+      }
+    }
+  });
+</script>
+{% endblock %}

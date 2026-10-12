@@ -1,0 +1,626 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Kamnath Events | Book Event Tickets Online{% endblock %}
+{% block meta_desc %}Book tickets for concerts, standup comedy, conferences, and sports events across India.{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  {% if booking_success %}
+    <div class="booking-alert-banner {% if booking_confirmed %}confirmed{% else %}pending{% endif %} mt-3">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid {% if booking_confirmed %}fa-circle-check text-success{% else %}fa-clock text-warning{% endif %}" style="font-size: 1.1rem;"></i>
+        <div>
+          <span class="text-dark small fw-bold">{{ booking_success }}</span>
+          {% if ticket_id %}
+            <span class="text-muted small ms-2">(Ticket #BK-{{ ticket_id }})</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        {% if ticket_id %}
+          {% if booking_confirmed %}
+            <a href="{% url 'download_ticket' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+              <i class="fa-solid fa-file-pdf me-1"></i> Download Ticket PDF
+            </a>
+            <a href="{% url 'my_bookings' %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
+              View Tickets
+            </a>
+          {% else %}
+            <a href="{% url 'confirm_booking' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+              <i class="fa-solid fa-circle-check me-1"></i> Confirm Booking
+            </a>
+            <a href="{% url 'user_cancel_booking' ticket_id %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
+              Cancel
+            </a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Hero Section with Spotlight Carousel -->
+  <section class="hero-spotlight" aria-label="Featured Events">
+    <div class="hero-content-wrapper">
+      <div class="hero-eyebrow">
+        <img src="{% static 'images/logo.svg' %}" alt="Kamnath Events Logo" class="hero-eyebrow-logo">
+        <span>Kamnath Events • Official Platform</span>
+      </div>
+
+      <h1 class="hero-headline">
+        Book tickets for live events in your city
+      </h1>
+
+      <p class="hero-lead-text">
+        Find concerts, standup comedy, business conferences, and sports matches with live seat selection and digital tickets.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="{% url 'events' %}" class="btn-brand">
+          Browse Events
+        </a>
+        <button type="button" class="btn-secondary-custom" id="heroCityTrigger" onclick="document.getElementById('cityModal').classList.add('active')">
+          <i class="fa-solid fa-location-dot text-danger me-1"></i>
+          Select City
+        </button>
+      </div>
+    </div>
+
+    <!-- Spotlight Carousel Card (Right Column) -->
+    <div class="hero-spotlight-carousel" aria-label="Featured Event Carousel">
+      <div class="spotlight-header-strip">
+        <div class="d-flex align-items-center gap-2">
+          <span class="spotlight-title-label">Featured Spotlight</span>
+          <span class="spotlight-live-tag">Top Pick</span>
+        </div>
+        <div class="spotlight-pagination-controls">
+          <span class="spotlight-counter" id="spotlightCounter">1 / {% if spotlight_events %}{{ spotlight_events|length }}{% else %}3{% endif %}</span>
+          <button type="button" class="spotlight-nav-btn prev" aria-label="Previous slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button type="button" class="spotlight-nav-btn next" aria-label="Next slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="spotlight-slides-wrapper" id="spotlightSlidesWrapper">
+        {% if spotlight_events %}
+          {% for event in spotlight_events %}
+            <div class="spotlight-slide {% if forloop.first %}active{% endif %}" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} of {{ spotlight_events|length }}">
+              <div class="spotlight-card">
+                <div class="card-image-wrapper">
+                  <img src="{{ event.get_thumbnail_url }}" alt="{{ event.title }}" class="event-card-img" loading="eager">
+                  <div class="card-top-badges">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge-category-card">{{ event.category.category_name }}</span>
+                      <span class="badge-date-card">
+                        <i class="fa-regular fa-calendar"></i> {{ event.event_date|date:"D, d M" }}
+                      </span>
+                    </div>
+                    <span class="booked-count-badge">
+                      <i class="fa-solid fa-users"></i> {{ event.total_bookings|default_if_none:event.booking_set.count }} booked
+                    </span>
+                  </div>
+                </div>
+
+                <div class="card-content-body">
+                  <div class="event-meta-strip">
+                    <span class="event-meta-item">
+                      <i class="fa-regular fa-calendar"></i>
+                      {{ event.event_date|date:"D, d M Y" }}
+                    </span>
+                    <span>•</span>
+                    <span class="event-meta-item">
+                      <i class="fa-solid fa-location-dot"></i>
+                      {{ event.venue }}
+                    </span>
+                  </div>
+
+                  <h3 class="event-title">{{ event.title }}</h3>
+                  <p class="event-description-text">{{ event.description }}</p>
+
+                  <div class="card-footer-strip">
+                    <div class="price-container">
+                      <span class="price-subtext">Starting from</span>
+                      <span class="price-amount">₹{{ event.price|floatformat:0 }}</span>
+                    </div>
+
+                    <button type="button"
+                            class="btn-brand btn-book-card"
+                            data-book-trigger
+                            data-event-id="{{ event.id }}"
+                            data-event-title="{{ event.title }}"
+                            data-event-venue="{{ event.venue }}"
+                            data-event-price="{{ event.price }}"
+                            data-event-date="{{ event.event_date|date:'d M Y' }}">
+                      <i class="fa-solid fa-bolt me-1"></i> Book Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <!-- Curated Spotlight Slides for Initial Presentation -->
+          <div class="spotlight-slide active" role="group" aria-roledescription="slide" aria-label="1 of 3">
+            <div class="spotlight-card">
+              <div class="card-image-wrapper">
+                <img src="{% static 'images/music.jpg' %}" alt="Ahmedabad Music Festival" class="event-card-img" loading="eager">
+                <div class="card-top-badges">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-category-card">Concert</span>
+                    <span class="badge-date-card">
+                      <i class="fa-regular fa-calendar"></i> Sat, 15 Oct
+                    </span>
+                  </div>
+                  <span class="booked-count-badge">
+                    <i class="fa-solid fa-users"></i> 340 booked
+                  </span>
+                </div>
+              </div>
+              <div class="card-content-body">
+                <div class="event-meta-strip">
+                  <span class="event-meta-item"><i class="fa-regular fa-calendar"></i> Sat, 15 Oct 2026</span>
+                  <span>•</span>
+                  <span class="event-meta-item"><i class="fa-solid fa-location-dot"></i> GIFT City Arena</span>
+                </div>
+                <h3 class="event-title">Ahmedabad Music Festival</h3>
+                <p class="event-description-text">Live concert featuring regional and national indie bands.</p>
+                <div class="card-footer-strip">
+                  <div class="price-container">
+                    <span class="price-subtext">Starting from</span>
+                    <span class="price-amount">₹999</span>
+                  </div>
+                  <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="101" data-event-title="Ahmedabad Music Festival" data-event-venue="GIFT City Arena" data-event-price="999" data-event-date="15 Oct 2026">
+                    <i class="fa-solid fa-bolt me-1"></i> Book Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-slide" role="group" aria-roledescription="slide" aria-label="2 of 3">
+            <div class="spotlight-card">
+              <div class="card-image-wrapper">
+                <img src="{% static 'images/comedy.jpg' %}" alt="Mumbai Standup Comedy Showcase" class="event-card-img" loading="eager">
+                <div class="card-top-badges">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-category-card">Comedy</span>
+                    <span class="badge-date-card">
+                      <i class="fa-regular fa-calendar"></i> Sun, 18 Oct
+                    </span>
+                  </div>
+                  <span class="booked-count-badge">
+                    <i class="fa-solid fa-users"></i> 210 booked
+                  </span>
+                </div>
+              </div>
+              <div class="card-content-body">
+                <div class="event-meta-strip">
+                  <span class="event-meta-item"><i class="fa-regular fa-calendar"></i> Sun, 18 Oct 2026</span>
+                  <span>•</span>
+                  <span class="event-meta-item"><i class="fa-solid fa-location-dot"></i> Bandra Auditorium</span>
+                </div>
+                <h3 class="event-title">Mumbai Standup Comedy Showcase</h3>
+                <p class="event-description-text">An evening of standup comedy with established and upcoming comedians.</p>
+                <div class="card-footer-strip">
+                  <div class="price-container">
+                    <span class="price-subtext">Starting from</span>
+                    <span class="price-amount">₹499</span>
+                  </div>
+                  <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="102" data-event-title="Mumbai Standup Comedy Showcase" data-event-venue="Bandra Auditorium" data-event-price="499" data-event-date="18 Oct 2026">
+                    <i class="fa-solid fa-bolt me-1"></i> Book Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-slide" role="group" aria-roledescription="slide" aria-label="3 of 3">
+            <div class="spotlight-card">
+              <div class="card-image-wrapper">
+                <img src="{% static 'images/tech.jpg' %}" alt="Bengaluru Tech Summit 2026" class="event-card-img" loading="eager">
+                <div class="card-top-badges">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-category-card">Conference</span>
+                    <span class="badge-date-card">
+                      <i class="fa-regular fa-calendar"></i> Sat, 24 Oct
+                    </span>
+                  </div>
+                  <span class="booked-count-badge">
+                    <i class="fa-solid fa-users"></i> 520 booked
+                  </span>
+                </div>
+              </div>
+              <div class="card-content-body">
+                <div class="event-meta-strip">
+                  <span class="event-meta-item"><i class="fa-regular fa-calendar"></i> Sat, 24 Oct 2026</span>
+                  <span>•</span>
+                  <span class="event-meta-item"><i class="fa-solid fa-location-dot"></i> Whitefield Convention</span>
+                </div>
+                <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
+                <p class="event-description-text">Annual conference covering product engineering, startup growth, and infrastructure.</p>
+                <div class="card-footer-strip">
+                  <div class="price-container">
+                    <span class="price-subtext">Starting from</span>
+                    <span class="price-amount">₹1,499</span>
+                  </div>
+                  <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="103" data-event-title="Bengaluru Tech Summit 2026" data-event-venue="Whitefield Convention" data-event-price="1499" data-event-date="24 Oct 2026">
+                    <i class="fa-solid fa-bolt me-1"></i> Book Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="spotlight-dots-bar" role="tablist" aria-label="Choose featured event slide">
+        {% if spotlight_events %}
+          {% for event in spotlight_events %}
+            <button type="button" class="spotlight-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter }}"></button>
+          {% endfor %}
+        {% else %}
+          <button type="button" class="spotlight-dot active" data-index="0" aria-label="Slide 1"></button>
+          <button type="button" class="spotlight-dot" data-index="1" aria-label="Slide 2"></button>
+          <button type="button" class="spotlight-dot" data-index="2" aria-label="Slide 3"></button>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="my-4" aria-label="Event Categories">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="fs-4 mb-0">Browse by Category</h2>
+      <a href="{% url 'events' %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 5px 12px;">
+        View All
+      </a>
+    </div>
+
+    <div class="row g-3">
+      {% for cat in categories %}
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="card p-3 text-center h-100 w-100 category-chip category-card" data-category="{{ cat.category_name|lower }}" style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; min-height: 74px; cursor: pointer; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); transition: transform 0.2s, box-shadow 0.2s;">
+          <div class="fw-bold text-dark small mb-1">{{ cat.category_name }}</div>
+          <span class="text-muted" style="font-size: 0.75rem;">
+            {% if cat.event_count %}
+              {{ cat.event_count }} Event{{ cat.event_count|pluralize }}
+            {% else %}
+              Explore events
+            {% endif %}
+          </span>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center text-muted py-3">
+        No categories available yet.
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Events Grid -->
+  <section class="my-5" aria-label="Upcoming Events">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="fs-4 mb-0">Upcoming Events</h2>
+      <div id="resultsCounter" class="filter-results-counter"></div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="discovery-filter-bar">
+      <div class="filter-left-group">
+        <select class="filter-select" id="categoryFilterSelect" aria-label="Filter by Category">
+          <option value="all">All Categories</option>
+          {% for cat in categories %}
+            <option value="{{ cat.category_name|lower }}">{{ cat.category_name }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="filter-date-chips">
+          <button type="button" class="date-chip-btn active" data-date="all">All Dates</button>
+          <button type="button" class="date-chip-btn" data-date="today">Today</button>
+          <button type="button" class="date-chip-btn" data-date="weekend">This Weekend</button>
+        </div>
+
+        <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <div class="filter-right-group">
+        <select class="filter-select" id="sortFilterSelect" aria-label="Sort events">
+          <option value="featured">Featured First</option>
+          <option value="date-asc">Date: Upcoming First</option>
+          <option value="date-desc">Date: Latest First</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="events-grid" id="eventsContainer">
+      {% if events %}
+        {% for event in events %}
+          <div class="event-card-wrapper">
+            <article class="event-card"
+                     data-event-id="{{ event.id }}"
+                     data-title="{{ event.title }}"
+                     data-venue="{{ event.venue }}"
+                     data-category="{{ event.category.category_name|lower }}"
+                     data-category-name="{{ event.category.category_name }}"
+                     data-city="{{ event.venue }}"
+                     data-price="{{ event.price|floatformat:0 }}"
+                     data-date="{{ event.event_date|date:'Y-m-d' }}"
+                     data-date-formatted="{{ event.event_date|date:'D, d M Y' }}"
+                     data-date-badge="{{ event.event_date|date:'D, d M' }}"
+                     data-image="{{ event.get_thumbnail_url }}"
+                     data-description="{{ event.description }}"
+                     data-booked="{{ event.total_bookings|default_if_none:event.booking_set.count|default:'12' }}">
+              
+              <div class="card-image-wrapper">
+                <img src="{{ event.get_thumbnail_url }}" alt="{{ event.title }}" class="event-card-img" loading="lazy">
+
+                <div class="card-top-badges">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge-category-card">{{ event.category.category_name }}</span>
+                    <span class="badge-date-card">
+                      <i class="fa-regular fa-calendar"></i> {{ event.event_date|date:"D, d M" }}
+                    </span>
+                  </div>
+                  <button type="button"
+                          class="card-like-btn"
+                          aria-label="Save to favorites"
+                          title="Save to Wishlist"
+                          data-event-id="{{ event.id }}"
+                          data-event-title="{{ event.title }}"
+                          data-event-venue="{{ event.venue }}"
+                          data-event-price="{{ event.price }}"
+                          data-event-date="{{ event.event_date|date:'d M Y' }}"
+                          data-event-category="{{ event.category.category_name }}"
+                          data-event-thumbnail="{{ event.get_thumbnail_url }}">
+                    <i class="fa-regular fa-heart"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-content-body">
+                <div class="event-meta-strip">
+                  <div class="event-meta-date-row">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>{{ event.event_date|date:"D, d M Y" }}</span>
+                  </div>
+                  <div class="event-meta-location-row">
+                    <div class="event-venue-item" title="{{ event.venue }}">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span class="event-venue-name">{{ event.venue }}</span>
+                    </div>
+                    <span class="meta-sep-dot">•</span>
+                    <span class="booked-count-badge">
+                      <i class="fa-solid fa-users"></i> {{ event.total_bookings|default_if_none:event.booking_set.count }} booked
+                    </span>
+                  </div>
+                </div>
+
+                <h3 class="event-title">{{ event.title }}</h3>
+                <p class="event-description-text">{{ event.description }}</p>
+
+                <div class="card-footer-strip">
+                  <div class="price-container">
+                    <span class="price-subtext">Starting from</span>
+                    <span class="price-amount">₹{{ event.price|floatformat:0 }}</span>
+                  </div>
+
+                  <button type="button"
+                          class="btn-brand btn-book-card"
+                          data-book-trigger
+                          data-event-id="{{ event.id }}"
+                          data-event-title="{{ event.title }}"
+                          data-event-venue="{{ event.venue }}"
+                          data-event-price="{{ event.price }}"
+                          data-event-date="{{ event.event_date|date:'d M Y' }}"
+                          data-event-category="{{ event.category.category_name }}">
+                    <i class="fa-solid fa-bolt me-1"></i> Book Now
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="101"
+                   data-title="Ahmedabad Music Festival"
+                   data-venue="GIFT City Arena"
+                   data-category="music"
+                   data-category-name="Music"
+                   data-city="Ahmedabad"
+                   data-price="999"
+                   data-date="2026-10-15"
+                   data-date-formatted="Sat, 15 Oct 2026"
+                   data-date-badge="Sat, 15 Oct"
+                   data-image="{% static 'images/music.jpg' %}"
+                   data-description="Live concert featuring regional and national indie bands with state-of-the-art stage production."
+                   data-booked="340">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/music.jpg' %}" alt="Music Festival" class="event-card-img">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Music</span>
+                  <span class="badge-date-card">
+                    <i class="fa-regular fa-calendar"></i> Sat, 15 Oct
+                  </span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row">
+                  <i class="fa-regular fa-calendar"></i>
+                  <span>15 Oct 2026</span>
+                </div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item" title="GIFT City, Ahmedabad">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span class="event-venue-name">GIFT City, Ahmedabad</span>
+                  </div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge">
+                    <i class="fa-solid fa-users"></i> 340 booked
+                  </span>
+                </div>
+              </div>
+              <h3 class="event-title">Ahmedabad Music Festival</h3>
+              <p class="event-description-text">Live concert featuring regional and national indie bands with state-of-the-art stage production.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹999</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="101" data-event-title="Ahmedabad Music Festival" data-event-venue="GIFT City Arena" data-event-price="999" data-event-date="15 Oct 2026" data-event-category="Music">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="102"
+                   data-title="Surat Standup Comedy Showcase"
+                   data-venue="Dumas Road Auditorium"
+                   data-category="comedy"
+                   data-category-name="Comedy"
+                   data-city="Surat"
+                   data-price="499"
+                   data-date="2026-10-18"
+                   data-date-formatted="Sun, 18 Oct 2026"
+                   data-date-badge="Sun, 18 Oct"
+                   data-image="{% static 'images/comedy.jpg' %}"
+                   data-description="An evening of standup comedy with established and upcoming comedians delivering non-stop laughs."
+                   data-booked="210">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/comedy.jpg' %}" alt="Standup Comedy" class="event-card-img">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Comedy</span>
+                  <span class="badge-date-card">
+                    <i class="fa-regular fa-calendar"></i> Sun, 18 Oct
+                  </span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row">
+                  <i class="fa-regular fa-calendar"></i>
+                  <span>18 Oct 2026</span>
+                </div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item" title="Dumas Road, Surat">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span class="event-venue-name">Dumas Road, Surat</span>
+                  </div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge">
+                    <i class="fa-solid fa-users"></i> 210 booked
+                  </span>
+                </div>
+              </div>
+              <h3 class="event-title">Surat Standup Comedy Showcase</h3>
+              <p class="event-description-text">An evening of standup comedy with established and upcoming comedians delivering non-stop laughs.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹499</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="102" data-event-title="Surat Standup Comedy Showcase" data-event-venue="Dumas Road Auditorium" data-event-price="499" data-event-date="18 Oct 2026" data-event-category="Comedy">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="event-card-wrapper">
+          <article class="event-card"
+                   data-event-id="103"
+                   data-title="Bengaluru Tech Summit 2026"
+                   data-venue="Whitefield Convention Centre"
+                   data-category="business"
+                   data-category-name="Business"
+                   data-city="Bengaluru"
+                   data-price="1499"
+                   data-date="2026-10-24"
+                   data-date-formatted="Sat, 24 Oct 2026"
+                   data-date-badge="Sat, 24 Oct"
+                   data-image="{% static 'images/tech.jpg' %}"
+                   data-description="Annual conference covering product engineering, startup growth, modern cloud architecture, and infrastructure."
+                   data-booked="520">
+            <div class="card-image-wrapper">
+              <img src="{% static 'images/tech.jpg' %}" alt="Tech Summit" class="event-card-img">
+              <div class="card-top-badges">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-category-card">Business</span>
+                  <span class="badge-date-card">
+                    <i class="fa-regular fa-calendar"></i> Sat, 24 Oct
+                  </span>
+                </div>
+                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
+              </div>
+            </div>
+            <div class="card-content-body">
+              <div class="event-meta-strip">
+                <div class="event-meta-date-row">
+                  <i class="fa-regular fa-calendar"></i>
+                  <span>24 Oct 2026</span>
+                </div>
+                <div class="event-meta-location-row">
+                  <div class="event-venue-item" title="Alkapuri, Vadodara">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span class="event-venue-name">Alkapuri, Vadodara</span>
+                  </div>
+                  <span class="meta-sep-dot">•</span>
+                  <span class="booked-count-badge">
+                    <i class="fa-solid fa-users"></i> 520 booked
+                  </span>
+                </div>
+              </div>
+              <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
+              <p class="event-description-text">Annual conference covering product engineering, startup growth, modern cloud architecture, and infrastructure.</p>
+              <div class="card-footer-strip">
+                <div class="price-container">
+                  <span class="price-subtext">Starting from</span>
+                  <span class="price-amount">₹1,499</span>
+                </div>
+                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="103" data-event-title="Bengaluru Tech Summit 2026" data-event-venue="Whitefield Convention Centre" data-event-price="1499" data-event-date="24 Oct 2026" data-event-category="Business">
+                  <i class="fa-solid fa-bolt me-1"></i> Book Now
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      {% endif %}
+
+      <div class="empty-state-card" id="emptyStateContainer" style="display: none;">
+        <div class="empty-state-icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h3 class="fs-5 text-dark mb-1">No matching events found</h3>
+        <p class="text-secondary small mb-3">Adjust your search terms, city, or category filter.</p>
+        <button type="button" class="btn-secondary-custom" onclick="window.EventFilterEngine && window.EventFilterEngine.resetFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

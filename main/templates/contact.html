@@ -1,0 +1,520 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Support | Kamnath Events - 24/7 Fan & Organizer Help Desk{% endblock %}
+{% block meta_desc %}Contact Kamnath Events support for ticket assistance, venue guidelines, seat holds, and organizer inquiries.{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ==========================================================================
+     CONTACT SUPPORT PAGE - ORGANIZED TYPOGRAPHY & LAYOUT
+     Clean font hierarchy, balanced letter-spacing, and structured cards.
+     ========================================================================== */
+
+  /* Header Section */
+  .contact-header-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    margin-bottom: 32px;
+  }
+
+  .contact-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: #ffe4e6;
+    color: var(--brand-primary);
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .contact-page-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 3.2vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .contact-page-lead {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 680px;
+    margin-bottom: 0;
+  }
+
+  /* Success Confirmation Banner */
+  .contact-success-banner {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .contact-success-banner i {
+    font-size: 1.3rem;
+    color: var(--brand-success);
+    flex-shrink: 0;
+  }
+
+  .contact-success-text {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: #14532d;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Support Channel Cards (Left Column) */
+  .contact-channel-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: all var(--transition-fast);
+  }
+
+  .contact-channel-card:hover {
+    border-color: var(--border-medium);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  .contact-channel-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: #fff1f2;
+    color: var(--brand-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .contact-channel-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contact-channel-label {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .contact-channel-value {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    letter-spacing: -0.01em;
+    word-break: break-word;
+  }
+
+  .contact-channel-value a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .contact-channel-value a:hover {
+    color: var(--brand-primary);
+  }
+
+  .contact-channel-note {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  /* Ticket Quick Help Callout */
+  .contact-quick-callout {
+    background: #f8fafc;
+    border: 1px dashed var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .contact-quick-callout-icon {
+    color: var(--brand-primary);
+    font-size: 1.1rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .contact-quick-callout-text {
+    font-family: var(--font-sans);
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .contact-quick-callout-text strong {
+    color: var(--text-primary);
+  }
+
+  /* Contact Form Container (Right Column) */
+  .contact-form-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 32px 30px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .contact-form-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .contact-form-subtext {
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .contact-form-group {
+    margin-bottom: 18px;
+  }
+
+  .contact-field-label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+
+  .contact-field-input,
+  .contact-field-textarea {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+  }
+
+  .contact-field-input::placeholder,
+  .contact-field-textarea::placeholder {
+    color: #94a3b8;
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+  }
+
+  .contact-field-input:focus,
+  .contact-field-textarea:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+  }
+
+  .contact-field-helper {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    display: block;
+  }
+
+  .contact-submit-btn {
+    padding: 11px 24px;
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @media (max-width: 767px) {
+    .contact-header-card {
+      padding: 20px 16px;
+      margin-bottom: 20px;
+    }
+
+    .contact-page-title {
+      font-size: 1.7rem;
+    }
+
+    .contact-channel-card {
+      padding: 14px 16px;
+      gap: 12px;
+    }
+
+    .contact-channel-icon {
+      width: 38px;
+      height: 38px;
+      font-size: 1rem;
+    }
+
+    .contact-form-container {
+      padding: 20px 16px;
+    }
+
+    .contact-submit-btn {
+      width: 100%;
+      justify-content: center;
+      height: 46px;
+    }
+  }
+
+  /* ==========================================================================
+     DARK THEME SUPPORT PAGE OVERRIDES
+     ========================================================================== */
+  [data-theme="dark"] .contact-eyebrow,
+  html.dark .contact-eyebrow {
+    background: rgba(244, 63, 94, 0.16);
+    color: var(--brand-primary);
+  }
+
+  [data-theme="dark"] .contact-channel-icon,
+  html.dark .contact-channel-icon {
+    background: rgba(244, 63, 94, 0.16);
+    color: var(--brand-primary);
+  }
+
+  [data-theme="dark"] .contact-quick-callout,
+  html.dark .contact-quick-callout {
+    background: var(--bg-subtle);
+    border-color: var(--border-medium);
+  }
+
+  [data-theme="dark"] .contact-field-input,
+  [data-theme="dark"] .contact-field-textarea,
+  html.dark .contact-field-input,
+  html.dark .contact-field-textarea {
+    background: var(--bg-subtle);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+  }
+
+  [data-theme="dark"] .contact-field-input:focus,
+  [data-theme="dark"] .contact-field-textarea:focus,
+  html.dark .contact-field-input:focus,
+  html.dark .contact-field-textarea:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- ========================================================================
+       HEADER SECTION: Clean Organized Heading & Eyebrow
+       ======================================================================== -->
+  <section class="contact-header-card" aria-label="Customer Support Header">
+    <div class="contact-eyebrow">
+      <i class="fa-solid fa-headset"></i>
+      <span>Help & Support • Official Desk</span>
+    </div>
+
+    <h1 class="contact-page-title">Customer Support</h1>
+
+    <p class="contact-page-lead">
+      Have a question about your tickets, interactive seat holds, venue entry, or organizer partnerships? Our dedicated support team is here to assist you promptly.
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       FEEDBACK CONFIRMATION BANNER
+       ======================================================================== -->
+  {% if success %}
+    <div class="contact-success-banner" role="alert">
+      <i class="fa-solid fa-circle-check"></i>
+      <p class="contact-success-text">
+        <strong>Message Received:</strong> {{ success }}
+      </p>
+    </div>
+  {% endif %}
+
+  <!-- ========================================================================
+       MAIN GRID: Channels (Left) & Inquiry Form (Right)
+       ======================================================================== -->
+  <div class="row g-4">
+    
+    <!-- LEFT COLUMN: Structured Contact Channels -->
+    <div class="col-lg-5">
+      <div class="d-flex flex-column gap-3">
+
+        <!-- Channel 1: Email -->
+        <div class="contact-channel-card">
+          <div class="contact-channel-icon">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div class="contact-channel-body">
+            <div class="contact-channel-label">Official Support Email</div>
+            <div class="contact-channel-value">
+              <a href="mailto:support@kamnathevents.com">support@kamnathevents.com</a>
+            </div>
+            <p class="contact-channel-note">
+              Dedicated response team. Average reply time: under 30 minutes for ticket and booking emergencies.
+            </p>
+          </div>
+        </div>
+
+        <!-- Channel 2: Phone Helpline -->
+        <div class="contact-channel-card">
+          <div class="contact-channel-icon">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <div class="contact-channel-body">
+            <div class="contact-channel-label">Customer Helpline</div>
+            <div class="contact-channel-value">
+              <a href="tel:+919876543210">+91 98765 43210</a>
+            </div>
+            <p class="contact-channel-note">
+              Direct voice assistance available Monday to Saturday, 9:00 AM to 9:00 PM IST.
+            </p>
+          </div>
+        </div>
+
+        <!-- Channel 3: Office Headquarters -->
+        <div class="contact-channel-card">
+          <div class="contact-channel-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div class="contact-channel-body">
+            <div class="contact-channel-label">Headquarters</div>
+            <div class="contact-channel-value">
+              Ahmedabad, Gujarat, India
+            </div>
+            <p class="contact-channel-note">
+              Central Operations Hub & Event Technology Engineering Center.
+            </p>
+          </div>
+        </div>
+
+        <!-- Channel 4: Instant Self-Service Notice -->
+        <div class="contact-quick-callout">
+          <i class="fa-solid fa-ticket contact-quick-callout-icon"></i>
+          <p class="contact-quick-callout-text">
+            <strong>Need your tickets immediately?</strong> You can view and download your official PDF tickets with encrypted QR codes right from your <a href="{% url 'my_bookings' %}" class="fw-bold text-danger text-decoration-underline">My Bookings</a> dashboard without waiting.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Organized Contact Message Form -->
+    <div class="col-lg-7">
+      <div class="contact-form-container">
+        <h2 class="contact-form-title">Send a Message</h2>
+        <p class="contact-form-subtext">Fill out the details below and an agent will reply directly to your email.</p>
+
+        <form action="{% url 'contact' %}" method="POST" autocomplete="on">
+          {% csrf_token %}
+
+          <div class="row g-3">
+            <!-- Full Name -->
+            <div class="col-md-6">
+              <div class="contact-form-group">
+                <label class="contact-field-label" for="contactName">
+                  Full Name <span class="text-danger">*</span>
+                </label>
+                <input type="text"
+                       id="contactName"
+                       name="name"
+                       class="contact-field-input"
+                       placeholder="e.g. Rahul Sharma"
+                       required>
+              </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="col-md-6">
+              <div class="contact-form-group">
+                <label class="contact-field-label" for="contactEmail">
+                  Email Address <span class="text-danger">*</span>
+                </label>
+                <input type="email"
+                       id="contactEmail"
+                       name="email"
+                       class="contact-field-input"
+                       placeholder="e.g. rahul@example.com"
+                       required>
+              </div>
+            </div>
+
+            <!-- Message Textarea -->
+            <div class="col-12">
+              <div class="contact-form-group mb-2">
+                <label class="contact-field-label" for="contactMessage">
+                  Message Details <span class="text-danger">*</span>
+                </label>
+                <textarea id="contactMessage"
+                          name="message"
+                          class="contact-field-textarea"
+                          rows="5"
+                          placeholder="Please describe your question or issue in detail..."
+                          style="resize: vertical;"
+                          required></textarea>
+                <span class="contact-field-helper">
+                  <i class="fa-solid fa-circle-info me-1"></i> Tip: If your question is about an existing booking, please mention your Booking Reference ID (e.g. #BK-12).
+                </span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn-brand contact-submit-btn">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Send Message</span>
+              </button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

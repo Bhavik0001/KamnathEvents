@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookings & Tickets | Kamnath Events{% endblock %}
+{% block meta_desc %}View your active and past event tickets and download your official PDF passes.{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Page Header -->
+  <div class="p-4 p-md-5 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="fs-2 text-dark mb-1">My Bookings & Tickets</h1>
+        <p class="text-secondary mb-0">View all your registered event tickets and download your official PDF entry passes.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="{% url 'events' %}" class="btn-brand">
+          <i class="fa-solid fa-plus me-1"></i> Browse More Events
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Alert if Any -->
+  {% if booking_success %}
+    <div class="booking-alert-banner {% if booking_confirmed %}confirmed{% else %}pending{% endif %}">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid {% if booking_confirmed %}fa-circle-check text-success{% else %}fa-clock text-warning{% endif %}"></i>
+        <span class="text-dark small fw-medium">{{ booking_success }}</span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        {% if ticket_id %}
+          {% if booking_confirmed %}
+            <a href="{% url 'download_ticket' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+              <i class="fa-solid fa-file-pdf me-1"></i> Download Ticket PDF
+            </a>
+          {% else %}
+            <a href="{% url 'confirm_booking' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+              <i class="fa-solid fa-circle-check me-1"></i> Confirm Booking
+            </a>
+            <a href="{% url 'user_cancel_booking' ticket_id %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 14px;">
+              Cancel
+            </a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Bookings List -->
+  {% if bookings %}
+    <div class="row g-3">
+      {% for b in bookings %}
+        <div class="col-12 col-lg-6">
+          <div class="card p-3 h-100" style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md);">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <span class="badge" style="background: var(--bg-subtle); color: var(--text-muted); font-size: 0.72rem; border: 1px solid var(--border-subtle);">
+                  Ticket #BK-{{ b.id }}
+                </span>
+                {% if b.quantity > 1 %}
+                  <span class="badge bg-primary text-white ms-1" style="font-size: 0.72rem;">
+                    <i class="fa-solid fa-users me-1"></i> {{ b.quantity }} Passes
+                  </span>
+                {% endif %}
+                <span class="text-muted small ms-2">Booked on {{ b.booking_date|date:"d M Y" }}</span>
+              </div>
+
+              {% if b.status == "Confirmed" %}
+                <span class="ticket-badge-confirmed">
+                  <i class="fa-solid fa-circle-check me-1"></i> Confirmed
+                </span>
+              {% elif b.status == "Pending" %}
+                <span class="ticket-badge-pending">
+                  <i class="fa-regular fa-clock me-1"></i> Pending
+                </span>
+              {% else %}
+                <span class="ticket-badge-cancelled">
+                  <i class="fa-solid fa-ban me-1"></i> Cancelled
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="d-flex gap-3 align-items-center mb-3">
+                <img src="{{ b.event.get_thumbnail_url }}" alt="{{ b.event.title }}" style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+
+              <div class="flex-1">
+                <span class="badge-category-card mb-1">{{ b.event.category.category_name }}</span>
+                <h3 class="fs-6 mb-1 text-dark">{{ b.event.title }}</h3>
+                <div class="text-muted small">
+                  <i class="fa-regular fa-calendar me-1"></i> {{ b.event.event_date|date:"D, d M Y" }} • 
+                  <i class="fa-solid fa-location-dot ms-1 me-1"></i> {{ b.event.venue }}
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-2 mt-auto border-top ticket-card-footer" style="border-color: var(--border-subtle) !important;">
+              <div>
+                <span class="text-muted small">
+                  {% if b.quantity > 1 %}{{ b.quantity }} Passes • Total Paid{% else %}Ticket Price{% endif %}
+                </span>
+                <div class="fw-bold text-dark">
+                  ₹{{ b.total_price|floatformat:0 }}
+                  {% if b.quantity > 1 %}
+                    <small class="text-muted fw-normal" style="font-size: 0.75rem;">({{ b.quantity }} × ₹{{ b.event.price|floatformat:0 }})</small>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="d-flex gap-2">
+                {% if b.status == "Confirmed" %}
+                  <a href="{% url 'download_ticket' b.id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;" title="Download Single Official Pass PDF">
+                    <i class="fa-solid fa-file-pdf me-1"></i> Download Ticket PDF {% if b.quantity > 1 %}({{ b.quantity }} Passes){% endif %}
+                  </a>
+                  <a href="{% url 'user_cancel_booking' b.id %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;" onclick="return confirm('Cancel this ticket booking?')">
+                    Cancel
+                  </a>
+                {% elif b.status == "Pending" %}
+                  <a href="{% url 'confirm_booking' b.id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+                    Confirm
+                  </a>
+                  <a href="{% url 'user_cancel_booking' b.id %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
+                    Cancel
+                  </a>
+                {% else %}
+                  <span class="text-muted small">Booking inactive</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card p-5 text-center" style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md);">
+      <div style="width: 54px; height: 54px; border-radius: 50%; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: var(--text-muted); font-size: 1.4rem;">
+        <i class="fa-solid fa-ticket"></i>
+      </div>
+      <h3 class="fs-5 text-dark mb-1">No bookings found</h3>
+      <p class="text-secondary small mb-3">You have not booked any tickets yet. Explore upcoming concerts, comedy, and conferences.</p>
+      <div>
+        <a href="{% url 'events' %}" class="btn-brand">
+          Browse Events
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,464 @@
+================================================================================
+KAMNATH EVENTS - EVENT MANAGEMENT & TICKETING SYSTEM
+Full Project Summary, Architecture, New Features & Viva Voce Guide
+================================================================================
+
+1. PROJECT AT A GLANCE (ELEVATOR PITCH)
+--------------------------------------------------------------------------------
+Kamnath Events is a modern full-stack web application built using Python and the 
+Django framework (Django 6.0 on Python 3.14). It is engineered as an industry-standard 
+ticketing platform inspired by platforms like BookMyShow and Eventbrite.
+
+The platform allows visitors to explore upcoming events across multiple categories 
+(Music, Technology, Sports, Standup Comedy, Business Summits, Fashion, Art & Workshops), 
+filter events by city (Ahmedabad, Gandhinagar, Surat, Vadodara, Rajkot, Mumbai), save events 
+to an interactive slide-out Wishlist drawer, select pass quantities (1 to 10 passes), book 
+tickets online, manage booking statuses (confirmed or cancelled), and download a single, 
+high-security consolidated PDF entry pass with a vector barcode.
+
+It also features a built-in Academic & Project Documentation PDF generator accessible via 
+the `/project-docs/` route, plus a comprehensive Admin Management Portal where administrators 
+can track real-time business metrics (total events, registered users, bookings, total revenue), 
+perform full CRUD operations on events and categories, and manage customer inquiries.
+
+
+2. CORE PROBLEM SOLVED & KEY NEW FEATURES
+--------------------------------------------------------------------------------
+A common drawback in basic event websites is that booking multiple tickets for a group 
+creates duplicate database rows and forces users to download multiple separate PDFs. 
+In Kamnath Events, we designed and implemented a series of production-grade features:
+
+1. Smart Multi-Ticket Pass Consolidation:
+   - Users select their required ticket quantity (1 to 10 passes) in an express modal.
+   - Dynamic price calculation runs instantly on the client side.
+   - A single consolidated `Booking` record is stored with `quantity=N` and `status="Confirmed"`.
+   - The database stays clean with zero redundant rows.
+
+2. Single High-Security Group Pass PDF (ReportLab Engine):
+   - Rather than downloading 3 or 4 separate files, the customer gets ONE single official PDF pass.
+   - For 1 pass: Labeled as "Standard Admission Pass (Single)".
+   - For >1 passes: Labeled as "Group Admission Pass" and displays "Admit: N Persons".
+   - Shows attendee name, email, booking reference (#BK-XXXX), date, venue, unit price, and total amount.
+   - Includes a scannable vector barcode (`* KMN-PASS-XXXXXX-QTYXX *` or `* KMN-PASS-XXXXXX-SEC *`).
+   - Clear gate entry guidelines: "All N attendees must arrive together with this pass."
+
+3. Interactive Wishlist & Saved Events Drawer:
+   - Users can bookmark favorite events with a heart icon.
+   - Stored in browser `localStorage` for cross-session persistence.
+   - Real-time navbar badge counters (desktop and mobile) show saved event counts.
+   - Slide-out offcanvas drawer with live total estimated price and a 1-click "Book Now" trigger.
+
+4. Hero Spotlight Carousel:
+   - Dynamic top-banner carousel showcasing featured events.
+   - Features smooth CSS cross-fade, auto-play timer (5 seconds), pause-on-hover, touch swiping, 
+     dot pagination, and real-time slide counter (`01 / 04`).
+
+5. Self-Service Booking Confirmation & Cancellation:
+   - Users can review bookings under `/my-bookings/` and cancel reservations if needed.
+   - Admins can review, approve, or cancel bookings directly from the dashboard table.
+
+6. Built-in Project Documentation PDF Generator:
+   - Route `/project-docs/` invokes `generate_project_pdf.py` to render a 4-page, publication-quality 
+     system architecture specification, database schema, and viva defense guide directly in the browser.
+
+7. Production-Grade PBKDF2 Password Security & AJAX Modal Authentication:
+   - User and Admin passwords use secure PBKDF2 hashing (`make_password`, `check_password`).
+   - Transparent legacy password upgrade: Plaintext credentials automatically hash on successful login.
+   - Asynchronous AJAX modal login and registration with real-time JSON validation (no full page reload).
+
+8. Multi-City & Category Discovery Engine:
+   - Navigation modal supports filtering by Gandhinagar, Ahmedabad, Surat, Vadodara, Rajkot, and Mumbai.
+   - URL synchronization (`?category=...&city=...`) preserves active filter state.
+   - Live debounced search input filters by title or venue without page reloading.
+
+
+3. TECHNOLOGY STACK (WHY WE CHOSE EACH)
+--------------------------------------------------------------------------------
+A. Back-End:
+- Python 3.14: Clean syntax, high performance, robust standard libraries, and modern typing support.
+- Django 6.0: Robust, secure, "batteries-included" web framework. Built-in ORM, session engine, 
+  CSRF protection, XSS prevention, and clean URL routing.
+- ReportLab (Python Vector Graphics): Renders high-precision PDF tickets and documentation directly 
+  into memory buffers (`io.BytesIO`) without relying on heavy external headless browsers or CLI tools.
+
+B. Front-End:
+- HTML5 & Django Template Language (DTL): Semantic markup with template inheritance (`base.html`).
+- Custom Vanilla CSS3 Design System: Tokens defined in `design-system.css` with CSS variables for colors, 
+  radii, typography, and responsive layouts across `main.css`, `events.css`, `booking.css`, `dashboard.css`, and `about.css`.
+- Font Awesome 6 & Lucide Icons: Crisp iconography for dates, venues, categories, prices, and controls.
+- Vanilla JavaScript (ES6+): Lightweight, modular, non-blocking scripts (`auth.js`, `booking.js`, 
+  `events-filter.js`, `wishlist.js`, `spotlight-carousel.js`, `dashboard.js`, `main.js`) delivering instant 
+  interactivity with zero runtime framework overhead.
+
+C. Database & ORM:
+- MySQL (PyMySQL / mysqlclient): Production relational database with strict foreign-key integrity.
+- SQLite3: Zero-configuration local database for testing and offline development.
+- Django ORM: Abstracts SQL queries into Python method calls, automatically preventing SQL injection attacks.
+
+D. Quality & Tooling:
+- Pyrefly / Pyright: Static type analysis verifying Python 3.14 and Django typing constraints.
+
+
+4. SYSTEM ARCHITECTURE (DJANGO MTV PATTERN EXPLAINED SIMPLY)
+--------------------------------------------------------------------------------
+Django organizes code following the Model-Template-View (MTV) pattern:
+
+1. Model (`main/models.py`) - The Data Layer:
+   - Defines database tables and schema rules as Python classes.
+   - Encapsulates business properties (such as `Booking.total_price` and `Event.get_thumbnail_url`).
+   - Translated into database DDL/DML via Django's migration engine.
+
+2. View (`main/views.py`) - The Controller / Business Logic Layer:
+   - Receives HTTP requests (GET, POST, AJAX).
+   - Validates inputs, coordinates session authentication, and executes database queries.
+   - Builds dynamic HTTP responses (HTML templates, JSON payloads, or binary PDF streams).
+
+3. Template (`main/templates/`) - The Presentation Layer:
+   - HTML files structured with DTL blocks (`{% extends "base.html" %}`, `{% block content %}`).
+   - Displays server-rendered data with conditional tags (`{% if %}`, `{% for %}`).
+
+4. Centralized URL Router (`EventManagement/urls.py`):
+   - Maps URL patterns to designated view functions (e.g., `/events/` -> `views.events`, 
+     `/download-ticket/<id>/` -> `views.download_ticket`, `/project-docs/` -> `views.download_project_docs`).
+
+5. ReportLab PDF Generation Pipeline:
+   - Dynamic canvas drawing engine creating tickets and documentation with exact point coordinates, 
+     custom hex colors, vector shapes, barcodes, and automated file streaming.
+
+
+5. DATABASE MODELS (EXPLAINED IN DETAIL)
+--------------------------------------------------------------------------------
+The database schema is defined in `main/models.py` across 7 structured tables:
+
+1. User (`users` table):
+   - Represents registered customer accounts.
+   - Fields: `id` (PK), `name` (CharField), `email` (EmailField, unique), `password` (CharField, PBKDF2 hashed).
+   - Manages customer session authentication and ticket ownership.
+
+2. Admin (`admin` table):
+   - Stores administrative portal credentials.
+   - Fields: `id` (PK), `name` (CharField), `password` (CharField, PBKDF2 hashed).
+   - Protects the administrator dashboard.
+
+3. Category (`categories` table):
+   - Categorizes events into genres (Music, Tech, Sports, Comedy, Business, Fashion, Art, Workshop).
+   - Fields: `id` (PK), `category_name` (CharField).
+
+4. Event (`events` table):
+   - Stores all event details.
+   - Fields: `id` (PK), `title` (CharField), `category` (ForeignKey -> Category, on_delete=CASCADE), 
+     `event_date` (DateField), `venue` (CharField), `price` (DecimalField, max_digits=10, decimal_places=2), 
+     `image` (ImageField, upload_to="events/"), `description` (TextField).
+   - Property `get_thumbnail_url`: Safely returns the uploaded image URL or an intelligent category-matched 
+     default image (`/static/images/music.jpg`, `tech.jpg`, `food.jpg`, etc.) if no image was uploaded.
+
+5. Booking (`bookings` table):
+   - Stores event reservations and ticketing records.
+   - Fields:
+     * `id`: Unique booking reference number (e.g., #BK-0101).
+     * `user`: ForeignKey -> User (on_delete=CASCADE).
+     * `event`: ForeignKey -> Event (on_delete=CASCADE).
+     * `quantity`: PositiveIntegerField (default=1), stores the consolidated pass count.
+     * `booking_date`: DateField, stores the transaction date.
+     * `status`: CharField ('Confirmed', 'Pending', 'Cancelled').
+   - Property `total_price`: Computes `(event.price) * (quantity)` safely using explicit `Decimal` 
+     and `int` type casting to prevent class-level descriptor linter errors.
+
+6. Contact (`contacts` table):
+   - Captures user feedback and customer support inquiries.
+   - Fields: `id` (PK), `name` (CharField), `email` (EmailField), `message` (TextField).
+
+7. Subscribe (`subscribe` table):
+   - Captures email addresses for marketing newsletters.
+   - Fields: `id` (PK), `email` (EmailField, unique). Supports AJAX async submission.
+
+
+6. STEP-BY-STEP USER & ADMIN WORKFLOWS
+--------------------------------------------------------------------------------
+
+WORKFLOW 1: Event Discovery, City Filtering & Live Search
+1. The user visits the homepage (`/`) or catalog (`/events/`).
+2. The view fetches events using `Event.objects.all().select_related("category").annotate(total_bookings=Count("booking"))`.
+3. The user can select their city (e.g., Gandhinagar, Ahmedabad, Surat, Mumbai) via the top navigation modal.
+4. Category pills (Music, Tech, Sports, etc.) filter events instantly.
+5. Live debounced search checks event titles and venue names in real time without refreshing the page.
+
+WORKFLOW 2: Saving Events to Wishlist Drawer
+1. The user clicks the heart icon on any event card.
+2. `wishlist.js` persists the event to `localStorage` under `eventhub_wishlist_v1`.
+3. The navbar badge updates in real time.
+4. Clicking the Wishlist button opens an offcanvas slide-out drawer showing saved events, 
+   total estimated price, and a direct "Book Now" trigger.
+
+WORKFLOW 3: User Registration & Seamless Modal Login
+1. Users click "Login / Register" or click "Book Now" while unauthenticated.
+2. An interactive popup modal opens (no ugly page redirects).
+3. On submission, `auth.js` sends an asynchronous AJAX POST request to `/index/`.
+4. The server validates credentials, verifies PBKDF2 hashed passwords, sets session keys:
+   `request.session["user_id"]`, `request.session["user_name"]`, and `request.session["user_email"]`.
+5. The UI updates dynamically to display the user's name and adds the "My Bookings" menu link.
+
+WORKFLOW 4: Consolidated Ticket Booking
+1. The user clicks "Book Now" on an event card.
+2. The booking dialog displays event details and the ticket quantity selector (1 to 10 passes).
+3. The total price updates live as the user modifies the quantity stepper.
+4. On clicking "Confirm & Book", a secure request is sent to `/book-event/<id>/?qty=N`.
+5. The view creates a single record in `Booking` with `quantity=N` and `status="Confirmed"`.
+6. The user is redirected to `/my-bookings/` with a success alert banner.
+
+WORKFLOW 5: Downloading the Official Group / Single PDF Pass
+1. The user navigates to `/my-bookings/`.
+2. The page lists all reservations with event details, pass count, total price, and status badge.
+3. The user clicks "Download Ticket" (`/download-ticket/<booking_id>/`).
+4. ReportLab dynamically generates a crisp A4 PDF:
+   - Uses crimson brand styling (`#e11d48`).
+   - If quantity > 1: Labeled "Group Admission Pass (N Persons)" and "Admit: N Persons".
+   - If quantity == 1: Labeled "Standard Admission Pass (Single)".
+   - Draws a scannable vector barcode (`* KMN-PASS-XXXXXX-QTYXX *`).
+   - Renders attendee name, email, booking reference, date, venue, unit price, and total paid.
+   - Includes official gate instructions and non-transferable admission notices.
+5. The browser initiates an instant direct file download.
+
+WORKFLOW 6: User Self-Service Cancellation & Re-Confirmation
+1. Inside `/my-bookings/`, the user can click "Cancel Booking" (`/cancel-user-booking/<id>/`).
+2. The status updates to "Cancelled" and the ticket badge turns red.
+3. If allowed, the user can re-confirm their booking (`/confirm-booking/<id>/`).
+
+WORKFLOW 7: Admin Portal Management
+1. An administrator signs in at `/adminlogin/` with dedicated admin credentials.
+2. The session stores `request.session["admin_id"]`.
+3. The Admin Dashboard (`/dashboard/`) features:
+   - Live KPI Ribbon: Real-time counts for Total Events, Registered Users, Total Bookings, and Total Revenue.
+   - Event Management: Add events with file uploads, edit details with a native calendar picker, or delete events.
+   - Category Management: Create, update, or remove event categories.
+   - Booking Supervision: Review all reservations, check quantities and amounts, approve pending bookings, 
+     or cancel reservations.
+   - Inquiries: Read and manage customer messages received via the Contact Us form.
+
+WORKFLOW 8: Downloading Official Project Documentation PDF
+1. Anyone visiting `/project-docs/` triggers `views.download_project_docs`.
+2. The backend runs `generate_project_pdf.py` to compile a complete 4-page academic and production 
+   reference PDF document covering system architecture, database schema, module workflows, and viva defense guide.
+
+
+7. PROJECT DIRECTORY STRUCTURE
+--------------------------------------------------------------------------------
+EventManagement/                   <-- Root project directory
+│   manage.py                      <-- Django management CLI (runserver, migrate, makemigrations)
+│   summary.txt                    <-- Complete project summary, architecture & viva guide
+│   generate_project_pdf.py        <-- 4-Page publication-ready Project Documentation PDF generator
+│   requirements.txt               <-- Python dependencies list
+│   pyproject.toml                 <-- Pyrefly / Pyright type checker configuration
+│   pyrefly.toml                   <-- Pyrefly project settings
+│   db.sqlite3                     <-- Local development fallback database
+│
+├── EventManagement/               <-- Main project configuration package
+│       settings.py                <-- Database settings, apps, templates, static/media paths, security
+│       urls.py                    <-- Centralized URL routing for all project views
+│       wsgi.py                    <-- WSGI entry point for production web servers
+│       asgi.py                    <-- ASGI entry point for async servers
+│
+├── main/                          <-- Core Django application
+│   │   models.py                  <-- Database models (User, Admin, Category, Event, Booking, Contact, Subscribe)
+│   │   views.py                   <-- Business logic, booking engine, PDF pass generator, auth handlers
+│   │   admin.py                   <-- Django admin registrations
+│   │   apps.py                    <-- App configuration
+│   │
+│   ├── static/                    <-- Static CSS, JavaScript, and image assets
+│   │   ├── css/
+│   │   │     design-system.css    <-- Colors, typography, shared UI design tokens
+│   │   │     main.css             <-- Header, footer, navbar, modal styles
+│   │   │     events.css           <-- Event cards, city modal, hero spotlight carousel styling
+│   │   │     booking.css          <-- Express booking dialog, quantity stepper styles
+│   │   │     dashboard.css        <-- Admin analytics cards, tables, modal forms
+│   │   │     about.css            <-- Informational page layouts and mission cards
+│   │   │     bootstrap-grid.min.css <-- Lightweight responsive 12-column grid system
+│   │   ├── js/
+│   │   │     auth.js              <-- Modal sign-in / sign-up async AJAX handling
+│   │   │     booking.js           <-- Multi-ticket quantity stepper & express booking controller
+│   │   │     events-filter.js     <-- Real-time category, city, and debounced text search engine
+│   │   │     wishlist.js          <-- Saved events drawer controller with localStorage persistence
+│   │   │     spotlight-carousel.js<-- Hero spotlight carousel with cross-fade & touch support
+│   │   │     dashboard.js         <-- Admin dashboard tab switching, live search & modal forms
+│   │   │     main.js              <-- Global UI utilities, city selector, mobile navigation
+│   │   │     lucide.min.js        <-- Lucide vector iconography library
+│   │   │     tailwindcss.min.js   <-- Utility CSS script for dashboard widgets
+│   │   └── images/                <-- Logos, brand marks, and fallback category banners
+│   │
+│   ├── templates/                 <-- HTML Templates (Django Template Language)
+│   │       base.html              <-- Main base template with header, footer, modals & wishlist drawer
+│   │       index.html             <-- Homepage with hero spotlight carousel & featured events
+│   │       events.html            <-- Searchable and filterable events directory catalog
+│   │       my_bookings.html       <-- Customer tickets history, status badges & PDF download buttons
+│   │       dashboard.html         <-- Full admin console with live analytics ribbon & CRUD controls
+│   │       adminlogin.html        <-- Dedicated admin authentication screen
+│   │       about.html             <-- Company background, mission, values & platform overview
+│   │       contact.html           <-- Customer inquiry form with success notification feedback
+│   │
+│   └── migrations/                <-- Database migration schema versions
+│           0001_initial.py        <-- Initial table creation
+│           0005_booking_quantity.py <-- Added quantity field to Booking model
+│
+└── media/                         <-- User uploaded media files
+    └── events/                    <-- Uploaded event poster graphics
+
+
+8. TOP 20 VIVA VOCE QUESTIONS & COMPREHENSIVE ANSWERS
+--------------------------------------------------------------------------------
+
+Q1: What is Django and why was it chosen for this project?
+A1: Django is a high-level, open-source Python web framework following the "batteries-included" 
+    philosophy. It provides out-of-the-box support for database ORM, user session management, 
+    URL routing, CSRF defense, and secure template rendering. It allowed us to build a robust, 
+    secure, and scalable ticketing platform rapidly without assembling fragmented libraries.
+
+Q2: What is the MTV architecture in Django and how is it implemented here?
+A2: MTV stands for Model-Template-View:
+    - Model (`main/models.py`): Defines data entities (User, Event, Booking) as Python classes.
+    - Template (`main/templates/`): Renders dynamic HTML using Django Template Language (DTL).
+    - View (`main/views.py`): Implements business logic, handles HTTP requests, and queries models.
+    It is Django's specific implementation of the classic MVC (Model-View-Controller) design pattern.
+
+Q3: What is Django ORM and what are its key advantages?
+A3: ORM (Object-Relational Mapping) translates database tables into Python objects and queries into 
+    method calls (e.g., `Event.objects.filter(category_id=1)`).
+    Key advantages:
+    1. Security: Parameterized queries protect against SQL Injection automatically.
+    2. Database Agnostic: Switching between MySQL and SQLite requires zero Python code changes.
+    3. Productivity: Relationships (`ForeignKey`, `select_related`, `annotate`) are simple to express.
+
+Q4: How does user authentication and session management work?
+A4: When a user logs in, the backend authenticates their email and password against the `User` model. 
+    On success, Django stores their ID in `request.session["user_id"]`. The user's browser receives 
+    a secure session cookie. Every subsequent request checks this session. Admins use a separate 
+    session key (`request.session["admin_id"]`), ensuring strict domain privilege isolation.
+
+Q5: How are passwords stored and secured in the database?
+A5: Passwords are encrypted using Django's PBKDF2 algorithm with a SHA-256 hash and salt via 
+    `make_password()` upon registration. During authentication, `check_password()` verifies credentials 
+    securely. The system also includes an automatic migration handler that upgrades legacy plaintext 
+    passwords into PBKDF2 hashes on successful login.
+
+Q6: What happens when a user books multiple tickets for an event?
+A6: When a user selects multiple tickets (e.g., 4 passes):
+    1. The booking modal computes the total price live (`price * quantity`).
+    2. Upon confirmation, the backend creates a single `Booking` row with `quantity=4`.
+    3. Storing one consolidated record prevents database bloat and ensures transaction integrity.
+    4. When downloading the pass, the user gets ONE consolidated group ticket PDF rather than 4 files.
+
+Q7: How is the PDF ticket generated without heavy web-to-PDF tools?
+A7: We use Python's `ReportLab` vector library inside `views.download_ticket`. Instead of launching 
+    a headless browser, ReportLab draws vector rectangles, text, fonts, colors, and barcodes directly 
+    onto an in-memory canvas (`io.BytesIO`). The stream is returned inside an `HttpResponse` with 
+    `content_type="application/pdf"`, delivering sub-second PDF generation.
+
+Q8: How does the PDF ticket differentiate group passes from single passes?
+A8: The generator inspects `booking.quantity`:
+    - If `quantity == 1`: Labeled as "Standard Admission Pass (Single)".
+    - If `quantity > 1`: Labeled as "Group Admission Pass" and "Admit: N Persons", listing unit price, 
+      total paid amount, and a gate instruction requiring all attendees to arrive together.
+    - The vector barcode dynamically adjusts (`* KMN-PASS-XXXXXX-QTYXX *`).
+
+Q9: How does the interactive Wishlist feature work?
+A9: The Wishlist is managed client-side by `wishlist.js` using browser `localStorage` (`eventhub_wishlist_v1`). 
+    This avoids unneeded database writes while keeping saved events persistent across visits. It updates 
+    the navbar badge in real time, provides a slide-out drawer with total estimated costs, and features 
+    a 1-click trigger that launches the express booking modal directly.
+
+Q10: How does the Hero Spotlight Carousel function?
+A10: Managed by `spotlight-carousel.js`, it provides an automated slideshow of top events with CSS cross-fade 
+     transitions, auto-play rotation every 5 seconds, pause-on-hover, touch swipe support for mobile devices, 
+     dot pagination, and a synchronized slide counter (`01 / 04`).
+
+Q11: What is the `/project-docs/` route and how does it work?
+A11: The `/project-docs/` route invokes `views.download_project_docs()`, which runs `generate_project_pdf.py`. 
+     It compiles a 4-page academic and production documentation PDF covering system architecture, database 
+     schema, module workflows, and viva defense Q&As, streaming it directly to the browser for viewing or printing.
+
+Q12: How do booking cancellations work for users and administrators?
+A12: - User Cancellation: Under `/my-bookings/`, users can trigger `/cancel-user-booking/<id>/` to mark their 
+       own reservation as "Cancelled".
+     - Admin Management: From the dashboard, administrators can review all bookings, click "Approve" 
+       (`/approve-booking/<id>/`) to confirm reservations, or click "Cancel" (`/cancel-booking/<id>/`).
+
+Q13: What cities can users filter events by?
+A13: The navigation modal supports filtering by Gandhinagar, Ahmedabad, Surat, Vadodara, Rajkot, and Mumbai. 
+     Selecting a city filters event cards instantly and syncs with the URL parameter `?city=...`.
+
+Q14: How does the search and filtering engine work without page reloads?
+A14: Handled by `events-filter.js`:
+     - Reads URL parameters (`?category=...&city=...`) on page load.
+     - Attaches debounced input listeners to search event titles and venue names.
+     - Filters cards based on combined category, city, and search query conditions.
+     - Displays dynamic card counts and helpful empty-state messages if no events match.
+
+Q15: How do you prevent unauthorized bookings or admin access?
+A15: - Booking Security: In the frontend, clicking "Book Now" while logged out opens the login modal. In the 
+       backend, `book_event` checks `request.session.get("user_id")` and redirects unauthenticated users.
+     - Admin Security: `is_admin_authenticated(request)` checks `request.session.get("admin_id")` or Django 
+       staff/superuser credentials. Unauthorized requests to dashboard routes redirect to `/adminlogin/`.
+
+Q16: What is CSRF and how does Django protect against it?
+A16: Cross-Site Request Forgery (CSRF) is an attack where an external malicious site tricks an authenticated 
+     user's browser into executing unauthorized POST actions. Django requires a hidden `{% csrf_token %}` 
+     in every POST form, validating a cryptographically generated, session-bound token with each request.
+
+Q17: What is the purpose of database migrations in Django?
+A17: Migrations translate changes in `models.py` into database schema alterations:
+     - `python manage.py makemigrations`: Inspects models and creates Python migration files.
+     - `python manage.py migrate`: Executes DDL SQL statements to update database tables.
+
+Q18: How are uploaded event images handled and what fallback exists?
+A18: Images are handled via `models.ImageField(upload_to="events/")` and saved in `media/events/`. 
+     During development, `urls.py` serves them via `static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)`. 
+     If an event has no uploaded image, the `get_thumbnail_url` property automatically provides a high-quality 
+     category fallback image (`music.jpg`, `tech.jpg`, `business.jpg`, etc.).
+
+Q19: What type-checker issue occurred in models.py and how was it solved?
+A19: Static type checkers (like Pyrefly / Pyright) evaluate Django model fields at the class level as descriptor 
+     types (`DecimalField` and `PositiveIntegerField`) rather than numeric runtime values (`Decimal` and `int`). 
+     Multiplying them raised type errors. We resolved this by accessing attributes safely via `getattr()` and 
+     explicitly casting them: `Decimal(str(price_val or 0)) * int(qty_val)`, making the codebase 100% type-safe.
+
+Q20: What are future enhancements planned for Kamnath Events?
+A20: 1. Payment Gateway Integration: Adding Razorpay or Stripe for real credit card, net banking, and UPI payments.
+     2. QR Code Scanner Mobile App: Allowing event staff to scan ticket barcodes at the gate to verify admissions.
+     3. Automated Email & SMS Notifications: Sending PDF ticket passes automatically via Celery background tasks.
+     4. Interactive Seat Selection: Permitting attendees to select specific auditorium rows and seats.
+
+
+9. QUICK 2-MINUTE REVISION CHEAT SHEET FOR VIVA
+--------------------------------------------------------------------------------
+- Project Name: Kamnath Events (Event Management & Ticketing System)
+- Tech Stack: Python 3.14, Django 6.0, ReportLab, Vanilla JS (ES6+), Vanilla CSS Design System, MySQL / SQLite
+- Architecture: Model-Template-View (MTV) pattern with centralized routing in `EventManagement/urls.py`
+- Core Models (7): User, Admin, Category, Event, Booking, Contact, Subscribe
+- Key Novelty: Multi-ticket pass consolidation (1-10 passes) with dynamic pricing and a single 
+  high-security ReportLab PDF group pass with vector barcode
+- Security: PBKDF2 password hashing with legacy upgrade, User/Admin session domain isolation, CSRF tokens
+- Discovery Features: City filter (Gandhinagar, Ahmedabad, Surat, Mumbai, etc.), category chips, 
+  debounced live search, hero spotlight carousel, and localStorage-persisted Wishlist drawer
+- Documentation Endpoint: `/project-docs/` automatically renders a 4-page academic & system architecture PDF
+- Admin Capabilities: Live business revenue ribbon, full event CRUD, category CRUD, and booking approval/cancellation
+
+
+10. COMMONLY USED COMMANDS CHEAT SHEET
+--------------------------------------------------------------------------------
+1. Run Local Development Server:
+   python manage.py runserver
+
+2. Create Database Migrations:
+   python manage.py makemigrations
+
+3. Apply Database Migrations:
+   python manage.py migrate
+
+4. Create Django Superuser:
+   python manage.py createsuperuser
+
+5. Generate Standalone Documentation PDF:
+   python generate_project_pdf.py
+
+6. Run Type Checking (Pyrefly):
+   pyrefly check
+================================================================================
