@@ -72,31 +72,175 @@ In Kamnath Events, we designed and implemented a series of production-grade feat
    - Live debounced search input filters by title or venue without page reloading.
 
 
-3. TECHNOLOGY STACK (WHY WE CHOSE EACH)
+3. TECHNOLOGY STACK, DJANGO FRAMEWORK DEEP-DIVE & LIBRARIES USED
 --------------------------------------------------------------------------------
-A. Back-End:
-- Python 3.14: Clean syntax, high performance, robust standard libraries, and modern typing support.
-- Django 6.0: Robust, secure, "batteries-included" web framework. Built-in ORM, session engine, 
-  CSRF protection, XSS prevention, and clean URL routing.
-- ReportLab (Python Vector Graphics): Renders high-precision PDF tickets and documentation directly 
-  into memory buffers (`io.BytesIO`) without relying on heavy external headless browsers or CLI tools.
 
-B. Front-End:
-- HTML5 & Django Template Language (DTL): Semantic markup with template inheritance (`base.html`).
-- Custom Vanilla CSS3 Design System: Tokens defined in `design-system.css` with CSS variables for colors, 
-  radii, typography, and responsive layouts across `main.css`, `events.css`, `booking.css`, `dashboard.css`, and `about.css`.
-- Font Awesome 6 & Lucide Icons: Crisp iconography for dates, venues, categories, prices, and controls.
-- Vanilla JavaScript (ES6+): Lightweight, modular, non-blocking scripts (`auth.js`, `booking.js`, 
-  `events-filter.js`, `wishlist.js`, `spotlight-carousel.js`, `dashboard.js`, `main.js`) delivering instant 
-  interactivity with zero runtime framework overhead.
+A. THE DJANGO FRAMEWORK: WHAT IT IS, WHAT IS ITS USE, AND WHY IT IS USED:
 
-C. Database & ORM:
-- MySQL (PyMySQL / mysqlclient): Production relational database with strict foreign-key integrity.
-- SQLite3: Zero-configuration local database for testing and offline development.
-- Django ORM: Abstracts SQL queries into Python method calls, automatically preventing SQL injection attacks.
+   1. What is Django?
+      - Django is a high-level, open-source Python web framework designed to encourage 
+        rapid development and clean, pragmatic design.
+      - It follows the Model-Template-View (MTV) architectural pattern (Django's variant of MVC).
+      - It was created under the philosophy of "The web framework for perfectionists with deadlines" 
+        and follows the "Batteries-Included" approach — meaning almost everything a web developer 
+        needs (ORM, authentication, security, routing, templating, migrations, admin portal) is 
+        built into the framework rather than requiring dozens of third-party plugins.
 
-D. Quality & Tooling:
-- Pyrefly / Pyright: Static type analysis verifying Python 3.14 and Django typing constraints.
+   2. What is the Use of Django Framework (Core Purpose & Responsibilities)?
+      - Web Server & Request-Response Pipeline: Receives client HTTP requests (GET, POST, AJAX), 
+        processes them through security middleware, dispatches them to view handlers, and returns 
+        structured HTTP responses (HTML web pages, JSON data payloads, or binary file downloads).
+      - Object-Relational Mapping (ORM): Bridges Python object-oriented programming with relational 
+        databases (MySQL, SQLite, PostgreSQL). Developers define tables as Python classes (`models.Model`) 
+        and execute queries using Python methods (`Event.objects.filter(...)`), completely eliminating 
+        the need to write error-prone raw SQL queries.
+      - User Authentication & Session Management: Out-of-the-box infrastructure for handling user 
+        registration, secure login/logout, session tracking via encrypted cookies, and permission control.
+      - Template Engine (DTL): Dynamically renders server data into HTML using template tags 
+        (`{% for %}`, `{% if %}`), template inheritance (`{% extends "base.html" %}`), and safe context escaping.
+      - Automated Security Shield: Automatically protects against common web vulnerabilities:
+        * Cross-Site Request Forgery (CSRF) via `{% csrf_token %}`.
+        * SQL Injection through parameterized database queries.
+        * Cross-Site Scripting (XSS) through automatic HTML escaping in templates.
+        * Clickjacking defense via `XFrameOptionsMiddleware`.
+      - Database Schema Migrations: Tracks schema changes in Python code and updates the database 
+        structure smoothly with automated version control (`makemigrations` and `migrate`).
+      - Ready-to-Use Admin Interface: Built-in administrative console (`django.contrib.admin`) 
+        providing instant CRUD (Create, Read, Update, Delete) controls over all application models.
+
+   3. Why is Django Used in This Specific Project (Kamnath Events)?
+      - High Security for Event Ticketing: In an event booking platform where tickets represent financial 
+        value, data integrity is vital. Django's built-in CSRF protection, secure cookies, and parameterized 
+        queries guarantee that bookings cannot be forged or manipulated.
+      - Industry-Standard Password Hashing: Implements PBKDF2 with SHA-256 and cryptographic salts 
+        (`make_password()` / `check_password()`), ensuring customer passwords and admin credentials 
+        cannot be cracked even if the database is exposed.
+      - Robust Relational Data Modeling: Event management requires intricate relations:
+        Users -> Bookings -> Events -> Categories. Django ORM's `ForeignKey` with cascade rules, 
+        `select_related` query caching, and aggregation annotations (`Count`, `Sum`) provide peak 
+        database performance and zero data corruption.
+      - Separate Public User & Admin Session Domains: Django makes it trivial to maintain distinct 
+        session states for customers (`request.session["user_id"]`) and system administrators 
+        (`request.session["admin_id"]`), ensuring strict privilege separation.
+      - Seamless In-Memory PDF Streaming: Django's `HttpResponse` easily streams dynamically generated 
+        binary files (PDF passes created via ReportLab) directly to the user's browser without writing 
+        temporary files to disk.
+      - Why Django Over Flask, FastAPI, or Node.js/Express?
+        * vs. Flask: Flask is a micro-framework that requires manually stitching together external 
+          libraries for ORM (SQLAlchemy), authentication, migrations (Alembic), and CSRF (Flask-WTF). 
+          This increases fragmentation and security risks. Django offers a unified, standardized ecosystem.
+        * vs. Node.js/Express: Node requires assembling dozens of unstandardized NPM packages for ORM, 
+          sessions, and migrations, which frequently break across versions. Django provides a rock-solid, 
+          academically acclaimed, battle-tested architecture that is ideal for project viva presentation.
+
+
+B. COMPLETE BREAKDOWN OF ALL LIBRARIES USED IN THIS PROJECT & THEIR PURPOSE:
+
+   [1] Back-End Python Libraries & Core Packages:
+
+   1. Django (v6.0.7):
+      - Role: Core Web Application Framework.
+      - Purpose in Project: Powers the entire backend architecture, including the MTV structure, URL 
+        routing (`urls.py`), database ORM layer (`models.py`), request controllers (`views.py`), 
+        session handling, PBKDF2 password encryption, and static/media asset serving.
+
+   2. ReportLab (v5.0.1):
+      - Role: Python Vector Graphics & Document Generation Engine.
+      - Purpose in Project: Dynamically generates high-resolution, vector-accurate PDF ticket passes 
+        inside `views.download_ticket()`. It renders ticket details, customer info, seat count, and 
+        a scannable barcode directly onto an in-memory canvas (`io.BytesIO`). It also powers the 
+        4-page academic project documentation generator in `generate_project_pdf.py`.
+
+   3. Pillow (PIL Fork - v12.1.1):
+      - Role: Python Imaging Library.
+      - Purpose in Project: Required by Django's `models.ImageField(upload_to="events/")`. It handles, 
+        validates, and verifies event promotional posters uploaded by administrators, checking image 
+        formats and dimensions before saving them to `media/events/`.
+
+   4. mysqlclient (v2.2.8) & PyMySQL (v1.2.3):
+      - Role: C-based / Python MySQL Database Connectors.
+      - Purpose in Project: Connects Django's database engine (`django.db.backends.mysql`) to the 
+        MySQL relational database server (`kamnathevents` on port 3306), ensuring ACID transactions, 
+        foreign key constraints, and fast query execution.
+
+   5. asgiref (v3.12.1):
+      - Role: Asynchronous Server Gateway Interface Reference Standard.
+      - Purpose in Project: Standard Django dependency providing async/sync translation, thread-local 
+        context management, and compatibility with asynchronous servers (ASGI) and future real-time features.
+
+   6. sqlparse (v0.5.5):
+      - Role: Non-validating SQL Parser and Formatter for Python.
+      - Purpose in Project: Required by Django to parse, split, and format SQL statements during database 
+        migrations (`makemigrations` and `migrate`) and when debugging SQL queries.
+
+   7. tzdata (v2025.3):
+      - Role: IANA Time Zone Database for Python.
+      - Purpose in Project: Provides global time zone definitions on Windows operating systems, enabling 
+        Django's timezone-aware datetime operations (`USE_TZ = True`, `django.utils.timezone`).
+
+   [2] Python Built-in Standard Libraries:
+
+   8. io (io.BytesIO):
+      - Purpose in Project: Provides in-memory binary byte streams. ReportLab draws the ticket pass and 
+        project documentation PDF into a `BytesIO` RAM buffer, allowing Django to stream the file 
+        instantly via `HttpResponse` without creating slow temporary files on disk.
+
+   9. decimal (Decimal):
+      - Purpose in Project: Provides fixed-point arbitrary precision arithmetic. Used for computing 
+        `Booking.total_price = event.price * quantity` to eliminate IEEE floating-point rounding inaccuracies 
+        common with standard float types.
+
+   10. os & pathlib (Path):
+       - Purpose in Project: Handles dynamic operating system paths (`BASE_DIR`, `STATIC_ROOT`, `MEDIA_ROOT`) 
+         ensuring the application runs seamlessly across Windows, Linux, and macOS.
+
+   11. textwrap:
+       - Purpose in Project: Wraps and formats lengthy event titles and descriptions into neat multi-line 
+         blocks when drawing text inside fixed-width table cells on ReportLab PDF canvases.
+
+   12. datetime (date, datetime):
+       - Purpose in Project: Manages event schedules, booking dates, and calendar queries.
+
+   [3] Front-End Libraries, UI Frameworks & Icons:
+
+   13. Lucide Icons (lucide.min.js):
+       - Role: Modern, Lightweight Vector SVG Icon Library.
+       - Purpose in Project: Renders clean vector icons for dates, venues, categories, ticket quantities, 
+         modal close triggers, navigation links, and administrative actions across all pages.
+
+   14. Font Awesome 6 (CDN):
+       - Role: Scalable Vector Icon Library.
+       - Purpose in Project: Supplies branding, social media icons in the footer, search icons, and 
+         status badge markers.
+
+   15. Bootstrap Grid System (bootstrap-grid.min.css):
+       - Role: Standalone 12-Column Responsive Layout Grid.
+       - Purpose in Project: Provides clean, lightweight container, row, and column grid classes 
+         (`col-md-4`, `col-lg-3`, etc.) ensuring cards, forms, and admin layouts adapt fluidly across 
+         mobile phones, tablets, and desktop monitors without bloated JS dependencies.
+
+   16. Tailwind CSS (tailwindcss.min.js):
+       - Role: Utility-First CSS Framework.
+       - Purpose in Project: Used on the admin dashboard (`dashboard.html`) to style analytics cards, 
+         revenue badges, and table controls rapidly with utility classes.
+
+   17. Custom Vanilla CSS3 Design System (design-system.css & component stylesheets):
+       - Role: Bespoke CSS Design System.
+       - Purpose in Project: Defines design tokens via CSS variables (`--c-brand: #e11d48`, typography, 
+         shadows, border-radii) providing a unified, cohesive appearance across `main.css`, `events.css`, 
+         `booking.css`, `dashboard.css`, and `about.css`.
+
+   18. Modular Vanilla JavaScript (ES6+):
+       - Role: Framework-free, Non-blocking Client-Side Logic.
+       - Purpose in Project:
+         * `auth.js`: Handles asynchronous AJAX modal sign-in and sign-up with real-time JSON responses.
+         * `booking.js`: Controls ticket quantity stepper (1 to 10 passes) with live price calculation.
+         * `events-filter.js`: Live category filtering, city selection, and debounced text search without reloading.
+         * `wishlist.js`: Offcanvas slide-out saved events drawer with browser `localStorage` persistence.
+         * `spotlight-carousel.js`: Hero banner carousel with CSS cross-fade, auto-play, and touch swiping.
+         * `dashboard.js`: Admin dashboard tab navigation, real-time table search, and modal triggers.
+         * `main.js`: Global utilities, toast notifications, and mobile navigation toggling.
+
 
 
 4. SYSTEM ARCHITECTURE (DJANGO MTV PATTERN EXPLAINED SIMPLY)
@@ -303,14 +447,25 @@ EventManagement/                   <-- Root project directory
     └── events/                    <-- Uploaded event poster graphics
 
 
-8. TOP 20 VIVA VOCE QUESTIONS & COMPREHENSIVE ANSWERS
+8. TOP 22 VIVA VOCE QUESTIONS & COMPREHENSIVE ANSWERS
 --------------------------------------------------------------------------------
 
-Q1: What is Django and why was it chosen for this project?
-A1: Django is a high-level, open-source Python web framework following the "batteries-included" 
-    philosophy. It provides out-of-the-box support for database ORM, user session management, 
-    URL routing, CSRF defense, and secure template rendering. It allowed us to build a robust, 
-    secure, and scalable ticketing platform rapidly without assembling fragmented libraries.
+Q1: What is Django framework, what is its core use, and why was it chosen for this project?
+A1: Django is a high-level, open-source Python web framework built upon the Model-Template-View (MTV) 
+    architecture following the "batteries-included" philosophy.
+    - What is its use: It provides complete, out-of-the-box infrastructure for web development: 
+      an Object-Relational Mapper (ORM), secure session & authentication system, dynamic template engine (DTL), 
+      automated URL dispatcher, database schema migration engine, and automated admin panel.
+    - Why it was chosen for Kamnath Events:
+      1. Robust Security: Event ticketing requires absolute data safety. Django provides built-in defense 
+         against CSRF, SQL Injection (via ORM parameterization), XSS, and Clickjacking.
+      2. Secure Credentials: User and admin passwords use PBKDF2 hashing with SHA-256 and salt.
+      3. Relational ORM: Manages complex relationships (Users, Events, Bookings, Categories) without raw SQL.
+      4. Session Domain Separation: Keeps public user sessions and administrator portal sessions strictly isolated.
+      5. Streaming Performance: Easily streams dynamically generated ReportLab PDF tickets via `HttpResponse`.
+      6. Comparison: Unlike micro-frameworks like Flask (which require assembling fragmented, unvetted 
+         libraries for ORM, sessions, and CSRF) or Node.js (which suffers from NPM package fragility), 
+         Django delivers an all-in-one, enterprise-ready, standardized solution.
 
 Q2: What is the MTV architecture in Django and how is it implemented here?
 A2: MTV stands for Model-Template-View:
@@ -426,12 +581,47 @@ A20: 1. Payment Gateway Integration: Adding Razorpay or Stripe for real credit c
      3. Automated Email & SMS Notifications: Sending PDF ticket passes automatically via Celery background tasks.
      4. Interactive Seat Selection: Permitting attendees to select specific auditorium rows and seats.
 
+Q21: Which Python libraries/packages are used in this project and what is their role?
+A21: 1. Django (6.0.7): Core web framework providing MTV architecture, ORM, URL routing, authentication, 
+        session management, CSRF defense, and template engine.
+     2. ReportLab (5.0.1): Renders pixel-perfect PDF entry passes with vector barcodes directly into memory 
+        buffers (`io.BytesIO`) without needing heavy headless browsers. Also generates the `/project-docs/` PDF.
+     3. Pillow (12.1.1): Handles image format validation and upload processing for `models.ImageField(upload_to="events/")`.
+     4. mysqlclient (2.2.8) & PyMySQL (1.2.3): Connects Django's ORM database engine to the MySQL database server.
+     5. asgiref (3.12.1): Provides async-to-sync translation and ASGI compatibility.
+     6. sqlparse (0.5.5): Parses and formats SQL statements during migrations and ORM query execution.
+     7. tzdata (2025.3): Supplies Windows systems with the IANA time zone database for timezone-aware operations.
+     8. Standard Libraries: `io.BytesIO` (in-memory streaming), `decimal.Decimal` (exact financial math), 
+        `os`/`pathlib` (dynamic paths), `textwrap` (PDF text wrapping), and `datetime` (dates & schedules).
+
+Q22: Which frontend libraries, icon sets, and CSS frameworks are used in this project?
+A22: 1. Lucide Icons (`lucide.min.js`): Lightweight SVG vector icons for dates, venues, categories, ticket counts, and navigation.
+     2. Font Awesome 6 (CDN): Comprehensive icon set for branding, social media links, and status badges.
+     3. Bootstrap Grid (`bootstrap-grid.min.css`): Standalone 12-column responsive layout engine (without bloated JS).
+     4. Tailwind CSS (`tailwindcss.min.js`): Utility CSS classes utilized on the admin dashboard for analytics widgets.
+     5. Custom Vanilla CSS3 Design System (`design-system.css`): Centralized design tokens (colors, typography, radii, shadows).
+     6. Modular Vanilla JavaScript (ES6+): Custom scripts (`auth.js`, `booking.js`, `events-filter.js`, 
+        `wishlist.js`, `spotlight-carousel.js`, `dashboard.js`, `main.js`) delivering instant AJAX modal auth, 
+        live price calculation, real-time filtering, localStorage wishlist management, and hero carousel animations.
+
 
 9. QUICK 2-MINUTE REVISION CHEAT SHEET FOR VIVA
 --------------------------------------------------------------------------------
 - Project Name: Kamnath Events (Event Management & Ticketing System)
-- Tech Stack: Python 3.14, Django 6.0, ReportLab, Vanilla JS (ES6+), Vanilla CSS Design System, MySQL / SQLite
-- Architecture: Model-Template-View (MTV) pattern with centralized routing in `EventManagement/urls.py`
+- Core Framework: Python 3.14 + Django 6.0 (Model-Template-View Architecture)
+- Why Django?: "Batteries-included" web framework providing built-in security against OWASP Top 10 
+  (CSRF, SQL Injection, XSS, Clickjacking), robust relational ORM, PBKDF2 password hashing, 
+  and separate session domains for users and administrators.
+- Python Libraries Used:
+  * Django: Core framework, ORM, authentication, routing, sessions.
+  * ReportLab: In-memory dynamic PDF ticket & documentation generation with vector barcodes.
+  * Pillow (PIL): Image upload validation for event poster media.
+  * mysqlclient / PyMySQL: MySQL database adapter ensuring ACID integrity.
+  * asgiref & sqlparse: Internal Django ASGI support and SQL parsing.
+  * tzdata: IANA timezone database for timezone-aware scheduling.
+  * Python stdlib: `io.BytesIO` (in-memory PDF streaming), `Decimal` (accurate pricing math).
+- Front-End Stack: Lucide Icons, Font Awesome 6, Bootstrap Grid, Tailwind CSS (Dashboard), 
+  Custom Vanilla CSS3 Design System, Modular Vanilla JavaScript (ES6+ with AJAX & localStorage).
 - Core Models (7): User, Admin, Category, Event, Booking, Contact, Subscribe
 - Key Novelty: Multi-ticket pass consolidation (1-10 passes) with dynamic pricing and a single 
   high-security ReportLab PDF group pass with vector barcode
