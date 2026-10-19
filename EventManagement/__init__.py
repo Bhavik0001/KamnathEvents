@@ -1,3 +1,9 @@
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 from django.db.backends.base.base import BaseDatabaseWrapper
 from django.db.backends.mysql.features import DatabaseFeatures
 
@@ -10,4 +16,5 @@ def _can_return_columns_from_insert(self):
 
 setattr(DatabaseFeatures, "can_return_columns_from_insert", property(_can_return_columns_from_insert))
 setattr(DatabaseFeatures, "can_return_rows_from_bulk_insert", property(_can_return_columns_from_insert))
+
 
