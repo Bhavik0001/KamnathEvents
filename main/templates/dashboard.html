@@ -1321,7 +1321,7 @@
                   <tbody id="subscriberTableBody">
                     {% for subscriber in subscribers %}
                     <tr class="subscriber-row">
-                      <td>{{ subscriber.id }}</td>
+                      <td>{{ forloop.counter }}</td>
                       <td class="fw-semibold">
                         <i class="fa-regular fa-envelope me-2 text-secondary"></i>{{ subscriber.email }}
                       </td>
