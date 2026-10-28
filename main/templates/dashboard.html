@@ -1,10 +1,17 @@
 {% load static %}
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kamnath Events | Admin Dashboard</title>
+
+    <script>
+      (function() {
+        var savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
 
     <!-- Bootstrap 5 -->
     <link
@@ -27,18 +34,221 @@
     />
 
     <!-- Modular Production CSS (CSS in CSS) -->
-    <link rel="stylesheet" href="{% static 'css/design-system.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}?v=20261026_red_v2" />
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=20261026_red_v2" />
+
+    <style>
+      :root {
+        --dash-primary: #F84464 !important;
+        --dash-primary-hover: #E53554 !important;
+        --dash-highlight: #FF6584 !important;
+        --dash-brand-gradient: linear-gradient(135deg, #F84464 0%, #E53554 100%) !important;
+        --dash-brand-gradient-hover: linear-gradient(135deg, #FF5A7A 0%, #F84464 100%) !important;
+        --dash-red-glow: rgba(248, 68, 100, 0.28) !important;
+        --dash-red-subtle: rgba(248, 68, 100, 0.12) !important;
+        --dash-red-border: rgba(248, 68, 100, 0.35) !important;
+      }
+
+      /* Logo red highlight */
+      .brand span span {
+        color: #F84464 !important;
+      }
+
+      /* Active Sidebar Nav Link */
+      .sidebar .nav-link.active {
+        color: #FFFFFF !important;
+        background: linear-gradient(135deg, #F84464 0%, #E53554 100%) !important;
+        border: 1.5px solid #F84464 !important;
+        box-shadow: 0 4px 16px rgba(248, 68, 100, 0.35) !important;
+      }
+      .sidebar .nav-link.active i {
+        color: #FFFFFF !important;
+      }
+      .sidebar .nav-link:hover {
+        color: #F84464 !important;
+        background: rgba(248, 68, 100, 0.08) !important;
+        border-color: rgba(248, 68, 100, 0.2) !important;
+      }
+      .sidebar .nav-link:hover i {
+        color: #F84464 !important;
+      }
+
+      /* Stat Cards and Icons */
+      .stat-icon {
+        background: rgba(248, 68, 100, 0.12) !important;
+        color: #F84464 !important;
+        border: 1px solid rgba(248, 68, 100, 0.28) !important;
+      }
+      .stat-card:hover,
+      .report-card:hover {
+        border-color: #F84464 !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(248, 68, 100, 0.3) !important;
+      }
+
+      /* Primary CTA Buttons */
+      .btn-coral {
+        background: linear-gradient(135deg, #F84464 0%, #E53554 100%) !important;
+        color: #FFFFFF !important;
+        border: 1px solid #F84464 !important;
+        box-shadow: 0 4px 16px rgba(248, 68, 100, 0.35) !important;
+      }
+      .btn-coral:hover {
+        background: linear-gradient(135deg, #FF5A7A 0%, #F84464 100%) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 6px 22px rgba(248, 68, 100, 0.55) !important;
+      }
+
+      /* Secondary Buttons */
+      .btn-outline-coral:hover {
+        border-color: #F84464 !important;
+        color: #F84464 !important;
+        background: rgba(248, 68, 100, 0.1) !important;
+        box-shadow: 0 0 14px rgba(248, 68, 100, 0.2) !important;
+      }
+
+      /* Avatar and Theme Toggle */
+      .admin-avatar {
+        background: rgba(248, 68, 100, 0.12) !important;
+        color: #F84464 !important;
+        border: 1.5px solid rgba(248, 68, 100, 0.35) !important;
+        box-shadow: 0 0 12px rgba(248, 68, 100, 0.2) !important;
+      }
+      .dashboard-theme-toggle:hover {
+        border-color: #F84464 !important;
+        color: #F84464 !important;
+      }
+      .dashboard-theme-toggle i {
+        color: #F84464 !important;
+      }
+
+      /* Table Hover */
+      .table tbody tr:hover td {
+        background: rgba(248, 68, 100, 0.05) !important;
+      }
+
+      /* Modals */
+      .modal-content {
+        border: 2px solid #F84464 !important;
+        box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8), 0 0 35px rgba(248, 68, 100, 0.3) !important;
+      }
+      .modal-header .modal-title i {
+        color: #F84464 !important;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #F84464 !important;
+        box-shadow: 0 0 0 3px rgba(248, 68, 100, 0.25) !important;
+      }
+      /* Search Box with Crisp White Border */
+      .search-box {
+        position: relative;
+        min-width: 250px;
+        max-width: 320px;
+      }
+      .search-box .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #FFFFFF !important;
+        font-size: 0.85rem;
+        pointer-events: none;
+        z-index: 5;
+        opacity: 0.9;
+      }
+      .search-box input.form-control,
+      .search-box .form-control {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border: 1.5px solid #FFFFFF !important;
+        border-radius: 10px !important;
+        color: #FFFFFF !important;
+        padding: 8px 16px 8px 38px !important;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition: all 0.25s ease;
+      }
+      .search-box input.form-control::placeholder,
+      .search-box .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65) !important;
+      }
+      .search-box input.form-control:focus,
+      .search-box .form-control:focus {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: #FFFFFF !important;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25), 0 0 14px rgba(255, 255, 255, 0.2) !important;
+        color: #FFFFFF !important;
+        outline: none;
+      }
+
+      /* Light mode adjustment */
+      [data-theme="light"] .search-box .search-icon {
+        color: #475569 !important;
+      }
+      [data-theme="light"] .search-box input.form-control,
+      [data-theme="light"] .search-box .form-control {
+        background: #FFFFFF !important;
+        border: 1.5px solid #CBD5E1 !important;
+        color: #0F172A !important;
+      }
+      [data-theme="light"] .search-box input.form-control::placeholder,
+      [data-theme="light"] .search-box .form-control::placeholder {
+        color: #94A3B8 !important;
+      }
+      [data-theme="light"] .search-box input.form-control:focus,
+      [data-theme="light"] .search-box .form-control:focus {
+        border-color: #F84464 !important;
+        box-shadow: 0 0 0 3px rgba(248, 68, 100, 0.2) !important;
+      }
+      /* Modal Header & Content Colors */
+      .modal-title,
+      .modal-header .modal-title,
+      .modal-header h5 {
+        color: #FFFFFF !important;
+      }
+      .modal-body .booking-detail-label {
+        color: #E2E8F0 !important;
+      }
+      .modal-body .booking-detail-value {
+        color: #FFFFFF !important;
+      }
+      .modal-body .form-label {
+        color: #E2E8F0 !important;
+      }
+      [data-theme="light"] .modal-title,
+      [data-theme="light"] .modal-header .modal-title,
+      [data-theme="light"] .modal-header h5 {
+        color: #0F172A !important;
+      }
+      [data-theme="light"] .modal-body .booking-detail-label {
+        color: #64748B !important;
+      }
+      [data-theme="light"] .modal-body .booking-detail-value {
+        color: #0F172A !important;
+      }
+      [data-theme="light"] .modal-body .form-label {
+        color: #1E293B !important;
+      }
+      .action-btn:hover {
+        color: #F84464 !important;
+        border-color: #F84464 !important;
+        background: rgba(248, 68, 100, 0.12) !important;
+      }
+    </style>
   </head>
 
-  <body class="dashboard-body" data-theme="light">
+  <body class="dashboard-body">
     <div class="admin-layout">
       <!-- SIDEBAR -->
       <aside class="sidebar" id="sidebar">
-        <a href="{% url 'index' %}" class="brand d-flex align-items-center gap-2">
-          <img src="{% static 'images/logo.svg' %}" alt="Kamnath Events Logo" class="brand-logo" />
-          <span>Kamnath<span>Events</span></span>
-        </a>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <a href="{% url 'index' %}" class="brand d-flex align-items-center gap-2 mb-0">
+            <img src="{% static 'images/logo.svg' %}" alt="Kamnath Events Logo" class="brand-logo" />
+            <span>Kamnath<span>Events</span></span>
+          </a>
+          <button class="sidebar-close-btn d-lg-none" id="sidebarCloseBtn" type="button" aria-label="Close sidebar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
 
         <div class="admin-label">Administration</div>
 
@@ -80,6 +290,12 @@
             <i class="fa-solid fa-envelope"></i> Contact Inquiries
           </a>
           <a
+            class="nav-link {% if active_section == 'subscribers' %}active{% endif %}"
+            data-section="subscribers"
+          >
+            <i class="fa-solid fa-bell"></i> Subscribers
+          </a>
+          <a
             class="nav-link {% if active_section == 'reports' %}active{% endif %}"
             data-section="reports"
           >
@@ -97,29 +313,40 @@
         </div>
       </aside>
 
+      <!-- SIDEBAR BACKDROP FOR MOBILE -->
+      <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
       <!-- MAIN -->
       <main class="main">
         <!-- TOPBAR -->
         <header class="topbar">
-          <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light sidebar-toggle" id="sidebarToggle">
+          <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle navigation">
               <i class="fa-solid fa-bars"></i>
             </button>
             <div>
-              <h5 id="topTitle">Dashboard Overview</h5>
-              <small class="text-secondary"
+              <h5 id="topTitle" class="topbar-title">Dashboard Overview</h5>
+              <small class="text-secondary topbar-subtitle"
                 >Kamnath Events Administration</small
               >
             </div>
           </div>
 
-          <div class="admin-user">
-            <div class="text-end topbar-user-text">
-              <div class="fw-semibold small">Administrator</div>
-              <small class="text-secondary">Admin</small>
-            </div>
-            <div class="admin-avatar">
-              <i class="fa-solid fa-user-shield"></i>
+          <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <!-- Theme Toggle Pill Button -->
+            <button type="button" class="dashboard-theme-toggle" id="dashboardThemeToggleBtn" aria-label="Toggle theme">
+              <i class="fa-solid fa-moon" id="dashboardThemeIcon"></i>
+              <span class="d-none d-sm-inline" id="dashboardThemeText">Dark</span>
+            </button>
+
+            <div class="admin-user">
+              <div class="text-end topbar-user-text">
+                <div class="fw-semibold small">Administrator</div>
+                <small class="text-secondary">Admin</small>
+              </div>
+              <div class="admin-avatar">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
             </div>
           </div>
         </header>
@@ -137,8 +364,8 @@
               </p>
             </div>
 
-            <div class="row g-4 mb-4">
-              <div class="col-xl-3 col-sm-6">
+            <div class="row g-3 g-md-4 mb-4 stat-grid">
+              <div class="col-6 col-sm-6 col-xl-3">
                 <div class="stat-card">
                   <div class="stat-icon">
                     <i class="fa-solid fa-calendar-days"></i>
@@ -148,7 +375,7 @@
                 </div>
               </div>
 
-              <div class="col-xl-3 col-sm-6">
+              <div class="col-6 col-sm-6 col-xl-3">
                 <div class="stat-card">
                   <div class="stat-icon">
                     <i class="fa-solid fa-ticket"></i>
@@ -158,7 +385,7 @@
                 </div>
               </div>
 
-              <div class="col-xl-3 col-sm-6">
+              <div class="col-6 col-sm-6 col-xl-3">
                 <div class="stat-card">
                   <div class="stat-icon">
                     <i class="fa-solid fa-users"></i>
@@ -168,7 +395,7 @@
                 </div>
               </div>
 
-              <div class="col-xl-3 col-sm-6">
+              <div class="col-6 col-sm-6 col-xl-3">
                 <div class="stat-card">
                   <div class="stat-icon">
                     <i class="fa-solid fa-envelope"></i>
@@ -204,7 +431,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for booking in bookings %}
+                        {% for booking in recent_bookings|default:bookings %}
                         <tr>
                           <td>#{{ booking.id }}</td>
                           <td>{{ booking.user.name }}</td>
@@ -274,7 +501,7 @@
             id="events"
           >
             <div
-              class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"
+              class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 section-header-bar"
             >
               <div>
                 <h2 class="page-title">Event Management</h2>
@@ -284,7 +511,7 @@
               </div>
 
               <button
-                class="btn btn-coral"
+                class="btn btn-coral add-action-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#addEventModal"
               >
@@ -296,10 +523,8 @@
               <div class="panel-header d-flex align-items-center justify-content-between">
                 <h6>Event List</h6>
 
-                <div class="input-group search-box ms-auto">
-                  <span class="input-group-text bg-white">
-                    <i class="fa-solid fa-search"></i>
-                  </span>
+                <div class="search-box position-relative ms-auto">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
                   <input
                     type="text"
                     id="eventSearch"
@@ -367,8 +592,8 @@
                           <div class="modal-dialog modal-lg modal-dialog-centered">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title fw-bold" style="color: #0f172a !important;">
-                                  <i class="fa-solid fa-pen me-2" style="color: #0f172a !important;"></i> Edit Event
+                                <h5 class="modal-title fw-bold">
+                                  <i class="fa-solid fa-pen me-2"></i> Edit Event
                                 </h5>
                                 <button
                                   type="button"
@@ -410,7 +635,7 @@
                                   </div>
 
                                   <div class="mb-3">
-                                    <label class="form-label fw-semibold" style="color: #0f172a;">Event Date</label>
+                                    <label class="form-label fw-semibold">Event Date</label>
                                     <input
                                       type="date"
                                       name="event_date"
@@ -519,7 +744,7 @@
             id="categories"
           >
             <div
-              class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"
+              class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 section-header-bar"
             >
               <div>
                 <h2 class="page-title">Category Management</h2>
@@ -527,7 +752,7 @@
               </div>
 
               <button
-                class="btn btn-coral"
+                class="btn btn-coral add-action-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#categoryModal"
               >
@@ -596,7 +821,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content border-0 rounded-4">
                     <div class="modal-header">
-                      <h5 class="modal-title fw-bold" style="color: #0f172a !important;">Edit Category</h5>
+                      <h5 class="modal-title fw-bold">Edit Category</h5>
                       <button
                         type="button"
                         class="btn-close"
@@ -664,7 +889,7 @@
               <div class="panel-header">
                 <h6>All Bookings</h6>
 
-                <div class="booking-filter-wrapper position-relative" style="min-width: 160px; max-width: 220px;">
+                <div class="booking-filter-wrapper position-relative">
                   <select id="bookingStatusFilter" class="form-select pe-4" style="cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none;">
                     <option>All Status</option>
                     <option>Confirmed</option>
@@ -743,7 +968,7 @@
                           <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title fw-bold" style="color: #0f172a !important;">Booking Details</h5>
+                                <h5 class="modal-title fw-bold">Booking Details</h5>
                                 <button
                                   type="button"
                                   class="btn-close"
@@ -752,50 +977,64 @@
                               </div>
 
                               <div class="modal-body">
-                                <div class="mb-3">
-                                  <strong>Booking ID:</strong> #{{ booking.id }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Booking ID</span>
+                                  <span class="booking-detail-value">#{{ booking.id }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Customer Name:</strong> {{ booking.user.name }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Customer Name</span>
+                                  <span class="booking-detail-value">{{ booking.user.name }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Customer Email:</strong> {{ booking.user.email }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Customer Email</span>
+                                  <span class="booking-detail-value">{{ booking.user.email }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Event:</strong> {{ booking.event.title }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Event</span>
+                                  <span class="booking-detail-value">{{ booking.event.title }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Category:</strong> {{ booking.event.category.category_name }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Category</span>
+                                  <span class="booking-detail-value">{{ booking.event.category.category_name }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Event Date:</strong> {{ booking.event.event_date|date:"d M Y" }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Event Date</span>
+                                  <span class="booking-detail-value">{{ booking.event.event_date|date:"d M Y" }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Venue:</strong> {{ booking.event.venue }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Venue</span>
+                                  <span class="booking-detail-value">{{ booking.event.venue }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Passes / Quantity:</strong> {{ booking.quantity }} Pass{% if booking.quantity > 1 %}es{% endif %}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Passes / Quantity</span>
+                                  <span class="booking-detail-value">{{ booking.quantity }} Pass{% if booking.quantity > 1 %}es{% endif %}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Total Paid:</strong> ₹{{ booking.total_price|floatformat:0 }}
-                                  {% if booking.quantity > 1 %}
-                                  <small class="text-muted">({{ booking.quantity }} × ₹{{ booking.event.price|floatformat:0 }})</small>
-                                  {% endif %}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Total Paid</span>
+                                  <span class="booking-detail-value">
+                                    ₹{{ booking.total_price|floatformat:0 }}
+                                    {% if booking.quantity > 1 %}
+                                    <small class="text-muted">({{ booking.quantity }} × ₹{{ booking.event.price|floatformat:0 }})</small>
+                                    {% endif %}
+                                  </span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Booking Date:</strong> {{ booking.booking_date|date:"d M Y" }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Booking Date</span>
+                                  <span class="booking-detail-value">{{ booking.booking_date|date:"d M Y" }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Status:</strong>
-                                  {% if booking.status == "Confirmed" %}
-                                  <span class="badge badge-soft-success">Confirmed</span>
-                                  {% elif booking.status == "Pending" %}
-                                  <span class="badge badge-soft-warning">Pending</span>
-                                  {% elif booking.status == "Cancelled" %}
-                                  <span class="badge badge-soft-danger">Cancelled</span>
-                                  {% else %}
-                                  <span class="badge badge-soft-primary">{{ booking.status }}</span>
-                                  {% endif %}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Status</span>
+                                  <span class="booking-detail-value">
+                                    {% if booking.status == "Confirmed" %}
+                                    <span class="badge badge-soft-success">Confirmed</span>
+                                    {% elif booking.status == "Pending" %}
+                                    <span class="badge badge-soft-warning">Pending</span>
+                                    {% elif booking.status == "Cancelled" %}
+                                    <span class="badge badge-soft-danger">Cancelled</span>
+                                    {% else %}
+                                    <span class="badge badge-soft-primary">{{ booking.status }}</span>
+                                    {% endif %}
+                                  </span>
                                 </div>
                               </div>
 
@@ -880,13 +1119,11 @@
             </div>
 
             <div class="panel">
-              <div class="panel-header">
+              <div class="panel-header d-flex align-items-center justify-content-between">
                 <h6>Registered Customers</h6>
 
-                <div class="input-group search-box">
-                  <span class="input-group-text bg-white">
-                    <i class="fa-solid fa-search"></i>
-                  </span>
+                <div class="search-box position-relative ms-auto">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
                   <input
                     type="text"
                     id="customerSearch"
@@ -935,7 +1172,7 @@
                           <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title fw-bold" style="color: #0f172a !important;">Customer Details</h5>
+                                <h5 class="modal-title fw-bold">Customer Details</h5>
                                 <button
                                   type="button"
                                   class="btn-close"
@@ -944,17 +1181,21 @@
                               </div>
 
                               <div class="modal-body">
-                                <div class="mb-3">
-                                  <strong>Customer ID:</strong> {{ user.id }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Customer ID</span>
+                                  <span class="booking-detail-value">#{{ user.id }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Name:</strong> {{ user.name }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Full Name</span>
+                                  <span class="booking-detail-value">{{ user.name }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Email:</strong> {{ user.email }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Email Address</span>
+                                  <span class="booking-detail-value">{{ user.email }}</span>
                                 </div>
-                                <div class="mb-3">
-                                  <strong>Total Bookings:</strong> {{ user.total_bookings|default_if_none:user.booking_set.count }}
+                                <div class="booking-detail-item">
+                                  <span class="booking-detail-label">Total Bookings</span>
+                                  <span class="booking-detail-value">{{ user.total_bookings|default_if_none:user.booking_set.count }}</span>
                                 </div>
                               </div>
 
@@ -1039,6 +1280,85 @@
             </div>
           </section>
 
+          <!-- ================= SUBSCRIBERS ================= -->
+          <section
+            class="page-section {% if active_section == 'subscribers' %}active{% endif %}"
+            id="subscribers"
+          >
+            <div class="mb-4">
+              <h2 class="page-title">Newsletter Subscribers</h2>
+              <p class="page-subtitle">
+                View all users who subscribed for ticket alerts and event announcements.
+              </p>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header d-flex align-items-center justify-content-between">
+                <h6>Subscribers List ({{ total_subscribers|default:subscribers.count }})</h6>
+
+                <div class="search-box position-relative ms-auto">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input
+                    type="text"
+                    id="subscriberSearch"
+                    class="form-control"
+                    placeholder="Search subscriber..."
+                  />
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Email Address</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="subscriberTableBody">
+                    {% for subscriber in subscribers %}
+                    <tr class="subscriber-row">
+                      <td>{{ subscriber.id }}</td>
+                      <td class="fw-semibold">
+                        <i class="fa-regular fa-envelope me-2 text-secondary"></i>{{ subscriber.email }}
+                      </td>
+                      <td>
+                        <span class="badge badge-soft-success">Subscribed</span>
+                      </td>
+                      <td>
+                        <form
+                          method="POST"
+                          action="{% url 'delete_subscriber' subscriber.id %}"
+                          style="display: inline;"
+                          onsubmit="return confirm('Are you sure you want to remove this subscriber?');"
+                        >
+                          {% csrf_token %}
+                          <button
+                            type="submit"
+                            class="action-btn text-danger border-0 bg-transparent"
+                            title="Remove subscriber"
+                          >
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td colspan="4" class="text-center py-4 text-secondary">
+                        No newsletter subscribers yet.
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
           <!-- ================= REPORTS ================= -->
           <section class="page-section" id="reports">
             <div class="mb-4">
@@ -1048,8 +1368,8 @@
               </p>
             </div>
 
-            <div class="row g-4">
-              <div class="col-md-6 col-xl-3">
+            <div class="row g-3 g-md-4 mb-4 stat-grid">
+              <div class="col-6 col-md-6 col-xl-3">
                 <div class="report-card">
                   <i
                     class="fa-solid fa-calendar-days text-primary mb-3 fs-4"
@@ -1059,7 +1379,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6 col-xl-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <div class="report-card">
                   <i class="fa-solid fa-ticket text-primary mb-3 fs-4"></i>
                   <div class="report-value">{{ total_bookings }}</div>
@@ -1067,7 +1387,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6 col-xl-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <div class="report-card">
                   <i class="fa-solid fa-users text-primary mb-3 fs-4"></i>
                   <div class="report-value">{{ total_customers }}</div>
@@ -1075,7 +1395,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6 col-xl-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <div class="report-card">
                   <i
                     class="fa-solid fa-indian-rupee-sign text-primary mb-3 fs-4"
@@ -1141,8 +1461,8 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title fw-bold" id="addEventModalLabel" style="color: #0f172a !important;">
-              <i class="fa-solid fa-plus me-2" style="color: #0f172a !important;"></i> Add New Event
+            <h5 class="modal-title fw-bold" id="addEventModalLabel">
+              <i class="fa-solid fa-plus me-2"></i> Add New Event
             </h5>
             <button
               type="button"
@@ -1182,7 +1502,7 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-semibold" style="color: #0f172a;">Event Date</label>
+                <label class="form-label fw-semibold">Event Date</label>
                 <input
                   type="date"
                   name="event_date"
@@ -1259,7 +1579,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4">
           <div class="modal-header">
-            <h5 class="modal-title fw-bold" style="color: #0f172a !important;">Add Category</h5>
+            <h5 class="modal-title fw-bold">Add Category</h5>
             <button
               type="button"
               class="btn-close"
@@ -1298,6 +1618,6 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Modular Production JS (JS in JS) -->
-    <script src="{% static 'js/dashboard.js' %}" defer></script>
+    <script src="{% static 'js/dashboard.js' %}?v=20261026_red_v2" defer></script>
   </body>
 </html>

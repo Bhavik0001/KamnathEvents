@@ -6,48 +6,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Surfaces & Backgrounds */
-  --bg-main: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-card: #ffffff;
-  --bg-subtle: #f1f5f9;
-  --bg-muted: #e2e8f0;
+  /* Surfaces & Backgrounds - Clean Cinematic Light */
+  --bg-main: #F5F5FA;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #EEEEF5;
+  --bg-muted: #E2E2EC;
 
   /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --text-inverse: #ffffff;
+  --text-primary: #1A1A24;
+  --text-secondary: #4A4C5E;
+  --text-muted: #666677;
+  --text-inverse: #FFFFFF;
 
-  /* Brand Accents (BookMyShow standard crimson & clean neutrals) */
-  --brand-primary: #e11d48;
-  --brand-primary-hover: #be123c;
-  --brand-secondary: #0f172a;
-  --brand-accent: #2563eb;
-  --brand-success: #16a34a;
-  --brand-warning: #d97706;
+  /* Brand Accents - BookMyShow Entertainment Signature */
+  --brand-primary: #F84464;        /* BMS Primary Crimson Red (Main Book Tickets CTA) */
+  --brand-primary-hover: #E53554;  /* BMS Secondary Light Coral (Button hover state) */
+  --brand-logo: #C4242B;           /* BMS Official Logo Red */
+  --brand-secondary: #E53554;
+  --brand-accent: #F84464;
+  --brand-gold: #F5A623;            /* Rating / Star Gold (IMDb/User stars) */
+  --brand-gold-light: #FDE8BD;
+  --brand-success: #4ABD5D;         /* Availability Green (Available seats & "Filling Fast") */
+  --brand-warning: #F5A623;
 
   /* Borders */
-  --border-subtle: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-dark: #94a3b8;
-  --border-focus: #e11d48;
+  --border-subtle: #E5E5EF;
+  --border-medium: #D5D5E2;
+  --border-dark: #F84464;
+  --border-focus: #F84464;
+  --border-card: 1.5px solid #EBEBF2;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  /* Shadows - Ambient Crimson Halo */
+  --shadow-sm: 0 1px 3px 0 rgba(26, 26, 36, 0.05);
+  --shadow-card: 0 4px 18px -2px rgba(26, 26, 36, 0.06), 0 0 16px rgba(248, 68, 100, 0.12);
+  --shadow-md: 0 10px 28px -4px rgba(26, 26, 36, 0.09), 0 0 24px rgba(248, 68, 100, 0.18);
+  --shadow-lg: 0 18px 42px -6px rgba(26, 26, 36, 0.14), 0 0 32px rgba(248, 68, 100, 0.25);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Plus Jakarta Sans', var(--font-sans);
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Radii: Clean and restrained */
+  /* Radii */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+  --radius-xl: 16px;
+  --radius-card: 20px;
+  --radius-card-img: 16px;
   --radius-pill: 9999px;
 
   /* Transitions */
@@ -56,74 +63,81 @@
 }
 
 /* ==========================================================================
-   DARK THEME SYSTEM TOKENS (Deep Obsidian & Premium Slate)
-   Activated via [data-theme="dark"] or html.dark or system preference
+   DARK THEME SYSTEM TOKENS - BookMyShow Deep Midnight & Crimson Entertainment
    ========================================================================== */
 [data-theme="dark"],
 html.dark {
   color-scheme: dark;
 
-  /* Surfaces & Backgrounds */
-  --bg-main: #0a0e17;
-  --bg-surface: #111827;
-  --bg-card: #151f32;
-  --bg-subtle: #1e293b;
-  --bg-muted: #2a374d;
+  /* Surfaces & Backgrounds - BMS Deep Midnight Blue-Gray */
+  --bg-main: #12131A;           /* Canvas / Main Background: Cinematic dark background */
+  --bg-surface: #1F2533;        /* Navbar / Top Header: #1F2533 */
+  --bg-card: #222433;           /* Cards / Elevated Surface: #222433 */
+  --bg-subtle: #2B2D3C;         /* Secondary Surface / Hover: #2B2D3C */
+  --bg-muted: #333547;          /* Muted container: #333547 */
 
-  /* Text */
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-inverse: #0f172a;
+  /* Text - Crisp White & Muted Slate */
+  --text-primary: #FFFFFF;      /* Headlines / Primary Text: #FFFFFF */
+  --text-secondary: #C8CAD7;    /* Secondary Text */
+  --text-muted: #9698A9;        /* Secondary / Muted Text (Date, time, venue): #9698A9 */
+  --text-inverse: #12131A;
 
-  /* Brand Accents - Radiant Rose Red */
-  --brand-primary: #f43f5e;
-  --brand-primary-hover: #fb7185;
-  --brand-secondary: #f8fafc;
-  --brand-accent: #38bdf8;
-  --brand-success: #22c55e;
-  --brand-warning: #f59e0b;
+  /* Brand Accents - BookMyShow Signature */
+  --brand-primary: #F84464;        /* BMS Primary Crimson Red (Main CTA, logo accent, active tabs) */
+  --brand-primary-hover: #E53554;  /* BMS Secondary Light Coral (Button hover state) */
+  --brand-logo: #C4242B;           /* BMS Brand Logo Red */
+  --brand-secondary: #E53554;
+  --brand-accent: #F84464;
+  --brand-gold: #F5A623;            /* Rating / Star Gold (IMDb/User rating stars) */
+  --brand-gold-light: #FDE8BD;
+  --brand-success: #4ABD5D;         /* Availability Green (Available seats & "Filling Fast") */
+  --brand-warning: #F5A623;
 
-  /* Borders */
-  --border-subtle: #1e293b;
-  --border-medium: #2a374d;
-  --border-dark: #475569;
-  --border-focus: #f43f5e;
+  /* Borders & Dividers */
+  --border-subtle: #333547;       /* Card Borders / Dividers: #333547 */
+  --border-medium: #3A3D52;
+  --border-dark: #F84464;
+  --border-focus: #F84464;
+  --border-card: 1.5px solid #333547;
 
-  /* Shadows with Rich Ambient Depth */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 4px 12px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 16px 32px -4px rgba(0, 0, 0, 0.65), 0 6px 12px -4px rgba(0, 0, 0, 0.4);
+  /* Shadows with Crimson Cinematic Depth */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 4px 18px 0 rgba(0, 0, 0, 0.7), 0 0 18px rgba(248, 68, 100, 0.16);
+  --shadow-md: 0 8px 26px -2px rgba(0, 0, 0, 0.8), 0 0 24px rgba(248, 68, 100, 0.24);
+  --shadow-lg: 0 16px 38px -4px rgba(0, 0, 0, 0.9), 0 0 35px rgba(248, 68, 100, 0.35);
 }
 
 /* System preference fallback when no manual choice has been stored */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg-main: #0a0e17;
-    --bg-surface: #111827;
-    --bg-card: #151f32;
-    --bg-subtle: #1e293b;
-    --bg-muted: #2a374d;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --text-inverse: #0f172a;
-    --brand-primary: #f43f5e;
-    --brand-primary-hover: #fb7185;
-    --brand-secondary: #f8fafc;
-    --brand-accent: #38bdf8;
-    --brand-success: #22c55e;
-    --brand-warning: #f59e0b;
-    --border-subtle: #1e293b;
-    --border-medium: #2a374d;
-    --border-dark: #475569;
-    --border-focus: #f43f5e;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-    --shadow-card: 0 4px 12px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 8px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 16px 32px -4px rgba(0, 0, 0, 0.65), 0 6px 12px -4px rgba(0, 0, 0, 0.4);
+    --bg-main: #12131A;
+    --bg-surface: #1F2533;
+    --bg-card: #222433;
+    --bg-subtle: #2B2D3C;
+    --bg-muted: #333547;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C8CAD7;
+    --text-muted: #9698A9;
+    --text-inverse: #12131A;
+    --brand-primary: #F84464;
+    --brand-primary-hover: #E53554;
+    --brand-logo: #C4242B;
+    --brand-secondary: #E53554;
+    --brand-accent: #F84464;
+    --brand-gold: #F5A623;
+    --brand-gold-light: #FDE8BD;
+    --brand-success: #4ABD5D;
+    --brand-warning: #F5A623;
+    --border-subtle: #333547;
+    --border-medium: #3A3D52;
+    --border-dark: #F84464;
+    --border-focus: #F84464;
+    --border-card: 1.5px solid #333547;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+    --shadow-card: 0 4px 18px 0 rgba(0, 0, 0, 0.7), 0 0 18px rgba(248, 68, 100, 0.16);
+    --shadow-md: 0 8px 26px -2px rgba(0, 0, 0, 0.8), 0 0 24px rgba(248, 68, 100, 0.24);
+    --shadow-lg: 0 16px 38px -4px rgba(0, 0, 0, 0.9), 0 0 35px rgba(248, 68, 100, 0.35);
   }
 }
 
@@ -235,19 +249,23 @@ img {
   justify-content: center;
   gap: 8px;
   background-color: var(--brand-primary);
-  color: #ffffff;
-  font-weight: 600;
+  color: #FFFFFF !important;
+  font-weight: 700;
   font-size: 0.9rem;
   padding: 9px 18px;
   border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  border: 1px solid var(--brand-primary);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(248, 68, 100, 0.35);
+  transition: all var(--transition-fast);
 }
 
 .btn-brand:hover {
   background-color: var(--brand-primary-hover);
-  color: #ffffff;
+  color: #FFFFFF !important;
+  border-color: var(--brand-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(248, 68, 100, 0.5);
 }
 
 .btn-secondary-custom {
@@ -256,20 +274,22 @@ img {
   justify-content: center;
   gap: 8px;
   background-color: var(--bg-surface);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 0.9rem;
   padding: 8px 16px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-medium);
+  border: 1px solid var(--border-subtle);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .btn-secondary-custom:hover {
   background-color: var(--bg-subtle);
-  color: var(--text-primary);
-  border-color: var(--border-dark);
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 12px rgba(248, 68, 100, 0.2);
+  transform: translateY(-1px);
 }
 
 /* Badges */
@@ -287,15 +307,15 @@ img {
 }
 
 .badge-clean-primary {
-  background: #ffe4e6;
-  color: var(--brand-primary);
-  border: 1px solid #fecdd3;
+  background: rgba(248, 68, 100, 0.14);
+  color: #F84464;
+  border: 1px solid rgba(248, 68, 100, 0.35);
 }
 
 .badge-clean-success {
-  background: #dcfce7;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
+  background: rgba(74, 189, 93, 0.16);
+  color: #4ABD5D;
+  border: 1px solid rgba(74, 189, 93, 0.35);
 }
 
 /* Universal Layout, Card, Border & Typography Utilities */
@@ -376,16 +396,16 @@ html.dark .badge-clean {
 
 [data-theme="dark"] .badge-clean-primary,
 html.dark .badge-clean-primary {
-  background: rgba(244, 63, 94, 0.16);
-  color: var(--brand-primary);
-  border: 1px solid rgba(244, 63, 94, 0.35);
+  background: rgba(248, 68, 100, 0.18);
+  color: #F84464;
+  border: 1px solid rgba(248, 68, 100, 0.35);
 }
 
 [data-theme="dark"] .badge-clean-success,
 html.dark .badge-clean-success {
-  background: rgba(34, 197, 94, 0.16);
-  color: #4ade80;
-  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(74, 189, 93, 0.16);
+  color: #4ABD5D;
+  border: 1px solid rgba(74, 189, 93, 0.35);
 }
 
 [data-theme="dark"] .btn-secondary-custom,

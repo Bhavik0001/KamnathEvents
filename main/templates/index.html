@@ -2,271 +2,2113 @@
 {% load static %}
 
 {% block title %}Kamnath Events | Book Event Tickets Online{% endblock %}
-{% block meta_desc %}Book tickets for concerts, standup comedy, conferences, and sports events across India.{% endblock %}
+{% block extra_css %}
+<style>
+  /* 3 Cards per row grid layout */
+  .events-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 24px;
+  }
+
+  @media (max-width: 991px) {
+    .events-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 575px) {
+    .events-grid {
+      grid-template-columns: 1fr !important;
+      gap: 16px;
+    }
+  }
+
+  /* Realistic Live Concert Stage Backdrop for Hero Spotlight (Index page only) */
+  .hero-spotlight {
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: #0B0C10 !important;
+    border: 1.5px solid #272B35 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 20px 50px -10px rgba(11, 12, 16, 0.95), 0 0 40px rgba(212, 175, 55, 0.12) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    min-height: 480px !important;
+    padding: 64px 48px !important;
+    margin: 20px 0 28px !important;
+  }
+
+  .hero-stage-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero-stage-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 42%;
+    filter: brightness(1.02) contrast(1.18) saturate(1.25);
+    transform-origin: center center;
+    animation: heroStageCinemaDrift 20s ease-in-out infinite alternate, heroStagePulse 6s ease-in-out infinite alternate;
+    will-change: transform, filter;
+  }
+
+  @keyframes heroStageCinemaDrift {
+    0% {
+      transform: scale(1.01) translate3d(0, 0, 0);
+    }
+
+    50% {
+      transform: scale(1.06) translate3d(-1.2%, -0.6%, 0);
+    }
+
+    100% {
+      transform: scale(1.03) translate3d(0.8%, -0.3%, 0);
+    }
+  }
+
+  @keyframes heroStagePulse {
+    0% {
+      filter: brightness(0.98) contrast(1.15) saturate(1.2);
+    }
+
+    50% {
+      filter: brightness(1.12) contrast(1.22) saturate(1.35);
+    }
+
+    100% {
+      filter: brightness(1.02) contrast(1.18) saturate(1.25);
+    }
+  }
+
+  /* Dynamic Volumetric Neon Concert Laser & Spotlight Beams */
+  .concert-laser-beams,
+  .gold-shimmer-beams {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 12%, rgba(255, 230, 150, 0.38) 0%, rgba(248, 68, 100, 0.28) 25%, rgba(168, 85, 247, 0.22) 50%, rgba(56, 189, 248, 0.12) 70%, transparent 85%),
+      radial-gradient(circle at 75% 35%, rgba(248, 68, 100, 0.25) 0%, transparent 45%),
+      radial-gradient(circle at 25% 35%, rgba(56, 189, 248, 0.22) 0%, transparent 45%);
+    mix-blend-mode: screen;
+    animation: concertLaserSweep 8s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  @keyframes concertLaserSweep {
+    0% {
+      opacity: 0.65;
+      transform: scale(0.99) rotate(-1deg);
+      filter: hue-rotate(-8deg);
+    }
+
+    50% {
+      opacity: 0.95;
+      transform: scale(1.04) rotate(1.2deg);
+      filter: hue-rotate(12deg);
+    }
+
+    100% {
+      opacity: 0.75;
+      transform: scale(1.01) rotate(-0.5deg);
+      filter: hue-rotate(0deg);
+    }
+  }
+
+  /* Ambient Stage Floor Glow & Atmospheric Mist */
+  .concert-ambient-glow,
+  .gold-ambient-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 45% at 50% 88%, rgba(248, 68, 100, 0.32) 0%, rgba(168, 85, 247, 0.18) 35%, rgba(56, 189, 248, 0.1) 60%, transparent 78%);
+    mix-blend-mode: color-dodge;
+    animation: concertGlowPulse 7s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  @keyframes concertGlowPulse {
+    0% {
+      opacity: 0.55;
+      transform: scale(0.97) translateY(2px);
+    }
+
+    50% {
+      opacity: 0.92;
+      transform: scale(1.03) translateY(-2px);
+    }
+
+    100% {
+      opacity: 0.68;
+      transform: scale(1.0) translateY(0);
+    }
+  }
+
+  /* Concert Stardust & Radiant Sparkle Particles */
+  .concert-particles-layer,
+  .golden-particles-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .concert-sparkle,
+  .gold-sparkle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFFFFF 0%, #FFA8B6 45%, #F84464 80%, transparent 100%);
+    box-shadow: 0 0 10px #FFFFFF, 0 0 18px rgba(248, 68, 100, 0.8), 0 0 26px rgba(168, 85, 247, 0.6);
+    opacity: 0;
+    animation: concertSparkleFloat linear infinite;
+  }
+
+  @keyframes concertSparkleFloat {
+    0% {
+      opacity: 0;
+      transform: translateY(25px) scale(0.5);
+    }
+
+    20% {
+      opacity: 0.95;
+    }
+
+    70% {
+      opacity: 0.85;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(-90px) scale(1.2);
+    }
+  }
+
+  .p1 { left: 45%; bottom: 22%; width: 4px; height: 4px; animation-duration: 7s; animation-delay: 0s; }
+  .p2 { left: 55%; bottom: 30%; width: 5px; height: 5px; animation-duration: 6s; animation-delay: 1.2s; box-shadow: 0 0 12px #38BDF8, 0 0 20px rgba(56, 189, 248, 0.8); background: radial-gradient(circle, #FFFFFF 0%, #BAE6FD 50%, #38BDF8 100%); }
+  .p3 { left: 65%; bottom: 18%; width: 4px; height: 4px; animation-duration: 8.5s; animation-delay: 2.8s; }
+  .p4 { left: 78%; bottom: 38%; width: 5px; height: 5px; animation-duration: 6.8s; animation-delay: 0.5s; }
+  .p5 { left: 48%; bottom: 12%; width: 3px; height: 3px; animation-duration: 7.5s; animation-delay: 3.5s; box-shadow: 0 0 12px #FDE047, 0 0 18px rgba(234, 179, 8, 0.8); background: radial-gradient(circle, #FFFFFF 0%, #FEF08A 50%, #EAB308 100%); }
+  .p6 { left: 85%; bottom: 25%; width: 4px; height: 4px; animation-duration: 5.8s; animation-delay: 1.9s; }
+  .p7 { left: 60%; bottom: 45%; width: 3px; height: 3px; animation-duration: 7.2s; animation-delay: 4.2s; }
+  .p8 { left: 35%; bottom: 35%; width: 4px; height: 4px; animation-duration: 8s; animation-delay: 2.4s; }
+  .p9 { left: 50%; bottom: 40%; width: 6px; height: 6px; animation-duration: 6.5s; animation-delay: 3.1s; }
+  .p10 { left: 70%; bottom: 28%; width: 3px; height: 3px; animation-duration: 7.8s; animation-delay: 4.9s; box-shadow: 0 0 12px #38BDF8, 0 0 20px rgba(56, 189, 248, 0.8); background: radial-gradient(circle, #FFFFFF 0%, #BAE6FD 50%, #38BDF8 100%); }
+
+  .hero-stage-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+        rgba(10, 11, 16, 0.94) 0%,
+        rgba(10, 11, 16, 0.82) 42%,
+        rgba(10, 11, 16, 0.35) 70%,
+        rgba(10, 11, 16, 0.15) 86%,
+        rgba(10, 11, 16, 0.45) 100%),
+      linear-gradient(180deg,
+        rgba(10, 11, 16, 0.3) 0%,
+        transparent 30%,
+        rgba(10, 11, 16, 0.45) 85%,
+        rgba(10, 11, 16, 0.75) 100%);
+    z-index: 1;
+  }
+
+  .hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100% !important;
+    max-width: 560px !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .hero-spotlight .hero-eyebrow {
+    background: rgba(248, 68, 100, 0.16) !important;
+    border: 1px solid rgba(248, 68, 100, 0.4) !important;
+    color: #F84464 !important;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    align-self: flex-start !important;
+    margin-left: 0 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .hero-city-italic {
+    font-style: italic;
+    font-family: 'Playfair Display', Georgia, serif;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFA8B6 50%, #F84464 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-left: 2px;
+    padding-right: 4px;
+  }
+
+  .hero-spotlight .hero-headline {
+    color: #FFFFFF !important;
+    text-shadow: 0 2px 16px rgba(11, 12, 16, 0.8);
+    text-align: left !important;
+    max-width: 540px !important;
+    margin-left: 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .hero-spotlight .hero-lead-text {
+    color: #CBD5E1 !important;
+    text-shadow: 0 1px 8px rgba(11, 12, 16, 0.7);
+    text-align: left !important;
+    max-width: 480px !important;
+    margin-left: 0 !important;
+    margin-bottom: 22px !important;
+  }
+
+  .hero-spotlight .hero-cta-group {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .hero-spotlight .spotlight-title-label {
+    color: #94A3B8 !important;
+  }
+
+  .hero-spotlight .spotlight-counter {
+    color: #FFFFFF !important;
+  }
+
+  .hero-spotlight .spotlight-nav-btn {
+    background: rgba(20, 23, 30, 0.85) !important;
+    border-color: #272B35 !important;
+    color: #FFFFFF !important;
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-spotlight .spotlight-nav-btn:hover {
+    background: #F84464 !important;
+    border-color: #E53554 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 14px rgba(248, 68, 100, 0.45);
+  }
+
+  /* ==========================================================================
+     CARDS DESIGN SYSTEM (Hero Spotlight + All Event Grid Cards)
+     BookMyShow Crimson & Midnight Entertainment Theme
+     Realistic Glowing Aura on BOTH Light (White) & Dark Themes
+     ========================================================================== */
+  [data-theme="dark"] body,
+  html.dark body {
+    background-color: #12131A !important;
+    color: #FFFFFF !important;
+  }
+
+  :root:not([data-theme="dark"]) body,
+  [data-theme="light"] body {
+    background-color: #F5F5FA !important;
+    color: #1A1A24 !important;
+  }
+
+  /* Headings & Section Titles - Both Themes */
+  [data-theme="dark"] h1,
+  [data-theme="dark"] h2,
+  [data-theme="dark"] h3,
+  [data-theme="dark"] h4,
+  [data-theme="dark"] h5,
+  [data-theme="dark"] h6,
+  html.dark h1,
+  html.dark h2,
+  html.dark h3,
+  html.dark h4,
+  html.dark h5,
+  html.dark h6,
+  [data-theme="dark"] .fs-4,
+  [data-theme="dark"] .fs-2,
+  html.dark .fs-4,
+  html.dark .fs-2,
+  [data-theme="dark"] section[aria-label="Upcoming Events"] h2,
+  html.dark section[aria-label="Upcoming Events"] h2,
+  [data-theme="dark"] section[aria-label="Featured Events"] h2,
+  html.dark section[aria-label="Featured Events"] h2,
+  [data-theme="dark"] section[aria-label="Event Categories"] h2,
+  html.dark section[aria-label="Event Categories"] h2 {
+    color: #FFFFFF !important;
+  }
+
+  :root:not([data-theme="dark"]) h1:not(.hero-headline),
+  :root:not([data-theme="dark"]) h2,
+  :root:not([data-theme="dark"]) h3,
+  :root:not([data-theme="dark"]) h4,
+  :root:not([data-theme="dark"]) h5,
+  :root:not([data-theme="dark"]) h6,
+  [data-theme="light"] h1:not(.hero-headline),
+  [data-theme="light"] h2,
+  [data-theme="light"] h3,
+  [data-theme="light"] h4,
+  [data-theme="light"] h5,
+  [data-theme="light"] h6,
+  :root:not([data-theme="dark"]) .fs-4,
+  :root:not([data-theme="dark"]) .fs-2,
+  [data-theme="light"] .fs-4,
+  [data-theme="light"] .fs-2,
+  :root:not([data-theme="dark"]) section[aria-label="Upcoming Events"] h2,
+  [data-theme="light"] section[aria-label="Upcoming Events"] h2,
+  :root:not([data-theme="dark"]) section[aria-label="Featured Events"] h2,
+  [data-theme="light"] section[aria-label="Featured Events"] h2,
+  :root:not([data-theme="dark"]) section[aria-label="Event Categories"] h2,
+  [data-theme="light"] section[aria-label="Event Categories"] h2 {
+    color: #1A1A24 !important;
+  }
+
+  /* Hero Headline & Lead Text - Always White across Both Themes (Stage Backdrop is Dark) */
+  .hero-headline,
+  .hero-spotlight .hero-headline,
+  h1.hero-headline,
+  :root:not([data-theme="dark"]) .hero-headline,
+  [data-theme="light"] .hero-headline,
+  :root:not([data-theme="dark"]) .hero-spotlight .hero-headline,
+  [data-theme="light"] .hero-spotlight .hero-headline,
+  :root:not([data-theme="dark"]) h1.hero-headline,
+  [data-theme="light"] h1.hero-headline {
+    color: #FFFFFF !important;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .hero-lead-text,
+  .hero-spotlight .hero-lead-text,
+  :root:not([data-theme="dark"]) .hero-lead-text,
+  [data-theme="light"] .hero-lead-text,
+  :root:not([data-theme="dark"]) .hero-spotlight .hero-lead-text,
+  [data-theme="light"] .hero-spotlight .hero-lead-text {
+    color: #CBD5E1 !important;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75) !important;
+  }
+
+  /* Event Cards Core Container */
+  .event-card,
+  .spotlight-card,
+  .hero-spotlight .spotlight-card {
+    border-radius: 28px !important;
+    padding: 14px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    isolation: isolate !important;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.32s ease,
+      background-color 0.32s ease !important;
+    will-change: transform, box-shadow;
+  }
+
+  /* Realistic Volumetric Glow Layer Behind Every Event Card */
+  .event-card::before,
+  .spotlight-card::before,
+  .hero-spotlight .spotlight-card::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: -3px !important;
+    border-radius: 30px !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform, opacity, filter !important;
+  }
+
+  /* Dark Theme Card Surface & BookMyShow Crimson Cinematic Glow */
+  [data-theme="dark"] .event-card,
+  [data-theme="dark"] .spotlight-card,
+  html.dark .event-card,
+  html.dark .spotlight-card,
+  [data-theme="dark"] .hero-spotlight .spotlight-card,
+  html.dark .hero-spotlight .spotlight-card {
+    background: #222433 !important;
+    border: 1.5px solid #333547 !important;
+    box-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(248, 68, 100, 0.16) !important;
+  }
+
+  [data-theme="dark"] .event-card::before,
+  [data-theme="dark"] .spotlight-card::before,
+  html.dark .event-card::before,
+  html.dark .spotlight-card::before,
+  [data-theme="dark"] .hero-spotlight .spotlight-card::before,
+  html.dark .hero-spotlight .spotlight-card::before {
+    background: radial-gradient(ellipse 95% 75% at 50% 15%, rgba(248, 68, 100, 0.40) 0%, rgba(229, 53, 84, 0.18) 45%, transparent 75%) !important;
+    filter: blur(18px) !important;
+    opacity: 0.65 !important;
+    transform: scale(0.98) !important;
+  }
+
+  [data-theme="dark"] .event-card:hover::before,
+  [data-theme="dark"] .event-card.card-active::before,
+  [data-theme="dark"] .spotlight-card:hover::before,
+  [data-theme="dark"] .spotlight-card.card-active::before,
+  html.dark .event-card:hover::before,
+  html.dark .event-card.card-active::before,
+  html.dark .spotlight-card:hover::before,
+  html.dark .spotlight-card.card-active::before {
+    opacity: 1 !important;
+    filter: blur(28px) !important;
+    transform: scale(1.05) !important;
+    background: radial-gradient(ellipse 95% 75% at 50% 20%, rgba(248, 68, 100, 0.75) 0%, rgba(229, 53, 84, 0.35) 50%, transparent 80%) !important;
+  }
+
+  [data-theme="dark"] .event-card:hover,
+  [data-theme="dark"] .event-card.card-active,
+  [data-theme="dark"] .event-card.selected,
+  [data-theme="dark"] .event-card.is-selected,
+  [data-theme="dark"] .spotlight-card:hover,
+  [data-theme="dark"] .spotlight-card.card-active,
+  html.dark .event-card:hover,
+  html.dark .event-card.card-active,
+  html.dark .event-card.selected,
+  html.dark .event-card.is-selected,
+  html.dark .spotlight-card:hover,
+  html.dark .spotlight-card.card-active {
+    transform: translateY(-8px) scale(1.015) !important;
+    border-color: #F84464 !important;
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.95),
+      0 0 38px 4px rgba(248, 68, 100, 0.45),
+      0 0 0 1.5px rgba(248, 68, 100, 0.6) !important;
+  }
+
+  /* White / Light Theme Card Surface & Realistic Crimson Glow */
+  :root:not([data-theme="dark"]) .event-card,
+  :root:not([data-theme="dark"]) .spotlight-card,
+  [data-theme="light"] .event-card,
+  [data-theme="light"] .spotlight-card,
+  :root:not([data-theme="dark"]) .hero-spotlight .spotlight-card,
+  [data-theme="light"] .hero-spotlight .spotlight-card {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E5E5EF !important;
+    box-shadow: 0 10px 28px -6px rgba(26, 26, 36, 0.08), 0 0 20px 2px rgba(248, 68, 100, 0.14) !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card::before,
+  :root:not([data-theme="dark"]) .spotlight-card::before,
+  [data-theme="light"] .event-card::before,
+  [data-theme="light"] .spotlight-card::before,
+  :root:not([data-theme="dark"]) .hero-spotlight .spotlight-card::before,
+  [data-theme="light"] .hero-spotlight .spotlight-card::before {
+    background: radial-gradient(ellipse 96% 80% at 50% 15%, rgba(248, 68, 100, 0.30) 0%, rgba(229, 53, 84, 0.15) 48%, transparent 76%) !important;
+    filter: blur(18px) !important;
+    opacity: 0.70 !important;
+    transform: scale(0.98) !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card:hover::before,
+  :root:not([data-theme="dark"]) .event-card.card-active::before,
+  :root:not([data-theme="dark"]) .spotlight-card:hover::before,
+  :root:not([data-theme="dark"]) .spotlight-card.card-active::before,
+  [data-theme="light"] .event-card:hover::before,
+  [data-theme="light"] .event-card.card-active::before,
+  [data-theme="light"] .spotlight-card:hover::before,
+  [data-theme="light"] .spotlight-card.card-active::before {
+    opacity: 1 !important;
+    filter: blur(28px) !important;
+    transform: scale(1.05) !important;
+    background: radial-gradient(ellipse 96% 80% at 50% 20%, rgba(248, 68, 100, 0.65) 0%, rgba(229, 53, 84, 0.28) 50%, transparent 80%) !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card:hover,
+  :root:not([data-theme="dark"]) .event-card.card-active,
+  :root:not([data-theme="dark"]) .event-card.selected,
+  :root:not([data-theme="dark"]) .event-card.is-selected,
+  :root:not([data-theme="dark"]) .spotlight-card:hover,
+  :root:not([data-theme="dark"]) .spotlight-card.card-active,
+  [data-theme="light"] .event-card:hover,
+  [data-theme="light"] .event-card.card-active,
+  [data-theme="light"] .event-card.selected,
+  [data-theme="light"] .event-card.is-selected,
+  [data-theme="light"] .spotlight-card:hover,
+  [data-theme="light"] .spotlight-card.card-active {
+    transform: translateY(-8px) scale(1.015) !important;
+    border-color: #F84464 !important;
+    box-shadow: 0 20px 45px -8px rgba(26, 26, 36, 0.15),
+      0 0 36px 6px rgba(248, 68, 100, 0.35),
+      0 0 0 1.5px rgba(248, 68, 100, 0.5) !important;
+  }
+
+  /* Card Image Wrapper */
+  .event-card .card-image-wrapper,
+  .spotlight-card .card-image-wrapper,
+  .hero-spotlight .spotlight-card .card-image-wrapper {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    height: 215px !important;
+    aspect-ratio: 16 / 9 !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+  }
+
+  [data-theme="dark"] .card-image-wrapper,
+  html.dark .card-image-wrapper {
+    background: #0E1015 !important;
+  }
+
+  :root:not([data-theme="dark"]) .card-image-wrapper,
+  [data-theme="light"] .card-image-wrapper {
+    background: #F4EFE6 !important;
+  }
+
+  .event-card .event-card-img,
+  .spotlight-card .event-card-img,
+  .hero-spotlight .spotlight-card .event-card-img {
+    border-radius: 20px !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .event-card:hover .event-card-img,
+  .spotlight-card:hover .event-card-img {
+    transform: scale(1.07) !important;
+  }
+
+  .event-card .card-content-body,
+  .spotlight-card .card-content-body,
+  .hero-spotlight .spotlight-card .card-content-body {
+    padding: 14px 6px 14px 6px !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+  }
+
+  /* Badges on Card Image - Dark Theme */
+  [data-theme="dark"] .badge-category-card,
+  html.dark .badge-category-card {
+    background: rgba(20, 23, 30, 0.9) !important;
+    color: #F3E5AB !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 9999px !important;
+    padding: 4px 12px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  [data-theme="dark"] .badge-date-card,
+  html.dark .badge-date-card {
+    background: rgba(20, 23, 30, 0.9) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 9999px !important;
+    padding: 4px 11px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  [data-theme="dark"] .booked-count-badge,
+  html.dark .booked-count-badge {
+    background: rgba(20, 23, 30, 0.9) !important;
+    color: #F3E5AB !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 9999px !important;
+    padding: 3px 10px !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Badges on Card Image - White / Light Theme */
+  :root:not([data-theme="dark"]) .badge-category-card,
+  [data-theme="light"] .badge-category-card {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #8A6D14 !important;
+    border: 1px solid rgba(197, 155, 39, 0.45) !important;
+    border-radius: 9999px !important;
+    padding: 4px 12px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    box-shadow: 0 2px 8px rgba(11, 12, 16, 0.08) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  :root:not([data-theme="dark"]) .badge-date-card,
+  [data-theme="light"] .badge-date-card {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #0B0C10 !important;
+    border: 1px solid rgba(197, 155, 39, 0.45) !important;
+    border-radius: 9999px !important;
+    padding: 4px 11px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(11, 12, 16, 0.08) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  :root:not([data-theme="dark"]) .booked-count-badge,
+  [data-theme="light"] .booked-count-badge {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #8A6D14 !important;
+    border: 1px solid rgba(197, 155, 39, 0.45) !important;
+    border-radius: 9999px !important;
+    padding: 3px 10px !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(11, 12, 16, 0.08) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  .badge-date-card i,
+  .booked-count-badge i {
+    color: #F84464 !important;
+  }
+
+  .card-like-btn {
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+  }
+
+  [data-theme="dark"] .card-like-btn,
+  html.dark .card-like-btn {
+    background: rgba(34, 36, 51, 0.85) !important;
+    border: 1px solid rgba(248, 68, 100, 0.35) !important;
+    color: #9698A9 !important;
+  }
+
+  [data-theme="dark"] .card-like-btn:hover,
+  [data-theme="dark"] .card-like-btn.liked,
+  html.dark .card-like-btn:hover,
+  html.dark .card-like-btn.liked {
+    background: #222433 !important;
+    border-color: #F84464 !important;
+    color: #F84464 !important;
+    transform: scale(1.08) !important;
+  }
+
+  :root:not([data-theme="dark"]) .card-like-btn,
+  [data-theme="light"] .card-like-btn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(248, 68, 100, 0.3) !important;
+    color: #666677 !important;
+    box-shadow: 0 2px 6px rgba(26, 26, 36, 0.08) !important;
+  }
+
+  :root:not([data-theme="dark"]) .card-like-btn:hover,
+  :root:not([data-theme="dark"]) .card-like-btn.liked,
+  [data-theme="light"] .card-like-btn:hover,
+  [data-theme="light"] .card-like-btn.liked {
+    background: #FFFFFF !important;
+    border-color: #F84464 !important;
+    color: #F84464 !important;
+    transform: scale(1.08) !important;
+  }
+
+  /* Typography & Metadata - Dark Theme */
+  [data-theme="dark"] .event-title,
+  html.dark .event-title {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+    transition: color 0.2s ease !important;
+  }
+
+  [data-theme="dark"] .event-card:hover .event-title,
+  [data-theme="dark"] .event-card.card-active .event-title,
+  html.dark .event-card:hover .event-title,
+  html.dark .event-card.card-active .event-title {
+    color: #F84464 !important;
+  }
+
+  [data-theme="dark"] .event-description-text,
+  html.dark .event-description-text {
+    color: #C8CAD7 !important;
+    font-size: 0.85rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 12px !important;
+  }
+
+  [data-theme="dark"] .event-venue-name,
+  html.dark .event-venue-name {
+    color: #9698A9 !important;
+  }
+
+  [data-theme="dark"] .price-amount,
+  html.dark .price-amount {
+    color: #FFFFFF !important;
+    font-size: 1.22rem !important;
+    font-weight: 700 !important;
+  }
+
+  [data-theme="dark"] .price-subtext,
+  html.dark .price-subtext {
+    color: #9698A9 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+  }
+
+  [data-theme="dark"] .card-footer-strip,
+  html.dark .card-footer-strip {
+    border-top: 1px solid #333547 !important;
+    padding-top: 14px !important;
+    margin-top: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  /* Typography & Metadata - White / Light Theme */
+  :root:not([data-theme="dark"]) .event-title,
+  [data-theme="light"] .event-title {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #1A1A24 !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+    transition: color 0.2s ease !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card:hover .event-title,
+  :root:not([data-theme="dark"]) .event-card.card-active .event-title,
+  [data-theme="light"] .event-card:hover .event-title,
+  [data-theme="light"] .event-card.card-active .event-title {
+    color: #F84464 !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-description-text,
+  [data-theme="light"] .event-description-text {
+    color: #4A4C5E !important;
+    font-size: 0.85rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 12px !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-venue-name,
+  [data-theme="light"] .event-venue-name {
+    color: #666677 !important;
+  }
+
+  :root:not([data-theme="dark"]) .price-amount,
+  [data-theme="light"] .price-amount {
+    color: #1A1A24 !important;
+    font-size: 1.22rem !important;
+    font-weight: 700 !important;
+  }
+
+  :root:not([data-theme="dark"]) .price-subtext,
+  [data-theme="light"] .price-subtext {
+    color: #666677 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+  }
+
+  :root:not([data-theme="dark"]) .card-footer-strip,
+  [data-theme="light"] .card-footer-strip {
+    border-top: 1px solid #E5E5EF !important;
+    padding-top: 14px !important;
+    margin-top: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .event-meta-strip,
+  .event-meta-date-row,
+  .event-meta-location-row,
+  .event-venue-item,
+  .event-meta-item {
+    font-size: 0.8rem !important;
+  }
+
+  .event-meta-date-row i,
+  .event-venue-item i {
+    color: #F84464 !important;
+  }
+
+  .meta-sep-dot {
+    color: #8C96A5 !important;
+  }
+
+  /* Book Tickets CTA Button (BookMyShow Signature Crimson Red #F84464) */
+  .btn-book-card {
+    background: #F84464 !important;
+    border: 1px solid #F84464 !important;
+    color: #FFFFFF !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 8px 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 14px rgba(248, 68, 100, 0.35) !important;
+  }
+
+  .btn-book-card:hover,
+  .event-card:hover .btn-book-card,
+  .event-card.card-active .btn-book-card,
+  .spotlight-card:hover .btn-book-card,
+  .spotlight-card.card-active .btn-book-card {
+    background: #E53554 !important;
+    border-color: #E53554 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 6px 20px rgba(248, 68, 100, 0.5) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* Discovery Filter Bar - Both Themes */
+  .discovery-filter-bar {
+    border-radius: 18px !important;
+    padding: 12px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 24px !important;
+    transition: all 0.25s ease !important;
+  }
+
+  [data-theme="dark"] .discovery-filter-bar,
+  html.dark .discovery-filter-bar {
+    background: #222433 !important;
+    border: 1.5px solid #333547 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  [data-theme="dark"] .filter-select {
+    background: #1A1A24 !important;
+    border: 1px solid #333547 !important;
+    border-radius: 10px !important;
+    color: #FFFFFF !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    padding: 6px 14px !important;
+    height: 38px !important;
+    cursor: pointer !important;
+  }
+
+  [data-theme="dark"] .filter-select:focus {
+    outline: none !important;
+    border-color: #F84464 !important;
+    box-shadow: 0 0 10px rgba(248, 68, 100, 0.3) !important;
+  }
+
+  [data-theme="dark"] .filter-select option {
+    background: #222433 !important;
+    color: #FFFFFF !important;
+  }
+
+  [data-theme="dark"] .date-chip-btn {
+    background: #1A1A24 !important;
+    border: 1px solid #333547 !important;
+    color: #9698A9 !important;
+    border-radius: 10px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    padding: 6px 14px !important;
+    height: 38px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+  }
+
+  [data-theme="dark"] .date-chip-btn:hover,
+  [data-theme="dark"] .date-chip-btn.active {
+    background: #F84464 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 14px rgba(248, 68, 100, 0.35) !important;
+  }
+
+  :root:not([data-theme="dark"]) .discovery-filter-bar,
+  [data-theme="light"] .discovery-filter-bar {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E5E5EF !important;
+    box-shadow: 0 6px 22px rgba(26, 26, 36, 0.05), 0 0 16px rgba(248, 68, 100, 0.12) !important;
+  }
+
+  :root:not([data-theme="dark"]) .filter-select,
+  [data-theme="light"] .filter-select {
+    background: #F5F5FA !important;
+    border: 1px solid #D5D5E2 !important;
+    border-radius: 10px !important;
+    color: #1A1A24 !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    padding: 6px 14px !important;
+    height: 38px !important;
+    cursor: pointer !important;
+  }
+
+  :root:not([data-theme="dark"]) .filter-select:focus,
+  [data-theme="light"] .filter-select:focus {
+    outline: none !important;
+    border-color: #F84464 !important;
+    box-shadow: 0 0 10px rgba(248, 68, 100, 0.3) !important;
+  }
+
+  :root:not([data-theme="dark"]) .filter-select option,
+  [data-theme="light"] .filter-select option {
+    background: #FFFFFF !important;
+    color: #1A1A24 !important;
+  }
+
+  :root:not([data-theme="dark"]) .date-chip-btn,
+  [data-theme="light"] .date-chip-btn {
+    background: #F5F5FA !important;
+    border: 1px solid #D5D5E2 !important;
+    color: #4A4C5E !important;
+    border-radius: 10px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    padding: 6px 14px !important;
+    height: 38px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+  }
+
+  :root:not([data-theme="dark"]) .date-chip-btn:hover,
+  :root:not([data-theme="dark"]) .date-chip-btn.active,
+  [data-theme="light"] .date-chip-btn:hover,
+  [data-theme="light"] .date-chip-btn.active {
+    background: #F84464 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 14px rgba(248, 68, 100, 0.35) !important;
+  }
+
+  .reset-filters-btn {
+    color: #F84464 !important;
+    font-weight: 600 !important;
+  }
+
+  @media (max-width: 768px) {
+    .discovery-filter-bar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 12px !important;
+    }
+
+    .filter-left-group {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      width: 100% !important;
+      gap: 10px !important;
+    }
+
+    .filter-left-group .filter-select,
+    #categoryFilterSelect {
+      width: 100% !important;
+    }
+
+    .filter-right-group {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 12px !important;
+      width: 100% !important;
+      margin-top: 2px !important;
+    }
+
+    .filter-right-group .filter-select,
+    .filter-right-group #sortFilterSelect {
+      width: auto !important;
+      min-width: 145px !important;
+      max-width: 190px !important;
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+      text-align: left !important;
+    }
+
+    .filter-right-group .reset-filters-btn {
+      align-self: center !important;
+      white-space: nowrap !important;
+      margin: 0 !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+    }
+
+    .events-header-strip {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100% !important;
+    }
+
+    .events-header-strip h2 {
+      order: 1 !important;
+      text-align: left !important;
+      font-size: 1.25rem !important;
+      margin: 0 !important;
+      flex: 0 1 auto !important;
+      white-space: nowrap !important;
+    }
+
+    .events-header-strip .filter-results-counter {
+      order: 2 !important;
+      text-align: right !important;
+      width: auto !important;
+      margin-left: auto !important;
+      font-size: 0.8rem !important;
+      white-space: nowrap !important;
+    }
+  }
+
+  .events-header-strip {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .events-header-strip h2 {
+    order: 1 !important;
+    text-align: left !important;
+    margin: 0 !important;
+    flex: 0 1 auto !important;
+  }
+
+  .events-header-strip .filter-results-counter {
+    order: 2 !important;
+    text-align: right !important;
+    width: auto !important;
+    margin-left: auto !important;
+    white-space: nowrap !important;
+  }
+
+  [data-theme="dark"] .filter-results-counter,
+  html.dark .filter-results-counter {
+    color: #9698A9 !important;
+  }
+
+  :root:not([data-theme="dark"]) .filter-results-counter,
+  [data-theme="light"] .filter-results-counter {
+    color: #666677 !important;
+  }
+
+  /* Hero CTA Buttons - Synchronized Width, Height, Size & Radius */
+  .hero-cta-group .btn-brand,
+  .hero-cta-group .btn-secondary-custom {
+    min-width: 145px !important;
+    height: 44px !important;
+    padding: 0 20px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    line-height: normal !important;
+  }
+
+  /* Secondary Button - Both Themes */
+  [data-theme="dark"] .btn-secondary-custom,
+  html.dark .btn-secondary-custom {
+    background: #222433 !important;
+    border: 1px solid #333547 !important;
+    color: #FFFFFF !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  [data-theme="dark"] .btn-secondary-custom:hover,
+  html.dark .btn-secondary-custom:hover {
+    background: #F84464 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 14px rgba(248, 68, 100, 0.35) !important;
+  }
+
+  :root:not([data-theme="dark"]) .btn-secondary-custom,
+  [data-theme="light"] .btn-secondary-custom {
+    background: #FFFFFF !important;
+    border: 1px solid #D5D5E2 !important;
+    color: #1A1A24 !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  :root:not([data-theme="dark"]) .btn-secondary-custom:hover,
+  [data-theme="light"] .btn-secondary-custom:hover {
+    background: #F84464 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(248, 68, 100, 0.3) !important;
+  }
+
+  /* Hero Select City Location Pin Icon - Black for high contrast */
+  #heroCityTrigger .hero-location-icon,
+  .btn-secondary-custom .hero-location-icon {
+    color: #000000 !important;
+    transition: color 0.18s ease;
+  }
+
+  #heroCityTrigger:hover .hero-location-icon,
+  #heroCityTrigger:active .hero-location-icon,
+  #heroCityTrigger:focus .hero-location-icon,
+  .btn-secondary-custom:hover .hero-location-icon,
+  .btn-secondary-custom:active .hero-location-icon,
+  .btn-secondary-custom:focus .hero-location-icon {
+    color: #000000 !important;
+  }
+
+  /* Category Cards - Both Themes */
+  .category-card {
+    border-radius: 20px !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease !important;
+  }
+
+  [data-theme="dark"] .category-card,
+  html.dark .category-card {
+    border: 1.5px solid #333547 !important;
+    background: #222433 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 16px rgba(248, 68, 100, 0.12) !important;
+  }
+
+  [data-theme="dark"] .category-card:hover,
+  html.dark .category-card:hover {
+    border-color: #F84464 !important;
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.85), 0 0 24px rgba(248, 68, 100, 0.35) !important;
+    transform: translateY(-4px) !important;
+  }
+
+  [data-theme="dark"] .category-card .fw-bold,
+  html.dark .category-card .fw-bold {
+    color: #FFFFFF !important;
+  }
+
+  [data-theme="dark"] .category-card span,
+  html.dark .category-card span {
+    color: #9698A9 !important;
+  }
+
+  :root:not([data-theme="dark"]) .category-card,
+  [data-theme="light"] .category-card {
+    border: 1.5px solid #E5E5EF !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 6px 20px rgba(26, 26, 36, 0.05), 0 0 16px rgba(248, 68, 100, 0.10) !important;
+  }
+
+  :root:not([data-theme="dark"]) .category-card:hover,
+  [data-theme="light"] .category-card:hover {
+    border-color: #F84464 !important;
+    box-shadow: 0 12px 28px -4px rgba(26, 26, 36, 0.1), 0 0 24px rgba(248, 68, 100, 0.25) !important;
+    transform: translateY(-4px) !important;
+  }
+
+  :root:not([data-theme="dark"]) .category-card .fw-bold,
+  [data-theme="light"] .category-card .fw-bold {
+    color: #1A1A24 !important;
+  }
+
+  :root:not([data-theme="dark"]) .category-card span,
+  [data-theme="light"] .category-card span {
+    color: #666677 !important;
+  }
+
+  .spotlight-live-tag {
+    background: rgba(31, 37, 51, 0.9) !important;
+    border: 1px solid rgba(248, 68, 100, 0.4) !important;
+    color: #FFFFFF !important;
+    border-radius: 9999px !important;
+  }
+
+  .live-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #F84464;
+    display: inline-block;
+    margin-right: 6px;
+    box-shadow: 0 0 0 0 rgba(248, 68, 100, 0.8);
+  }
+
+  @keyframes livePulseGold {
+    0% {
+      box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.8);
+    }
+
+    70% {
+      box-shadow: 0 0 0 8px rgba(212, 175, 55, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    }
+  }
+
+  /* ==========================================================================
+     MOBILE & RESPONSIVE PERFECTION FOR HERO SPOTLIGHT & CARDS
+     ========================================================================== */
+  @media (max-width: 991px) {
+    .hero-spotlight {
+      padding: 44px 28px !important;
+      min-height: 400px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      align-items: flex-start !important;
+    }
+
+    .hero-stage-overlay {
+      background: linear-gradient(180deg,
+          rgba(11, 12, 16, 0.96) 0%,
+          rgba(11, 12, 16, 0.82) 35%,
+          rgba(11, 12, 16, 0.55) 65%,
+          rgba(11, 12, 16, 0.95) 100%) !important;
+    }
+
+    .hero-content-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      text-align: left !important;
+      align-items: flex-start !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-spotlight {
+      padding: 36px 18px !important;
+      min-height: 360px !important;
+      margin: 12px 0 24px !important;
+      border-radius: 20px !important;
+      align-items: flex-start !important;
+    }
+
+    .hero-headline {
+      font-size: clamp(1.5rem, 5.2vw, 1.85rem) !important;
+      line-height: 1.22 !important;
+      margin-bottom: 8px !important;
+      word-break: break-word !important;
+    }
+
+    .hero-lead-text {
+      font-size: 0.9rem !important;
+      line-height: 1.5 !important;
+      margin-bottom: 16px !important;
+      word-break: break-word !important;
+    }
+
+    .hero-cta-group {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+      width: 100% !important;
+    }
+
+    .hero-cta-group .btn-brand,
+    .hero-cta-group .btn-secondary-custom {
+      min-width: 0 !important;
+      width: 100% !important;
+      height: 42px !important;
+      padding: 0 10px !important;
+      font-size: 0.84rem !important;
+      text-align: center !important;
+      justify-content: center !important;
+      border-radius: 10px !important;
+    }
+
+    .spotlight-header-strip {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
+      margin-bottom: 10px !important;
+    }
+
+    .spotlight-header-left {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      flex-wrap: wrap !important;
+      min-width: 0 !important;
+    }
+
+    .spotlight-pagination-controls {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      margin-left: auto !important;
+      flex-shrink: 0 !important;
+    }
+
+    .spotlight-nav-btn {
+      width: 32px !important;
+      height: 32px !important;
+      flex-shrink: 0 !important;
+    }
+
+    .spotlight-card,
+    .hero-spotlight .spotlight-card {
+      border-radius: 24px !important;
+      padding: 12px !important;
+    }
+
+    .spotlight-card .card-image-wrapper,
+    .hero-spotlight .spotlight-card .card-image-wrapper {
+      border-radius: 18px !important;
+      height: 190px !important;
+    }
+
+    .spotlight-card .event-card-img,
+    .hero-spotlight .spotlight-card .event-card-img {
+      border-radius: 18px !important;
+    }
+
+    .card-top-badges {
+      top: 8px !important;
+      left: 8px !important;
+      right: 8px !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 6px !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+    }
+
+    .card-top-badges>div {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 4px !important;
+    }
+
+    .badge-category-card,
+    .badge-date-card,
+    .booked-count-badge {
+      padding: 3px 8px !important;
+      font-size: 0.68rem !important;
+      white-space: nowrap !important;
+    }
+
+    .event-meta-strip {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      align-items: center !important;
+      gap: 4px 8px !important;
+      font-size: 0.78rem !important;
+    }
+
+    .event-title {
+      font-size: 1.15rem !important;
+      line-height: 1.3 !important;
+      margin-bottom: 6px !important;
+      word-break: break-word !important;
+    }
+
+    .event-description-text {
+      font-size: 0.82rem !important;
+      line-height: 1.4 !important;
+      margin-bottom: 10px !important;
+      word-break: break-word !important;
+    }
+
+    .card-footer-strip {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 8px !important;
+      padding-top: 10px !important;
+      flex-wrap: wrap !important;
+    }
+
+    .btn-book-card {
+      padding: 7px 16px !important;
+      font-size: 0.82rem !important;
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-spotlight {
+      padding: 16px 12px !important;
+      border-radius: 18px !important;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.68rem !important;
+      padding: 3px 8px !important;
+    }
+
+    .hero-headline {
+      font-size: 1.48rem !important;
+    }
+
+    .spotlight-header-strip {
+      gap: 6px !important;
+    }
+
+    .spotlight-title-label {
+      font-size: 0.7rem !important;
+    }
+
+    .spotlight-live-tag {
+      font-size: 0.65rem !important;
+      padding: 2px 8px !important;
+    }
+
+    .spotlight-card,
+    .hero-spotlight .spotlight-card {
+      border-radius: 20px !important;
+      padding: 10px !important;
+    }
+
+    .spotlight-card .card-image-wrapper,
+    .hero-spotlight .spotlight-card .card-image-wrapper {
+      border-radius: 14px !important;
+      height: 175px !important;
+    }
+
+    .spotlight-card .event-card-img,
+    .hero-spotlight .spotlight-card .event-card-img {
+      border-radius: 14px !important;
+    }
+
+    .price-amount {
+      font-size: 1.15rem !important;
+    }
+
+    .btn-book-card {
+      padding: 7px 12px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .hero-cta-group {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* ==========================================================================
+     LUXURY REPUTATION & METRICS RIBBON (After Hero Section)
+     ========================================================================== */
+  /* Luxury Reputation & Metrics Ribbon - Both Themes */
+  .luxury-metrics-ribbon {
+    border-radius: 22px !important;
+    padding: 30px 24px !important;
+    margin: 28px 0 36px 0 !important;
+    transition: all 0.25s ease !important;
+  }
+
+  [data-theme="dark"] .luxury-metrics-ribbon,
+  html.dark .luxury-metrics-ribbon {
+    background: #222433 !important;
+    border: 1.5px solid #333547 !important;
+    box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 24px rgba(248, 68, 100, 0.12) !important;
+  }
+
+  [data-theme="dark"] .luxury-metric-col:not(:first-child)::before,
+  html.dark .luxury-metric-col:not(:first-child)::before {
+    background: #333547;
+  }
+
+  [data-theme="dark"] .luxury-metric-val,
+  html.dark .luxury-metric-val {
+    color: #F84464 !important;
+    -webkit-text-fill-color: #F84464 !important;
+    text-shadow: 0 0 16px rgba(248, 68, 100, 0.45), 0 2px 4px rgba(0, 0, 0, 0.7);
+    background: none !important;
+  }
+
+  [data-theme="dark"] .luxury-metric-label,
+  html.dark .luxury-metric-label {
+    color: #FFFFFF !important;
+  }
+
+  [data-theme="dark"] .luxury-metric-subtext,
+  html.dark .luxury-metric-subtext {
+    color: #9698A9 !important;
+  }
+
+  :root:not([data-theme="dark"]) .luxury-metrics-ribbon,
+  [data-theme="light"] .luxury-metrics-ribbon {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E5E5EF !important;
+    box-shadow: 0 10px 32px rgba(26, 26, 36, 0.06), 0 0 20px rgba(248, 68, 100, 0.10) !important;
+  }
+
+  :root:not([data-theme="dark"]) .luxury-metric-col:not(:first-child)::before,
+  [data-theme="light"] .luxury-metric-col:not(:first-child)::before {
+    background: #E5E5EF;
+  }
+
+  :root:not([data-theme="dark"]) .luxury-metric-val,
+  [data-theme="light"] .luxury-metric-val {
+    color: #F84464 !important;
+    -webkit-text-fill-color: #F84464 !important;
+    text-shadow: 0 0 10px rgba(248, 68, 100, 0.25);
+    background: none !important;
+  }
+
+  :root:not([data-theme="dark"]) .luxury-metric-label,
+  [data-theme="light"] .luxury-metric-label {
+    color: #1A1A24 !important;
+  }
+
+  :root:not([data-theme="dark"]) .luxury-metric-subtext,
+  [data-theme="light"] .luxury-metric-subtext {
+    color: #666677 !important;
+  }
+
+  .luxury-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+  }
+
+  .luxury-metric-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 6px 16px;
+    position: relative;
+  }
+
+  .luxury-metric-col:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    bottom: 15%;
+    width: 1px;
+  }
+
+  .luxury-metric-val {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 2.35rem !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+    color: #F84464 !important;
+    margin-bottom: 6px !important;
+    letter-spacing: -0.01em;
+    background: none !important;
+    display: block !important;
+  }
+
+  .luxury-metric-label {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    margin-bottom: 4px !important;
+    line-height: 1.35 !important;
+  }
+
+  .luxury-metric-subtext {
+    font-size: 0.82rem !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+  }
+
+  @media (max-width: 991px) {
+    .luxury-metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 0;
+    }
+
+    .luxury-metric-col:not(:first-child)::before {
+      display: none;
+    }
+
+    .luxury-metric-col:nth-child(2n)::before {
+      display: block;
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10%;
+      bottom: 10%;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .luxury-metric-val {
+      font-size: 2rem !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .luxury-metrics-ribbon {
+      padding: 22px 14px !important;
+      border-radius: 18px !important;
+      margin: 20px 0 28px 0 !important;
+    }
+
+    .luxury-metric-val {
+      font-size: 1.75rem !important;
+    }
+
+    .luxury-metric-label {
+      font-size: 0.7rem !important;
+    }
+
+    .luxury-metric-subtext {
+      font-size: 0.75rem !important;
+    }
+  }
+
+  /* Customer Reviews Section */
+  .customer-reviews-section {
+    margin-top: 60px;
+    margin-bottom: 45px;
+  }
+
+  .reviews-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(248, 68, 100, 0.08);
+    border: 1px solid rgba(248, 68, 100, 0.25);
+    border-radius: 50px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #F84464;
+    margin-bottom: 12px;
+  }
+
+  .reviews-heading {
+    font-size: 2.15rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary, #1A1A24);
+    margin-bottom: 10px;
+  }
+
+  .reviews-subheading {
+    font-size: 0.98rem;
+    color: var(--text-secondary, #6B7280);
+    line-height: 1.6;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .reviews-metric-banner {
+    background: var(--bg-card, #FFFFFF);
+    border: 1.5px solid var(--border-card, #EBEBF2);
+    border-radius: 20px;
+    padding: 20px 28px;
+    margin: 32px auto 40px auto;
+    max-width: 900px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .score-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .score-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #F84464;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .review-card {
+    background: var(--bg-card, #FFFFFF);
+    border: 1.5px solid var(--border-card, #EBEBF2);
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+  }
+
+  .review-card:hover {
+    border-color: #F84464 !important;
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(248, 68, 100, 0.12);
+  }
+
+  [data-theme="dark"] .review-card {
+    background: #222433 !important;
+    border-color: #333547 !important;
+  }
+
+  [data-theme="dark"] .review-card:hover {
+    border-color: #F84464 !important;
+    box-shadow: 0 14px 32px rgba(248, 68, 100, 0.22) !important;
+  }
+
+  [data-theme="dark"] .reviews-metric-banner {
+    background: #222433 !important;
+    border-color: #333547 !important;
+  }
+
+  [data-theme="dark"] .reviews-heading {
+    color: #FFFFFF !important;
+  }
+
+  [data-theme="dark"] .reviews-subheading {
+    color: #C8CAD7 !important;
+  }
+
+  .review-author-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .review-event-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    background: rgba(248, 68, 100, 0.08);
+    color: #F84464;
+    margin-bottom: 12px;
+  }
+
+  .review-stars {
+    color: #FFB800;
+    font-size: 0.88rem;
+    display: flex;
+    gap: 3px;
+  }
+
+  .review-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary, #1A1A24);
+    margin: 10px 0 8px 0;
+    line-height: 1.35;
+  }
+
+  [data-theme="dark"] .review-title {
+    color: #FFFFFF !important;
+  }
+
+  .review-text {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-secondary, #4A4C5E);
+    margin-bottom: 18px;
+    flex-grow: 1;
+  }
+
+  [data-theme="dark"] .review-text {
+    color: #C8CAD7 !important;
+  }
+
+  .review-verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #10B981;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .review-footer {
+    border-top: 1px solid var(--border-color, #F0F0F5);
+    padding-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  [data-theme="dark"] .review-footer {
+    border-top-color: #333547 !important;
+  }
+
+  .review-helpful-btn {
+    background: transparent;
+    border: 1px solid var(--border-card, #E5E7EB);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6B7280);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .review-helpful-btn:hover,
+  .review-helpful-btn.liked {
+    background: rgba(248, 68, 100, 0.08);
+    border-color: #F84464;
+    color: #F84464;
+  }
+
+  .review-helpful-btn.liked i {
+    font-weight: 900;
+  }
+
+  .reviews-trust-strip {
+    background: var(--bg-card, #FFFFFF);
+    border: 1.5px solid var(--border-card, #EBEBF2);
+    border-radius: 20px;
+    padding: 26px 32px;
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  [data-theme="dark"] .reviews-trust-strip {
+    background: #222433 !important;
+    border-color: #333547 !important;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .trust-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(248, 68, 100, 0.1);
+    color: #F84464;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .trust-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary, #1A1A24);
+    margin-bottom: 2px;
+  }
+
+  [data-theme="dark"] .trust-title {
+    color: #FFFFFF !important;
+  }
+
+  .trust-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6B7280);
+    margin: 0;
+  }
+
+  [data-theme="dark"] .trust-desc {
+    color: #9EA1B5 !important;
+  }
+
+  @media (max-width: 991px) {
+    .reviews-trust-strip {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .reviews-trust-strip {
+      grid-template-columns: 1fr;
+      padding: 20px;
+    }
+
+    .reviews-heading {
+      font-size: 1.6rem;
+    }
+
+    .reviews-metric-banner {
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container">
-  
+
   {% if booking_success %}
-    <div class="booking-alert-banner {% if booking_confirmed %}confirmed{% else %}pending{% endif %} mt-3">
-      <div class="d-flex align-items-center gap-2">
-        <i class="fa-solid {% if booking_confirmed %}fa-circle-check text-success{% else %}fa-clock text-warning{% endif %}" style="font-size: 1.1rem;"></i>
-        <div>
-          <span class="text-dark small fw-bold">{{ booking_success }}</span>
-          {% if ticket_id %}
-            <span class="text-muted small ms-2">(Ticket #BK-{{ ticket_id }})</span>
-          {% endif %}
-        </div>
-      </div>
-      <div class="d-flex align-items-center gap-2">
+  <div class="booking-alert-banner {% if booking_confirmed %}confirmed{% else %}pending{% endif %} mt-3">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fa-solid {% if booking_confirmed %}fa-circle-check text-success{% else %}fa-clock text-warning{% endif %}"
+        style="font-size: 1.1rem;"></i>
+      <div>
+        <span class="text-dark small fw-bold">{{ booking_success }}</span>
         {% if ticket_id %}
-          {% if booking_confirmed %}
-            <a href="{% url 'download_ticket' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
-              <i class="fa-solid fa-file-pdf me-1"></i> Download Ticket PDF
-            </a>
-            <a href="{% url 'my_bookings' %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
-              View Tickets
-            </a>
-          {% else %}
-            <a href="{% url 'confirm_booking' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
-              <i class="fa-solid fa-circle-check me-1"></i> Confirm Booking
-            </a>
-            <a href="{% url 'user_cancel_booking' ticket_id %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
-              Cancel
-            </a>
-          {% endif %}
+        <span class="text-muted small ms-2">(Ticket #BK-{{ ticket_id }})</span>
         {% endif %}
       </div>
     </div>
+    <div class="d-flex align-items-center gap-2">
+      {% if ticket_id %}
+      {% if booking_confirmed %}
+      <a href="{% url 'download_ticket' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+        <i class="fa-solid fa-file-pdf me-1"></i> Download Ticket PDF
+      </a>
+      <a href="{% url 'my_bookings' %}" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 6px 12px;">
+        View Tickets
+      </a>
+      {% else %}
+      <a href="{% url 'confirm_booking' ticket_id %}" class="btn-brand" style="font-size: 0.82rem; padding: 6px 14px;">
+        <i class="fa-solid fa-circle-check me-1"></i> Confirm Booking
+      </a>
+      <a href="{% url 'user_cancel_booking' ticket_id %}" class="btn-secondary-custom"
+        style="font-size: 0.82rem; padding: 6px 12px;">
+        Cancel
+      </a>
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
   {% endif %}
 
   <!-- Hero Section with Spotlight Carousel -->
   <section class="hero-spotlight" aria-label="Featured Events">
+    <!-- Full HD Live Concert Stage Backdrop with Dynamic Neon Spotlights & Atmospheric Laser Animations -->
+    <div class="hero-stage-backdrop" aria-hidden="true">
+      <img src="{% static 'images/hero_live_stage_hd.jpg' %}"
+        alt="Full HD Live Concert Arena Stage with Neon Spotlights and Laser Lighting" class="hero-stage-img" id="heroStageImg" loading="eager"
+        decoding="async">
+      <div class="concert-laser-beams" aria-hidden="true"></div>
+      <div class="concert-ambient-glow" aria-hidden="true"></div>
+      <div class="concert-particles-layer" aria-hidden="true">
+        <span class="concert-sparkle p1"></span>
+        <span class="concert-sparkle p2"></span>
+        <span class="concert-sparkle p3"></span>
+        <span class="concert-sparkle p4"></span>
+        <span class="concert-sparkle p5"></span>
+        <span class="concert-sparkle p6"></span>
+        <span class="concert-sparkle p7"></span>
+        <span class="concert-sparkle p8"></span>
+        <span class="concert-sparkle p9"></span>
+        <span class="concert-sparkle p10"></span>
+      </div>
+      <div class="hero-stage-overlay"></div>
+    </div>
+
     <div class="hero-content-wrapper">
       <div class="hero-eyebrow">
-        <img src="{% static 'images/logo.svg' %}" alt="Kamnath Events Logo" class="hero-eyebrow-logo">
-        <span>Kamnath Events • Official Platform</span>
+        <span class="me-1">🎟️</span> LIVE ENTERTAINMENT & TICKETING
       </div>
 
       <h1 class="hero-headline">
-        Book tickets for live events in your city
+        Book tickets for live events in <span class="hero-city-italic">your city</span>
       </h1>
 
       <p class="hero-lead-text">
-        Find concerts, standup comedy, business conferences, and sports matches with live seat selection and digital tickets.
+        Find concerts, standup comedy, business conferences, and sports matches with live seat selection and digital
+        tickets.
       </p>
 
       <div class="hero-cta-group">
         <a href="{% url 'events' %}" class="btn-brand">
           Browse Events
         </a>
-        <button type="button" class="btn-secondary-custom" id="heroCityTrigger" onclick="document.getElementById('cityModal').classList.add('active')">
-          <i class="fa-solid fa-location-dot text-danger me-1"></i>
+        <button type="button" class="btn-secondary-custom" id="heroCityTrigger"
+          onclick="document.getElementById('cityModal').classList.add('active')">
+          <i class="fa-solid fa-location-dot me-1 hero-location-icon"></i>
           Select City
         </button>
       </div>
     </div>
+  </section>
 
-    <!-- Spotlight Carousel Card (Right Column) -->
-    <div class="hero-spotlight-carousel" aria-label="Featured Event Carousel">
-      <div class="spotlight-header-strip">
-        <div class="d-flex align-items-center gap-2">
-          <span class="spotlight-title-label">Featured Spotlight</span>
-          <span class="spotlight-live-tag">Top Pick</span>
-        </div>
-        <div class="spotlight-pagination-controls">
-          <span class="spotlight-counter" id="spotlightCounter">1 / {% if spotlight_events %}{{ spotlight_events|length }}{% else %}3{% endif %}</span>
-          <button type="button" class="spotlight-nav-btn prev" aria-label="Previous slide">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-          <button type="button" class="spotlight-nav-btn next" aria-label="Next slide">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
+  <!-- Luxury Reputation & Palatial Metrics Ribbon -->
+  <section class="luxury-metrics-ribbon" aria-label="Our Achievements & Track Record">
+    <div class="luxury-metrics-grid">
+      <div class="luxury-metric-col">
+        <div class="luxury-metric-val">500+</div>
+        <div class="luxury-metric-label">Bespoke Galas Hosted</div>
+        <p class="luxury-metric-subtext">Symphonies, summits &amp; state dinners</p>
       </div>
 
-      <div class="spotlight-slides-wrapper" id="spotlightSlidesWrapper">
-        {% if spotlight_events %}
-          {% for event in spotlight_events %}
-            <div class="spotlight-slide {% if forloop.first %}active{% endif %}" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} of {{ spotlight_events|length }}">
-              <div class="spotlight-card">
-                <div class="card-image-wrapper">
-                  <img src="{{ event.get_thumbnail_url }}" alt="{{ event.title }}" class="event-card-img" loading="eager">
-                  <div class="card-top-badges">
-                    <div class="d-flex align-items-center gap-2">
-                      <span class="badge-category-card">{{ event.category.category_name }}</span>
-                      <span class="badge-date-card">
-                        <i class="fa-regular fa-calendar"></i> {{ event.event_date|date:"D, d M" }}
-                      </span>
-                    </div>
-                    <span class="booked-count-badge">
-                      <i class="fa-solid fa-users"></i> {{ event.total_bookings|default_if_none:event.booking_set.count }} booked
-                    </span>
-                  </div>
-                </div>
-
-                <div class="card-content-body">
-                  <div class="event-meta-strip">
-                    <span class="event-meta-item">
-                      <i class="fa-regular fa-calendar"></i>
-                      {{ event.event_date|date:"D, d M Y" }}
-                    </span>
-                    <span>•</span>
-                    <span class="event-meta-item">
-                      <i class="fa-solid fa-location-dot"></i>
-                      {{ event.venue }}
-                    </span>
-                  </div>
-
-                  <h3 class="event-title">{{ event.title }}</h3>
-                  <p class="event-description-text">{{ event.description }}</p>
-
-                  <div class="card-footer-strip">
-                    <div class="price-container">
-                      <span class="price-subtext">Starting from</span>
-                      <span class="price-amount">₹{{ event.price|floatformat:0 }}</span>
-                    </div>
-
-                    <button type="button"
-                            class="btn-brand btn-book-card"
-                            data-book-trigger
-                            data-event-id="{{ event.id }}"
-                            data-event-title="{{ event.title }}"
-                            data-event-venue="{{ event.venue }}"
-                            data-event-price="{{ event.price }}"
-                            data-event-date="{{ event.event_date|date:'d M Y' }}">
-                      <i class="fa-solid fa-bolt me-1"></i> Book Now
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <!-- Curated Spotlight Slides for Initial Presentation -->
-          <div class="spotlight-slide active" role="group" aria-roledescription="slide" aria-label="1 of 3">
-            <div class="spotlight-card">
-              <div class="card-image-wrapper">
-                <img src="{% static 'images/music.jpg' %}" alt="Ahmedabad Music Festival" class="event-card-img" loading="eager">
-                <div class="card-top-badges">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge-category-card">Concert</span>
-                    <span class="badge-date-card">
-                      <i class="fa-regular fa-calendar"></i> Sat, 15 Oct
-                    </span>
-                  </div>
-                  <span class="booked-count-badge">
-                    <i class="fa-solid fa-users"></i> 340 booked
-                  </span>
-                </div>
-              </div>
-              <div class="card-content-body">
-                <div class="event-meta-strip">
-                  <span class="event-meta-item"><i class="fa-regular fa-calendar"></i> Sat, 15 Oct 2026</span>
-                  <span>•</span>
-                  <span class="event-meta-item"><i class="fa-solid fa-location-dot"></i> GIFT City Arena</span>
-                </div>
-                <h3 class="event-title">Ahmedabad Music Festival</h3>
-                <p class="event-description-text">Live concert featuring regional and national indie bands.</p>
-                <div class="card-footer-strip">
-                  <div class="price-container">
-                    <span class="price-subtext">Starting from</span>
-                    <span class="price-amount">₹999</span>
-                  </div>
-                  <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="101" data-event-title="Ahmedabad Music Festival" data-event-venue="GIFT City Arena" data-event-price="999" data-event-date="15 Oct 2026">
-                    <i class="fa-solid fa-bolt me-1"></i> Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="spotlight-slide" role="group" aria-roledescription="slide" aria-label="2 of 3">
-            <div class="spotlight-card">
-              <div class="card-image-wrapper">
-                <img src="{% static 'images/comedy.jpg' %}" alt="Mumbai Standup Comedy Showcase" class="event-card-img" loading="eager">
-                <div class="card-top-badges">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge-category-card">Comedy</span>
-                    <span class="badge-date-card">
-                      <i class="fa-regular fa-calendar"></i> Sun, 18 Oct
-                    </span>
-                  </div>
-                  <span class="booked-count-badge">
-                    <i class="fa-solid fa-users"></i> 210 booked
-                  </span>
-                </div>
-              </div>
-              <div class="card-content-body">
-                <div class="event-meta-strip">
-                  <span class="event-meta-item"><i class="fa-regular fa-calendar"></i> Sun, 18 Oct 2026</span>
-                  <span>•</span>
-                  <span class="event-meta-item"><i class="fa-solid fa-location-dot"></i> Bandra Auditorium</span>
-                </div>
-                <h3 class="event-title">Mumbai Standup Comedy Showcase</h3>
-                <p class="event-description-text">An evening of standup comedy with established and upcoming comedians.</p>
-                <div class="card-footer-strip">
-                  <div class="price-container">
-                    <span class="price-subtext">Starting from</span>
-                    <span class="price-amount">₹499</span>
-                  </div>
-                  <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="102" data-event-title="Mumbai Standup Comedy Showcase" data-event-venue="Bandra Auditorium" data-event-price="499" data-event-date="18 Oct 2026">
-                    <i class="fa-solid fa-bolt me-1"></i> Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="spotlight-slide" role="group" aria-roledescription="slide" aria-label="3 of 3">
-            <div class="spotlight-card">
-              <div class="card-image-wrapper">
-                <img src="{% static 'images/tech.jpg' %}" alt="Bengaluru Tech Summit 2026" class="event-card-img" loading="eager">
-                <div class="card-top-badges">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge-category-card">Conference</span>
-                    <span class="badge-date-card">
-                      <i class="fa-regular fa-calendar"></i> Sat, 24 Oct
-                    </span>
-                  </div>
-                  <span class="booked-count-badge">
-                    <i class="fa-solid fa-users"></i> 520 booked
-                  </span>
-                </div>
-              </div>
-              <div class="card-content-body">
-                <div class="event-meta-strip">
-                  <span class="event-meta-item"><i class="fa-regular fa-calendar"></i> Sat, 24 Oct 2026</span>
-                  <span>•</span>
-                  <span class="event-meta-item"><i class="fa-solid fa-location-dot"></i> Whitefield Convention</span>
-                </div>
-                <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
-                <p class="event-description-text">Annual conference covering product engineering, startup growth, and infrastructure.</p>
-                <div class="card-footer-strip">
-                  <div class="price-container">
-                    <span class="price-subtext">Starting from</span>
-                    <span class="price-amount">₹1,499</span>
-                  </div>
-                  <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="103" data-event-title="Bengaluru Tech Summit 2026" data-event-venue="Whitefield Convention" data-event-price="1499" data-event-date="24 Oct 2026">
-                    <i class="fa-solid fa-bolt me-1"></i> Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endif %}
+      <div class="luxury-metric-col">
+        <div class="luxury-metric-val">150,000+</div>
+        <div class="luxury-metric-label">Patron Accreditations</div>
+        <p class="luxury-metric-subtext">Cryptographic digital gold passes</p>
       </div>
 
-      <div class="spotlight-dots-bar" role="tablist" aria-label="Choose featured event slide">
-        {% if spotlight_events %}
-          {% for event in spotlight_events %}
-            <button type="button" class="spotlight-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter }}"></button>
-          {% endfor %}
-        {% else %}
-          <button type="button" class="spotlight-dot active" data-index="0" aria-label="Slide 1"></button>
-          <button type="button" class="spotlight-dot" data-index="1" aria-label="Slide 2"></button>
-          <button type="button" class="spotlight-dot" data-index="2" aria-label="Slide 3"></button>
-        {% endif %}
+      <div class="luxury-metric-col">
+        <div class="luxury-metric-val">18 Metros</div>
+        <div class="luxury-metric-label">Palatial Footprint</div>
+        <p class="luxury-metric-subtext">Pan-India &amp; Riviera properties</p>
+      </div>
+
+      <div class="luxury-metric-col">
+        <div class="luxury-metric-val">99.98%</div>
+        <div class="luxury-metric-label">Flawless Check-Ins</div>
+        <p class="luxury-metric-subtext">Zero counterfeit admission rate</p>
       </div>
     </div>
   </section>
@@ -283,13 +2125,15 @@
     <div class="row g-3">
       {% for cat in categories %}
       <div class="col-6 col-md-4 col-lg-2">
-        <div class="card p-3 text-center h-100 w-100 category-chip category-card" data-category="{{ cat.category_name|lower }}" style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; min-height: 74px; cursor: pointer; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); transition: transform 0.2s, box-shadow 0.2s;">
+        <div class="card p-3 text-center h-100 w-100 category-chip category-card"
+          data-category="{{ cat.category_name|lower }}"
+          style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; min-height: 74px; cursor: pointer;">
           <div class="fw-bold text-dark small mb-1">{{ cat.category_name }}</div>
           <span class="text-muted" style="font-size: 0.75rem;">
             {% if cat.event_count %}
-              {{ cat.event_count }} Event{{ cat.event_count|pluralize }}
+            {{ cat.event_count }} Event{{ cat.event_count|pluralize }}
             {% else %}
-              Explore events
+            Explore events
             {% endif %}
           </span>
         </div>
@@ -303,10 +2147,10 @@
   </section>
 
   <!-- Events Grid -->
-  <section class="my-5" aria-label="Upcoming Events">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="fs-4 mb-0">Upcoming Events</h2>
-      <div id="resultsCounter" class="filter-results-counter"></div>
+  <section class="my-5" aria-label="Featured Events">
+    <div class="events-header-strip d-flex justify-content-between align-items-center mb-3">
+      <h2 class="fs-4 mb-0 text-start">Featured Events</h2>
+      <div id="resultsCounter" class="filter-results-counter text-end"></div>
     </div>
 
     <!-- Filter Bar -->
@@ -315,7 +2159,7 @@
         <select class="filter-select" id="categoryFilterSelect" aria-label="Filter by Category">
           <option value="all">All Categories</option>
           {% for cat in categories %}
-            <option value="{{ cat.category_name|lower }}">{{ cat.category_name }}</option>
+          <option value="{{ cat.category_name|lower }}">{{ cat.category_name }}</option>
           {% endfor %}
         </select>
 
@@ -324,10 +2168,6 @@
           <button type="button" class="date-chip-btn" data-date="today">Today</button>
           <button type="button" class="date-chip-btn" data-date="weekend">This Weekend</button>
         </div>
-
-        <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
-          <i class="fa-solid fa-rotate-left"></i> Reset
-        </button>
       </div>
 
       <div class="filter-right-group">
@@ -338,275 +2178,180 @@
           <option value="price-low">Price: Low to High</option>
           <option value="price-high">Price: High to Low</option>
         </select>
+
+        <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
       </div>
     </div>
 
     <!-- Grid -->
     <div class="events-grid" id="eventsContainer">
       {% if events %}
-        {% for event in events %}
-          <div class="event-card-wrapper">
-            <article class="event-card"
-                     data-event-id="{{ event.id }}"
-                     data-title="{{ event.title }}"
-                     data-venue="{{ event.venue }}"
-                     data-category="{{ event.category.category_name|lower }}"
-                     data-category-name="{{ event.category.category_name }}"
-                     data-city="{{ event.venue }}"
-                     data-price="{{ event.price|floatformat:0 }}"
-                     data-date="{{ event.event_date|date:'Y-m-d' }}"
-                     data-date-formatted="{{ event.event_date|date:'D, d M Y' }}"
-                     data-date-badge="{{ event.event_date|date:'D, d M' }}"
-                     data-image="{{ event.get_thumbnail_url }}"
-                     data-description="{{ event.description }}"
-                     data-booked="{{ event.total_bookings|default_if_none:event.booking_set.count|default:'12' }}">
-              
-              <div class="card-image-wrapper">
-                <img src="{{ event.get_thumbnail_url }}" alt="{{ event.title }}" class="event-card-img" loading="lazy">
+      {% for event in events %}
+      <div class="event-card-wrapper">
+        <article class="event-card" data-event-id="{{ event.id }}" data-title="{{ event.title }}"
+          data-venue="{{ event.venue }}" data-category="{{ event.category.category_name|lower }}"
+          data-category-name="{{ event.category.category_name }}" data-city="{{ event.venue }}"
+          data-price="{{ event.price|floatformat:0 }}" data-date="{{ event.event_date|date:'Y-m-d' }}"
+          data-date-formatted="{{ event.event_date|date:'D, d M Y' }}"
+          data-date-badge="{{ event.event_date|date:'D, d M' }}" data-image="{{ event.get_thumbnail_url }}"
+          data-description="{{ event.description }}"
+          data-booked="{{ event.total_bookings|default_if_none:event.booking_set.count|default:'12' }}">
 
-                <div class="card-top-badges">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge-category-card">{{ event.category.category_name }}</span>
-                    <span class="badge-date-card">
-                      <i class="fa-regular fa-calendar"></i> {{ event.event_date|date:"D, d M" }}
-                    </span>
-                  </div>
-                  <button type="button"
-                          class="card-like-btn"
-                          aria-label="Save to favorites"
-                          title="Save to Wishlist"
-                          data-event-id="{{ event.id }}"
-                          data-event-title="{{ event.title }}"
-                          data-event-venue="{{ event.venue }}"
-                          data-event-price="{{ event.price }}"
-                          data-event-date="{{ event.event_date|date:'d M Y' }}"
-                          data-event-category="{{ event.category.category_name }}"
-                          data-event-thumbnail="{{ event.get_thumbnail_url }}">
-                    <i class="fa-regular fa-heart"></i>
-                  </button>
-                </div>
+          <div class="card-image-wrapper">
+            <img src="{{ event.get_thumbnail_url }}" alt="{{ event.title }}" class="event-card-img" loading="lazy">
+
+            <div class="card-top-badges">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge-category-card">{{ event.category.category_name }}</span>
+                <span class="badge-date-card">
+                  <i class="fa-regular fa-calendar"></i> {{ event.event_date|date:"D, d M" }}
+                </span>
               </div>
-
-              <div class="card-content-body">
-                <div class="event-meta-strip">
-                  <div class="event-meta-date-row">
-                    <i class="fa-regular fa-calendar"></i>
-                    <span>{{ event.event_date|date:"D, d M Y" }}</span>
-                  </div>
-                  <div class="event-meta-location-row">
-                    <div class="event-venue-item" title="{{ event.venue }}">
-                      <i class="fa-solid fa-location-dot"></i>
-                      <span class="event-venue-name">{{ event.venue }}</span>
-                    </div>
-                    <span class="meta-sep-dot">•</span>
-                    <span class="booked-count-badge">
-                      <i class="fa-solid fa-users"></i> {{ event.total_bookings|default_if_none:event.booking_set.count }} booked
-                    </span>
-                  </div>
-                </div>
-
-                <h3 class="event-title">{{ event.title }}</h3>
-                <p class="event-description-text">{{ event.description }}</p>
-
-                <div class="card-footer-strip">
-                  <div class="price-container">
-                    <span class="price-subtext">Starting from</span>
-                    <span class="price-amount">₹{{ event.price|floatformat:0 }}</span>
-                  </div>
-
-                  <button type="button"
-                          class="btn-brand btn-book-card"
-                          data-book-trigger
-                          data-event-id="{{ event.id }}"
-                          data-event-title="{{ event.title }}"
-                          data-event-venue="{{ event.venue }}"
-                          data-event-price="{{ event.price }}"
-                          data-event-date="{{ event.event_date|date:'d M Y' }}"
-                          data-event-category="{{ event.category.category_name }}">
-                    <i class="fa-solid fa-bolt me-1"></i> Book Now
-                  </button>
-                </div>
-              </div>
-            </article>
+              <button type="button" class="card-like-btn" aria-label="Save to favorites" title="Save to Wishlist"
+                data-event-id="{{ event.id }}" data-event-title="{{ event.title }}" data-event-venue="{{ event.venue }}"
+                data-event-price="{{ event.price }}" data-event-date="{{ event.event_date|date:'d M Y' }}"
+                data-event-category="{{ event.category.category_name }}"
+                data-event-thumbnail="{{ event.get_thumbnail_url }}">
+                <i class="fa-regular fa-heart"></i>
+              </button>
+            </div>
           </div>
-        {% endfor %}
+
+          <div class="card-content-body">
+            <div class="event-meta-strip">
+              <div class="event-meta-date-row">
+                <i class="fa-regular fa-calendar"></i>
+                <span>{{ event.event_date|date:"D, d M Y" }}</span>
+              </div>
+              <div class="event-meta-location-row">
+                <div class="event-venue-item" title="{{ event.venue }}">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span class="event-venue-name">{{ event.venue }}</span>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="event-title">{{ event.title }}</h3>
+          </div>
+        </article>
+      </div>
+      {% endfor %}
       {% else %}
-        <div class="event-card-wrapper">
-          <article class="event-card"
-                   data-event-id="101"
-                   data-title="Ahmedabad Music Festival"
-                   data-venue="GIFT City Arena"
-                   data-category="music"
-                   data-category-name="Music"
-                   data-city="Ahmedabad"
-                   data-price="999"
-                   data-date="2026-10-15"
-                   data-date-formatted="Sat, 15 Oct 2026"
-                   data-date-badge="Sat, 15 Oct"
-                   data-image="{% static 'images/music.jpg' %}"
-                   data-description="Live concert featuring regional and national indie bands with state-of-the-art stage production."
-                   data-booked="340">
-            <div class="card-image-wrapper">
-              <img src="{% static 'images/music.jpg' %}" alt="Music Festival" class="event-card-img">
-              <div class="card-top-badges">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge-category-card">Music</span>
-                  <span class="badge-date-card">
-                    <i class="fa-regular fa-calendar"></i> Sat, 15 Oct
-                  </span>
+      <div class="event-card-wrapper">
+        <article class="event-card" data-event-id="101" data-title="Ahmedabad Music Festival"
+          data-venue="GIFT City Arena" data-category="music" data-category-name="Music" data-city="Ahmedabad"
+          data-price="999" data-date="2026-10-15" data-date-formatted="Sat, 15 Oct 2026" data-date-badge="Sat, 15 Oct"
+          data-image="{% static 'images/music.jpg' %}"
+          data-description="Live concert featuring regional and national indie bands with state-of-the-art stage production."
+          data-booked="340">
+          <div class="card-image-wrapper">
+            <img src="{% static 'images/music.jpg' %}" alt="Music Festival" class="event-card-img">
+            <div class="card-top-badges">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge-category-card">Music</span>
+                <span class="badge-date-card">
+                  <i class="fa-regular fa-calendar"></i> Sat, 15 Oct
+                </span>
+              </div>
+              <button type="button" class="card-like-btn" aria-label="Favorite"><i
+                  class="fa-regular fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="card-content-body">
+            <div class="event-meta-strip">
+              <div class="event-meta-date-row">
+                <i class="fa-regular fa-calendar"></i>
+                <span>15 Oct 2026</span>
+              </div>
+              <div class="event-meta-location-row">
+                <div class="event-venue-item" title="GIFT City, Ahmedabad">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span class="event-venue-name">GIFT City, Ahmedabad</span>
                 </div>
-                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
               </div>
             </div>
-            <div class="card-content-body">
-              <div class="event-meta-strip">
-                <div class="event-meta-date-row">
-                  <i class="fa-regular fa-calendar"></i>
-                  <span>15 Oct 2026</span>
-                </div>
-                <div class="event-meta-location-row">
-                  <div class="event-venue-item" title="GIFT City, Ahmedabad">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span class="event-venue-name">GIFT City, Ahmedabad</span>
-                  </div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge">
-                    <i class="fa-solid fa-users"></i> 340 booked
-                  </span>
-                </div>
-              </div>
-              <h3 class="event-title">Ahmedabad Music Festival</h3>
-              <p class="event-description-text">Live concert featuring regional and national indie bands with state-of-the-art stage production.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹999</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="101" data-event-title="Ahmedabad Music Festival" data-event-venue="GIFT City Arena" data-event-price="999" data-event-date="15 Oct 2026" data-event-category="Music">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
-            </div>
-          </article>
-        </div>
+            <h3 class="event-title">Ahmedabad Music Festival</h3>
+          </div>
+        </article>
+      </div>
 
-        <div class="event-card-wrapper">
-          <article class="event-card"
-                   data-event-id="102"
-                   data-title="Surat Standup Comedy Showcase"
-                   data-venue="Dumas Road Auditorium"
-                   data-category="comedy"
-                   data-category-name="Comedy"
-                   data-city="Surat"
-                   data-price="499"
-                   data-date="2026-10-18"
-                   data-date-formatted="Sun, 18 Oct 2026"
-                   data-date-badge="Sun, 18 Oct"
-                   data-image="{% static 'images/comedy.jpg' %}"
-                   data-description="An evening of standup comedy with established and upcoming comedians delivering non-stop laughs."
-                   data-booked="210">
-            <div class="card-image-wrapper">
-              <img src="{% static 'images/comedy.jpg' %}" alt="Standup Comedy" class="event-card-img">
-              <div class="card-top-badges">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge-category-card">Comedy</span>
-                  <span class="badge-date-card">
-                    <i class="fa-regular fa-calendar"></i> Sun, 18 Oct
-                  </span>
+      <div class="event-card-wrapper">
+        <article class="event-card" data-event-id="102" data-title="Surat Standup Comedy Showcase"
+          data-venue="Dumas Road Auditorium" data-category="comedy" data-category-name="Comedy" data-city="Surat"
+          data-price="499" data-date="2026-10-18" data-date-formatted="Sun, 18 Oct 2026" data-date-badge="Sun, 18 Oct"
+          data-image="{% static 'images/comedy.jpg' %}"
+          data-description="An evening of standup comedy with established and upcoming comedians delivering non-stop laughs."
+          data-booked="210">
+          <div class="card-image-wrapper">
+            <img src="{% static 'images/comedy.jpg' %}" alt="Standup Comedy" class="event-card-img">
+            <div class="card-top-badges">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge-category-card">Comedy</span>
+                <span class="badge-date-card">
+                  <i class="fa-regular fa-calendar"></i> Sun, 18 Oct
+                </span>
+              </div>
+              <button type="button" class="card-like-btn" aria-label="Favorite"><i
+                  class="fa-regular fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="card-content-body">
+            <div class="event-meta-strip">
+              <div class="event-meta-date-row">
+                <i class="fa-regular fa-calendar"></i>
+                <span>18 Oct 2026</span>
+              </div>
+              <div class="event-meta-location-row">
+                <div class="event-venue-item" title="Dumas Road, Surat">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span class="event-venue-name">Dumas Road, Surat</span>
                 </div>
-                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
               </div>
             </div>
-            <div class="card-content-body">
-              <div class="event-meta-strip">
-                <div class="event-meta-date-row">
-                  <i class="fa-regular fa-calendar"></i>
-                  <span>18 Oct 2026</span>
-                </div>
-                <div class="event-meta-location-row">
-                  <div class="event-venue-item" title="Dumas Road, Surat">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span class="event-venue-name">Dumas Road, Surat</span>
-                  </div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge">
-                    <i class="fa-solid fa-users"></i> 210 booked
-                  </span>
-                </div>
-              </div>
-              <h3 class="event-title">Surat Standup Comedy Showcase</h3>
-              <p class="event-description-text">An evening of standup comedy with established and upcoming comedians delivering non-stop laughs.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹499</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="102" data-event-title="Surat Standup Comedy Showcase" data-event-venue="Dumas Road Auditorium" data-event-price="499" data-event-date="18 Oct 2026" data-event-category="Comedy">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
-            </div>
-          </article>
-        </div>
+            <h3 class="event-title">Surat Standup Comedy Showcase</h3>
+          </div>
+        </article>
+      </div>
 
-        <div class="event-card-wrapper">
-          <article class="event-card"
-                   data-event-id="103"
-                   data-title="Bengaluru Tech Summit 2026"
-                   data-venue="Whitefield Convention Centre"
-                   data-category="business"
-                   data-category-name="Business"
-                   data-city="Bengaluru"
-                   data-price="1499"
-                   data-date="2026-10-24"
-                   data-date-formatted="Sat, 24 Oct 2026"
-                   data-date-badge="Sat, 24 Oct"
-                   data-image="{% static 'images/tech.jpg' %}"
-                   data-description="Annual conference covering product engineering, startup growth, modern cloud architecture, and infrastructure."
-                   data-booked="520">
-            <div class="card-image-wrapper">
-              <img src="{% static 'images/tech.jpg' %}" alt="Tech Summit" class="event-card-img">
-              <div class="card-top-badges">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge-category-card">Business</span>
-                  <span class="badge-date-card">
-                    <i class="fa-regular fa-calendar"></i> Sat, 24 Oct
-                  </span>
+      <div class="event-card-wrapper">
+        <article class="event-card" data-event-id="103" data-title="Bengaluru Tech Summit 2026"
+          data-venue="Whitefield Convention Centre" data-category="business" data-category-name="Business"
+          data-city="Bengaluru" data-price="1499" data-date="2026-10-24" data-date-formatted="Sat, 24 Oct 2026"
+          data-date-badge="Sat, 24 Oct" data-image="{% static 'images/tech.jpg' %}"
+          data-description="Annual conference covering product engineering, startup growth, modern cloud architecture, and infrastructure."
+          data-booked="520">
+          <div class="card-image-wrapper">
+            <img src="{% static 'images/tech.jpg' %}" alt="Tech Summit" class="event-card-img">
+            <div class="card-top-badges">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge-category-card">Business</span>
+                <span class="badge-date-card">
+                  <i class="fa-regular fa-calendar"></i> Sat, 24 Oct
+                </span>
+              </div>
+              <button type="button" class="card-like-btn" aria-label="Favorite"><i
+                  class="fa-regular fa-heart"></i></button>
+            </div>
+          </div>
+          <div class="card-content-body">
+            <div class="event-meta-strip">
+              <div class="event-meta-date-row">
+                <i class="fa-regular fa-calendar"></i>
+                <span>24 Oct 2026</span>
+              </div>
+              <div class="event-meta-location-row">
+                <div class="event-venue-item" title="Alkapuri, Vadodara">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span class="event-venue-name">Alkapuri, Vadodara</span>
                 </div>
-                <button type="button" class="card-like-btn" aria-label="Favorite"><i class="fa-regular fa-heart"></i></button>
               </div>
             </div>
-            <div class="card-content-body">
-              <div class="event-meta-strip">
-                <div class="event-meta-date-row">
-                  <i class="fa-regular fa-calendar"></i>
-                  <span>24 Oct 2026</span>
-                </div>
-                <div class="event-meta-location-row">
-                  <div class="event-venue-item" title="Alkapuri, Vadodara">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span class="event-venue-name">Alkapuri, Vadodara</span>
-                  </div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge">
-                    <i class="fa-solid fa-users"></i> 520 booked
-                  </span>
-                </div>
-              </div>
-              <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
-              <p class="event-description-text">Annual conference covering product engineering, startup growth, modern cloud architecture, and infrastructure.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹1,499</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="103" data-event-title="Bengaluru Tech Summit 2026" data-event-venue="Whitefield Convention Centre" data-event-price="1499" data-event-date="24 Oct 2026" data-event-category="Business">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
-            </div>
-          </article>
-        </div>
+            <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
+          </div>
+        </article>
+      </div>
       {% endif %}
 
       <div class="empty-state-card" id="emptyStateContainer" style="display: none;">
@@ -615,9 +2360,235 @@
         </div>
         <h3 class="fs-5 text-dark mb-1">No matching events found</h3>
         <p class="text-secondary small mb-3">Adjust your search terms, city, or category filter.</p>
-        <button type="button" class="btn-secondary-custom" onclick="window.EventFilterEngine && window.EventFilterEngine.resetFilters()">
+        <button type="button" class="btn-secondary-custom"
+          onclick="window.EventFilterEngine && window.EventFilterEngine.resetFilters()">
           Clear Filters
         </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CUSTOMER REVIEWS & TRUST SECTION ================= -->
+  <section class="customer-reviews-section" id="customerReviewsSection">
+    <div class="text-center mb-4 pb-2">
+      <div class="reviews-pill">
+        <i class="fa-solid fa-shield-heart"></i>
+        <span>Verified Community Reviews</span>
+      </div>
+      <h2 class="reviews-heading">Loved by 50,000+ Eventgoers Across India</h2>
+    </div>
+
+    <!-- Review Cards Grid (Top 3 Verified Reviews) -->
+    <div class="row g-4">
+      <!-- Review 1 -->
+      <div class="col-lg-4 col-md-6 col-12">
+        <div class="review-card">
+          <div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="review-author-avatar" style="background: linear-gradient(135deg, #F84464, #FF758C);">
+                  AJ
+                </div>
+                <div>
+                  <div class="fw-bold text-dark" style="font-size: 0.95rem;">Aditya Joshi</div>
+                  <div class="text-muted" style="font-size: 0.78rem;">
+                    <i class="fa-solid fa-location-dot text-brand me-1"></i>Ahmedabad, Gujarat
+                  </div>
+                </div>
+              </div>
+              <span class="review-verified-badge">
+                <i class="fa-solid fa-circle-check"></i> Verified
+              </span>
+            </div>
+
+            <div class="review-event-pill">
+              <i class="fa-solid fa-music"></i>
+              <span>Arijit Singh Live Tour</span>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="review-stars">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+              </div>
+              <span class="text-muted" style="font-size: 0.75rem;">3 days ago</span>
+            </div>
+
+            <h4 class="review-title">Seamless entry at Gate 4, zero queue hassle!</h4>
+            <p class="review-text">
+              Booked 4 Phase-1 passes. Received WhatsApp tickets with scannable QR codes instantly. Gate turnstiles
+              scanned them in 2 seconds without printing or surge fees!
+            </p>
+          </div>
+
+          <div class="review-footer">
+            <span class="text-muted" style="font-size: 0.74rem;">
+              <i class="fa-solid fa-ticket me-1"></i>Pass #BK-8841
+            </span>
+            <button type="button" class="review-helpful-btn" onclick="this.classList.toggle('liked');">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span>Helpful (38)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 2 -->
+      <div class="col-lg-4 col-md-6 col-12">
+        <div class="review-card">
+          <div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="review-author-avatar" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
+                  PM
+                </div>
+                <div>
+                  <div class="fw-bold text-dark" style="font-size: 0.95rem;">Pooja Mehta</div>
+                  <div class="text-muted" style="font-size: 0.78rem;">
+                    <i class="fa-solid fa-location-dot text-brand me-1"></i>Mumbai, Maharashtra
+                  </div>
+                </div>
+              </div>
+              <span class="review-verified-badge">
+                <i class="fa-solid fa-circle-check"></i> Verified
+              </span>
+            </div>
+
+            <div class="review-event-pill">
+              <i class="fa-solid fa-masks-theater"></i>
+              <span>Zakir Khan Live Comedy Tour</span>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="review-stars">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+              </div>
+              <span class="text-muted" style="font-size: 0.75rem;">1 week ago</span>
+            </div>
+
+            <h4 class="review-title">Exact seats as selected on interactive layout!</h4>
+            <p class="review-text">
+              Row C centre view matched the seat preview 100%. Mobile checkout with UPI took under 40 seconds, and
+              calendar reminders kept us right on schedule.
+            </p>
+          </div>
+
+          <div class="review-footer">
+            <span class="text-muted" style="font-size: 0.74rem;">
+              <i class="fa-solid fa-ticket me-1"></i>Pass #BK-7910
+            </span>
+            <button type="button" class="review-helpful-btn" onclick="this.classList.toggle('liked');">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span>Helpful (27)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 3 -->
+      <div class="col-lg-4 col-md-6 col-12">
+        <div class="review-card">
+          <div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="review-author-avatar" style="background: linear-gradient(135deg, #10B981, #059669);">
+                  KR
+                </div>
+                <div>
+                  <div class="fw-bold text-dark" style="font-size: 0.95rem;">Kavita Rao</div>
+                  <div class="text-muted" style="font-size: 0.78rem;">
+                    <i class="fa-solid fa-location-dot text-brand me-1"></i>Bengaluru, Karnataka
+                  </div>
+                </div>
+              </div>
+              <span class="review-verified-badge">
+                <i class="fa-solid fa-circle-check"></i> Verified
+              </span>
+            </div>
+
+            <div class="review-event-pill">
+              <i class="fa-solid fa-laptop-code"></i>
+              <span>India Tech Summit 2026</span>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="review-stars">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+              </div>
+              <span class="text-muted" style="font-size: 0.75rem;">2 weeks ago</span>
+            </div>
+
+            <h4 class="review-title">GST tax invoice generated instantly for expenses</h4>
+            <p class="review-text">
+              Booked delegate passes for our team and downloaded valid GST tax invoices directly from the dashboard.
+              Registration desk check-in was completely seamless.
+            </p>
+          </div>
+
+          <div class="review-footer">
+            <span class="text-muted" style="font-size: 0.74rem;">
+              <i class="fa-solid fa-ticket me-1"></i>Pass #BK-6204
+            </span>
+            <button type="button" class="review-helpful-btn" onclick="this.classList.toggle('liked');">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span>Helpful (19)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4-Pillar Trust Strip -->
+    <div class="reviews-trust-strip">
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i class="fa-solid fa-shield-check"></i>
+        </div>
+        <div>
+          <div class="trust-title">100% Genuine Passes</div>
+          <p class="trust-desc">Direct authorized partner of official event organizers.</p>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i class="fa-brands fa-whatsapp"></i>
+        </div>
+        <div>
+          <div class="trust-title">Instant Delivery</div>
+          <p class="trust-desc">Scannable QR pass delivered directly on WhatsApp & Email.</p>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <div>
+          <div class="trust-title">256-Bit SSL Checkout</div>
+          <p class="trust-desc">Bank-grade encrypted payments via UPI, Cards & NetBanking.</p>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i class="fa-solid fa-headset"></i>
+        </div>
+        <div>
+          <div class="trust-title">24/7 Dedicated Support</div>
+          <p class="trust-desc">Live assistance on chat & email for any booking query.</p>
+        </div>
       </div>
     </div>
   </section>

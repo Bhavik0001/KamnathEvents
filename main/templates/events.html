@@ -10,13 +10,31 @@
      EVENTS CATALOG PAGE STYLES (Light Theme Design System)
      ========================================================================== */
 
+  /* 3 Cards per row grid layout */
+  .events-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 24px;
+  }
+  @media (max-width: 991px) {
+    .events-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 20px;
+    }
+  }
+  @media (max-width: 575px) {
+    .events-grid {
+      grid-template-columns: 1fr !important;
+      gap: 16px;
+    }
+  }
+
   .catalog-hero-card {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
+    border: var(--border-card, 1.5px solid #E8E1CE);
+    border-radius: var(--radius-card, 28px);
     padding: 24px 26px;
     margin-bottom: 18px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
     position: relative;
     overflow: hidden;
   }
@@ -28,7 +46,7 @@
     left: 0;
     width: 4px;
     height: 100%;
-    background: var(--brand-primary);
+    background: linear-gradient(180deg, #F84464 0%, #C4242B 100%);
   }
 
   .catalog-breadcrumb {
@@ -56,7 +74,8 @@
     gap: 6px;
     padding: 4px 10px;
     border-radius: var(--radius-sm);
-    background: #ffe4e6;
+    background: rgba(248, 68, 100, 0.14);
+    border: 1px solid rgba(248, 68, 100, 0.35);
     color: var(--brand-primary);
     font-size: 0.76rem;
     font-weight: 700;
@@ -184,12 +203,589 @@
   }
 
   /* ==========================================================================
-     DARK THEME CATALOG PAGE OVERRIDES
+     CATEGORIES & DISCOVERY FILTER BAR (Theme-Aware BookMyShow & Luxury Styling)
+     ========================================================================== */
+  .catalog-pills-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 6px 2px 18px;
+    margin-bottom: 20px;
+  }
+  .catalog-pills-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .catalog-pills-strip .category-chip {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 8px 18px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    border-radius: var(--radius-pill, 9999px) !important;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Category Chips - White / Light Theme */
+  :root:not([data-theme="dark"]) .catalog-pills-strip .category-chip,
+  [data-theme="light"] .catalog-pills-strip .category-chip {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E5E5EF !important;
+    color: #4A4C5E !important;
+    box-shadow: 0 2px 8px rgba(26, 26, 36, 0.05) !important;
+  }
+  :root:not([data-theme="dark"]) .catalog-pills-strip .category-chip:hover,
+  [data-theme="light"] .catalog-pills-strip .category-chip:hover {
+    background: #F8F9FD !important;
+    border-color: #F84464 !important;
+    color: #F84464 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(248, 68, 100, 0.2) !important;
+  }
+
+  /* Category Chips - Dark Theme (BookMyShow Midnight) */
+  [data-theme="dark"] .catalog-pills-strip .category-chip,
+  html.dark .catalog-pills-strip .category-chip {
+    background: #1F2533 !important;
+    border: 1.5px solid #333547 !important;
+    color: #C8CAD7 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  }
+  [data-theme="dark"] .catalog-pills-strip .category-chip:hover,
+  html.dark .catalog-pills-strip .category-chip:hover {
+    background: #2B2D3C !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(248, 68, 100, 0.28) !important;
+  }
+
+  /* Active Category Chip - Both Themes */
+  .catalog-pills-strip .category-chip.active {
+    background: #F84464 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 18px rgba(248, 68, 100, 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  /* ==========================================================================
+     DISCOVERY FILTER BAR (Both Themes)
+     ========================================================================== */
+  .discovery-filter-bar {
+    border-radius: 16px !important;
+    padding: 12px 18px !important;
+    margin-bottom: 28px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    transition: all 0.25s ease !important;
+  }
+
+  /* Discovery Filter Bar - White / Light Theme */
+  :root:not([data-theme="dark"]) .discovery-filter-bar,
+  [data-theme="light"] .discovery-filter-bar {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E5E5EF !important;
+    box-shadow: 0 6px 22px rgba(26, 26, 36, 0.05), 0 0 16px rgba(248, 68, 100, 0.1) !important;
+  }
+  :root:not([data-theme="dark"]) .filter-select,
+  [data-theme="light"] .filter-select {
+    background: #F5F5FA !important;
+    border: 1px solid #D5D5E2 !important;
+    color: #1A1A24 !important;
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+  }
+  :root:not([data-theme="dark"]) .filter-select option,
+  [data-theme="light"] .filter-select option {
+    background: #FFFFFF !important;
+    color: #1A1A24 !important;
+  }
+  :root:not([data-theme="dark"]) .date-chip-btn,
+  [data-theme="light"] .date-chip-btn {
+    background: #F5F5FA !important;
+    border: 1px solid #D5D5E2 !important;
+    color: #4A4C5E !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 7px 14px !important;
+    height: 38px;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+  }
+  :root:not([data-theme="dark"]) .date-chip-btn:hover,
+  [data-theme="light"] .date-chip-btn:hover {
+    background: #FFFFFF !important;
+    border-color: #F84464 !important;
+    color: #F84464 !important;
+  }
+  :root:not([data-theme="dark"]) .filter-results-counter,
+  [data-theme="light"] .filter-results-counter {
+    color: #666677 !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Discovery Filter Bar - Dark Theme (BookMyShow Midnight) */
+  [data-theme="dark"] .discovery-filter-bar,
+  html.dark .discovery-filter-bar {
+    background: #1F2533 !important;
+    border: 1px solid #333547 !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35) !important;
+  }
+  [data-theme="dark"] .filter-select,
+  html.dark .filter-select {
+    background: #12131A !important;
+    border: 1px solid #333547 !important;
+    color: #FFFFFF !important;
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+  }
+  [data-theme="dark"] .filter-select option,
+  html.dark .filter-select option {
+    background: #222433 !important;
+    color: #FFFFFF !important;
+  }
+  [data-theme="dark"] .date-chip-btn,
+  html.dark .date-chip-btn {
+    background: #12131A !important;
+    border: 1px solid #333547 !important;
+    color: #9698A9 !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 7px 14px !important;
+    height: 38px;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+  }
+  [data-theme="dark"] .date-chip-btn:hover,
+  html.dark .date-chip-btn:hover {
+    background: #222433 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+  }
+  [data-theme="dark"] .filter-results-counter,
+  html.dark .filter-results-counter {
+    color: #9698A9 !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Common Focus & Active States for Filters */
+  .filter-select:focus {
+    border-color: #F84464 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(248, 68, 100, 0.25) !important;
+  }
+  .filter-date-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .date-chip-btn.active {
+    background: rgba(248, 68, 100, 0.16) !important;
+    border: 1.5px solid #F84464 !important;
+    color: #F84464 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 14px rgba(248, 68, 100, 0.35) !important;
+  }
+  .reset-filters-btn {
+    color: #F84464 !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+  }
+  .reset-filters-btn:hover {
+    color: #E53554 !important;
+    text-decoration: underline !important;
+  }
+
+  @media (max-width: 768px) {
+    .discovery-filter-bar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 12px !important;
+    }
+    .filter-left-group {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      width: 100% !important;
+      gap: 10px !important;
+    }
+    .filter-left-group .filter-select,
+    #categoryFilterSelect {
+      width: 100% !important;
+    }
+    .filter-right-group {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 12px !important;
+      width: 100% !important;
+      margin-top: 2px !important;
+    }
+    .filter-right-group .filter-select,
+    .filter-right-group #sortFilterSelect {
+      width: auto !important;
+      min-width: 145px !important;
+      max-width: 190px !important;
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+      text-align: left !important;
+    }
+    .filter-right-group .reset-filters-btn {
+      align-self: center !important;
+      white-space: nowrap !important;
+      margin: 0 !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  /* ==========================================================================
+     EVENT CARDS & VOLUMETRIC RED GLOWING EFFECT (Both Themes)
+     ========================================================================== */
+  .event-card-wrapper {
+    position: relative;
+    height: 100%;
+  }
+
+  .event-card {
+    border-radius: 24px !important;
+    padding: 12px !important;
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: visible !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.32s ease !important;
+  }
+
+  /* Volumetric Crimson Halo Base */
+  .event-card::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: -5px !important;
+    border-radius: 28px !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform, opacity, filter !important;
+  }
+
+  /* ==========================================================================
+     WHITE / LIGHT THEME CARD SURFACE & REALISTIC RED GLOW
+     ========================================================================== */
+  :root:not([data-theme="dark"]) .event-card,
+  [data-theme="light"] .event-card {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E5E5EF !important;
+    box-shadow: 0 10px 28px -6px rgba(26, 26, 36, 0.08), 
+                0 0 20px 2px rgba(248, 68, 100, 0.14) !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card::before,
+  [data-theme="light"] .event-card::before {
+    background: radial-gradient(ellipse 96% 80% at 50% 15%, rgba(248, 68, 100, 0.30) 0%, rgba(229, 53, 84, 0.15) 48%, transparent 76%) !important;
+    filter: blur(18px) !important;
+    opacity: 0.70 !important;
+    transform: scale(0.98) !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card:hover,
+  :root:not([data-theme="dark"]) .event-card.card-active,
+  :root:not([data-theme="dark"]) .event-card.selected,
+  :root:not([data-theme="dark"]) .event-card.is-selected,
+  [data-theme="light"] .event-card:hover,
+  [data-theme="light"] .event-card.card-active,
+  [data-theme="light"] .event-card.selected,
+  [data-theme="light"] .event-card.is-selected {
+    transform: translateY(-8px) scale(1.015) !important;
+    border-color: #F84464 !important;
+    box-shadow: 0 20px 45px -8px rgba(26, 26, 36, 0.15), 
+                0 0 36px 6px rgba(248, 68, 100, 0.35), 
+                0 0 0 1.5px rgba(248, 68, 100, 0.5) !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card:hover::before,
+  :root:not([data-theme="dark"]) .event-card.card-active::before,
+  [data-theme="light"] .event-card:hover::before,
+  [data-theme="light"] .event-card.card-active::before {
+    opacity: 1 !important;
+    filter: blur(28px) !important;
+    transform: scale(1.05) !important;
+    background: radial-gradient(ellipse 96% 80% at 50% 20%, rgba(248, 68, 100, 0.65) 0%, rgba(229, 53, 84, 0.28) 50%, transparent 80%) !important;
+  }
+
+  /* Light Theme Card Typography */
+  :root:not([data-theme="dark"]) .event-card .event-title,
+  [data-theme="light"] .event-card .event-title {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #1A1A24 !important;
+    line-height: 1.35 !important;
+    margin-top: 8px !important;
+    margin-bottom: 4px !important;
+    transition: color 0.2s ease !important;
+  }
+  :root:not([data-theme="dark"]) .event-card:hover .event-title,
+  [data-theme="light"] .event-card:hover .event-title {
+    color: #F84464 !important;
+  }
+
+  :root:not([data-theme="dark"]) .event-card .event-meta-strip,
+  [data-theme="light"] .event-card .event-meta-strip {
+    color: #666677 !important;
+    font-size: 0.8rem !important;
+  }
+  :root:not([data-theme="dark"]) .event-card .event-venue-name,
+  [data-theme="light"] .event-card .event-venue-name {
+    color: #666677 !important;
+  }
+
+  /* Light Theme Card Badges & Like Button */
+  :root:not([data-theme="dark"]) .event-card .badge-category-card,
+  [data-theme="light"] .event-card .badge-category-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #F84464 !important;
+    border: 1px solid rgba(248, 68, 100, 0.35) !important;
+    box-shadow: 0 2px 8px rgba(26, 26, 36, 0.08) !important;
+  }
+  :root:not([data-theme="dark"]) .event-card .badge-date-card,
+  [data-theme="light"] .event-card .badge-date-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #1A1A24 !important;
+    border: 1px solid rgba(229, 229, 239, 0.9) !important;
+    box-shadow: 0 2px 8px rgba(26, 26, 36, 0.08) !important;
+  }
+  :root:not([data-theme="dark"]) .event-card .card-like-btn,
+  [data-theme="light"] .event-card .card-like-btn {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid rgba(248, 68, 100, 0.3) !important;
+    color: #666677 !important;
+    box-shadow: 0 2px 8px rgba(26, 26, 36, 0.08) !important;
+  }
+  :root:not([data-theme="dark"]) .event-card .card-like-btn:hover,
+  :root:not([data-theme="dark"]) .event-card .card-like-btn.liked,
+  [data-theme="light"] .event-card .card-like-btn:hover,
+  [data-theme="light"] .event-card .card-like-btn.liked {
+    background: #FFFFFF !important;
+    border-color: #F84464 !important;
+    color: #F84464 !important;
+    box-shadow: 0 0 12px rgba(248, 68, 100, 0.35) !important;
+  }
+
+  /* ==========================================================================
+     DARK THEME CARD SURFACE & RED GLOW (BookMyShow Midnight)
+     ========================================================================== */
+  [data-theme="dark"] .event-card,
+  html.dark .event-card {
+    background: #222433 !important;
+    border: 1.5px solid #333547 !important;
+    box-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.8), 
+                0 0 20px rgba(248, 68, 100, 0.16) !important;
+  }
+
+  [data-theme="dark"] .event-card::before,
+  html.dark .event-card::before {
+    background: radial-gradient(ellipse 95% 75% at 50% 15%, rgba(248, 68, 100, 0.40) 0%, rgba(229, 53, 84, 0.18) 45%, transparent 75%) !important;
+    filter: blur(18px) !important;
+    opacity: 0.65 !important;
+    transform: scale(0.98) !important;
+  }
+
+  [data-theme="dark"] .event-card:hover,
+  [data-theme="dark"] .event-card.card-active,
+  [data-theme="dark"] .event-card.selected,
+  [data-theme="dark"] .event-card.is-selected,
+  html.dark .event-card:hover,
+  html.dark .event-card.card-active,
+  html.dark .event-card.selected,
+  html.dark .event-card.is-selected {
+    transform: translateY(-8px) scale(1.015) !important;
+    border-color: #F84464 !important;
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.95), 
+                0 0 38px 4px rgba(248, 68, 100, 0.45), 
+                0 0 0 1.5px rgba(248, 68, 100, 0.6) !important;
+  }
+
+  [data-theme="dark"] .event-card:hover::before,
+  [data-theme="dark"] .event-card.card-active::before,
+  html.dark .event-card:hover::before,
+  html.dark .event-card.card-active::before {
+    opacity: 1 !important;
+    filter: blur(28px) !important;
+    transform: scale(1.05) !important;
+    background: radial-gradient(ellipse 95% 75% at 50% 20%, rgba(248, 68, 100, 0.75) 0%, rgba(229, 53, 84, 0.35) 50%, transparent 80%) !important;
+  }
+
+  /* Dark Theme Card Typography */
+  [data-theme="dark"] .event-card .event-title,
+  html.dark .event-card .event-title {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    line-height: 1.35 !important;
+    margin-top: 8px !important;
+    margin-bottom: 4px !important;
+    transition: color 0.2s ease !important;
+  }
+  [data-theme="dark"] .event-card:hover .event-title,
+  html.dark .event-card:hover .event-title {
+    color: #F84464 !important;
+  }
+
+  [data-theme="dark"] .event-card .event-meta-strip,
+  html.dark .event-card .event-meta-strip {
+    color: #9698A9 !important;
+    font-size: 0.8rem !important;
+  }
+  [data-theme="dark"] .event-card .event-venue-name,
+  html.dark .event-card .event-venue-name {
+    color: #9698A9 !important;
+  }
+
+  /* Dark Theme Card Badges & Like Button */
+  [data-theme="dark"] .event-card .badge-category-card,
+  html.dark .event-card .badge-category-card {
+    background: rgba(248, 68, 100, 0.22) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(248, 68, 100, 0.5) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  }
+  [data-theme="dark"] .event-card .badge-date-card,
+  html.dark .event-card .badge-date-card {
+    background: rgba(18, 19, 26, 0.92) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #333547 !important;
+  }
+  [data-theme="dark"] .event-card .card-like-btn,
+  html.dark .event-card .card-like-btn {
+    background: rgba(34, 36, 51, 0.9) !important;
+    border: 1px solid rgba(248, 68, 100, 0.35) !important;
+    color: #9698A9 !important;
+  }
+  [data-theme="dark"] .event-card .card-like-btn:hover,
+  [data-theme="dark"] .event-card .card-like-btn.liked,
+  html.dark .event-card .card-like-btn:hover,
+  html.dark .event-card .card-like-btn.liked {
+    background: #222433 !important;
+    border-color: #F84464 !important;
+    color: #F84464 !important;
+    box-shadow: 0 0 12px rgba(248, 68, 100, 0.45) !important;
+  }
+
+  /* Common Card Elements */
+  .event-card-img {
+    border-radius: 16px !important;
+    transition: transform 0.4s ease !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+  .event-card:hover .event-card-img {
+    transform: scale(1.05) !important;
+  }
+
+  .badge-category-card {
+    border-radius: var(--radius-pill, 9999px) !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    padding: 4px 12px !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  .badge-date-card {
+    border-radius: var(--radius-pill, 9999px) !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    padding: 4px 10px !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  .badge-date-card i {
+    color: #F84464 !important;
+  }
+
+  .card-like-btn {
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .event-meta-date-row i,
+  .event-venue-item i {
+    color: #F84464 !important;
+  }
+
+  .card-price-value {
+    color: #F84464 !important;
+    font-weight: 700 !important;
+    font-size: 1.15rem !important;
+  }
+
+  .card-book-btn {
+    background: #F84464 !important;
+    border-color: #F84464 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px rgba(248, 68, 100, 0.35) !important;
+  }
+  .card-book-btn:hover {
+    background: #E53554 !important;
+    border-color: #E53554 !important;
+    box-shadow: 0 6px 20px rgba(248, 68, 100, 0.5) !important;
+  }
+
+  /* ==========================================================================
+     DARK THEME CATALOG PAGE HERO OVERRIDES
      ========================================================================== */
   [data-theme="dark"] .catalog-eyebrow,
   html.dark .catalog-eyebrow {
-    background: rgba(244, 63, 94, 0.16);
-    color: var(--brand-primary);
+    background: rgba(248, 68, 100, 0.16);
+    border: 1px solid rgba(248, 68, 100, 0.4);
+    color: #F84464;
+  }
+
+  [data-theme="dark"] .catalog-hero-card,
+  html.dark .catalog-hero-card {
+    background: #222433;
+    border: 1.5px solid #333547;
   }
 
   [data-theme="dark"] .catalog-search-box input,
@@ -202,7 +798,7 @@
   [data-theme="dark"] .catalog-search-box input:focus,
   html.dark .catalog-search-box input:focus {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+    box-shadow: 0 0 0 3px rgba(248, 68, 100, 0.25);
   }
 </style>
 {% endblock %}
@@ -284,19 +880,19 @@
     <!-- Quick Stats & Guarantees Ribbon -->
     <div class="catalog-stats-ribbon">
       <div class="catalog-stat-item">
-        <i class="fa-solid fa-calendar-check"></i>
-        <span><strong class="text-dark">{{ events|length }}</strong> Live Events</span>
+        <i class="fa-solid fa-calendar-check" style="color: #F84464;"></i>
+        <span><strong style="color: var(--text-primary);">{{ events|length }}</strong> Live Events</span>
       </div>
       <div class="catalog-stat-item">
-        <i class="fa-solid fa-layer-group"></i>
-        <span><strong class="text-dark">{{ categories|length }}</strong> Categories</span>
+        <i class="fa-solid fa-layer-group" style="color: #F5A623;"></i>
+        <span><strong style="color: var(--text-primary);">{{ categories|length }}</strong> Categories</span>
       </div>
       <div class="catalog-stat-item">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>100% Verified Digital Passes</span>
+        <i class="fa-solid fa-shield-halved" style="color: #4ABD5D;"></i>
+        <span><strong style="color: var(--text-primary);">100%</strong> Verified Passes</span>
       </div>
       <div class="catalog-stat-item">
-        <i class="fa-solid fa-bolt"></i>
+        <i class="fa-solid fa-bolt" style="color: #F84464;"></i>
         <span>Instant Seat Booking</span>
       </div>
     </div>
@@ -349,10 +945,6 @@
           <button type="button" class="date-chip-btn" data-date="today">Today</button>
           <button type="button" class="date-chip-btn" data-date="weekend">This Weekend</button>
         </div>
-
-        <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
-          <i class="fa-solid fa-rotate-left"></i> Reset
-        </button>
       </div>
 
       <div class="filter-right-group d-flex align-items-center gap-3">
@@ -365,6 +957,10 @@
           <option value="price-low">Price: Low to High</option>
           <option value="price-high">Price: High to Low</option>
         </select>
+
+        <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
       </div>
     </div>
   </section>
@@ -427,34 +1023,10 @@
                       <i class="fa-solid fa-location-dot"></i>
                       <span class="event-venue-name">{{ event.venue }}</span>
                     </div>
-                    <span class="meta-sep-dot">•</span>
-                    <span class="booked-count-badge">
-                      <i class="fa-solid fa-users"></i> {{ event.total_bookings|default_if_none:event.booking_set.count }} booked
-                    </span>
                   </div>
                 </div>
 
                 <h3 class="event-title">{{ event.title }}</h3>
-                <p class="event-description-text">{{ event.description }}</p>
-
-                <div class="card-footer-strip">
-                  <div class="price-container">
-                    <span class="price-subtext">Starting from</span>
-                    <span class="price-amount">₹{{ event.price|floatformat:0 }}</span>
-                  </div>
-
-                  <button type="button"
-                          class="btn-brand btn-book-card"
-                          data-book-trigger
-                          data-event-id="{{ event.id }}"
-                          data-event-title="{{ event.title }}"
-                          data-event-venue="{{ event.venue }}"
-                          data-event-price="{{ event.price }}"
-                          data-event-date="{{ event.event_date|date:'d M Y' }}"
-                          data-event-category="{{ event.category.category_name }}">
-                    <i class="fa-solid fa-bolt me-1"></i> Book Now
-                  </button>
-                </div>
               </div>
             </article>
           </div>
@@ -488,24 +1060,12 @@
             </div>
             <div class="card-content-body">
               <div class="event-meta-strip">
-                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 02 Sep 2026</div>
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> Wed, 02 Sep 2026</div>
                 <div class="event-meta-location-row">
                   <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Grand Ballroom, Ahmedabad</span></div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 13 booked</span>
                 </div>
               </div>
               <h3 class="event-title">Gujarat Fashion Week</h3>
-              <p class="event-description-text">Experience the latest fashion trends, creative collections and stylish designs presented by talented designers.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹5999</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="1" data-event-title="Gujarat Fashion Week" data-event-venue="Grand Ballroom, Ahmedabad" data-event-price="5999" data-event-date="02 Sep 2026" data-event-category="Fashion">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
             </div>
           </article>
         </div>
@@ -537,24 +1097,12 @@
             </div>
             <div class="card-content-body">
               <div class="event-meta-strip">
-                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 15 Oct 2026</div>
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> Sat, 15 Oct 2026</div>
                 <div class="event-meta-location-row">
-                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">GIFT City Arena</span></div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 340 booked</span>
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">GIFT City Arena, Gandhinagar</span></div>
                 </div>
               </div>
               <h3 class="event-title">Ahmedabad Music Festival</h3>
-              <p class="event-description-text">Live concert featuring regional indie bands, acoustics, and electric performances with high-energy production.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹999</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="2" data-event-title="Ahmedabad Music Festival" data-event-venue="GIFT City Arena" data-event-price="999" data-event-date="15 Oct 2026" data-event-category="Music">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
             </div>
           </article>
         </div>
@@ -586,24 +1134,12 @@
             </div>
             <div class="card-content-body">
               <div class="event-meta-strip">
-                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 18 Oct 2026</div>
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> Sun, 18 Oct 2026</div>
                 <div class="event-meta-location-row">
-                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Bandra Auditorium</span></div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 210 booked</span>
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Bandra Auditorium, Mumbai</span></div>
                 </div>
               </div>
               <h3 class="event-title">Mumbai Standup Comedy Showcase</h3>
-              <p class="event-description-text">An evening of hilarious punchlines and standup routines with top comedians delivering non-stop laughs.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹499</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="3" data-event-title="Mumbai Standup Comedy Showcase" data-event-venue="Bandra Auditorium" data-event-price="499" data-event-date="18 Oct 2026" data-event-category="Comedy">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
             </div>
           </article>
         </div>
@@ -635,24 +1171,12 @@
             </div>
             <div class="card-content-body">
               <div class="event-meta-strip">
-                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> 24 Oct 2026</div>
+                <div class="event-meta-date-row"><i class="fa-regular fa-calendar"></i> Sat, 24 Oct 2026</div>
                 <div class="event-meta-location-row">
-                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Whitefield Convention</span></div>
-                  <span class="meta-sep-dot">•</span>
-                  <span class="booked-count-badge"><i class="fa-solid fa-users"></i> 520 booked</span>
+                  <div class="event-venue-item"><i class="fa-solid fa-location-dot"></i> <span class="event-venue-name">Whitefield Convention, Bengaluru</span></div>
                 </div>
               </div>
               <h3 class="event-title">Bengaluru Tech Summit 2026</h3>
-              <p class="event-description-text">Annual conference covering product engineering, startup growth, and infrastructure with leading innovators.</p>
-              <div class="card-footer-strip">
-                <div class="price-container">
-                  <span class="price-subtext">Starting from</span>
-                  <span class="price-amount">₹1499</span>
-                </div>
-                <button type="button" class="btn-brand btn-book-card" data-book-trigger data-event-id="4" data-event-title="Bengaluru Tech Summit 2026" data-event-venue="Whitefield Convention" data-event-price="1499" data-event-date="24 Oct 2026" data-event-category="Conference">
-                  <i class="fa-solid fa-bolt me-1"></i> Book Now
-                </button>
-              </div>
             </div>
           </article>
         </div>

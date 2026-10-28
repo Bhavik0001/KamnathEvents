@@ -10,6 +10,7 @@
 
   const AdminDashboard = {
     init() {
+      this.bindThemeToggle();
       this.bindSidebarToggle();
       this.bindSectionNavigation();
       this.bindTableSearches();
@@ -19,15 +20,73 @@
       this.restoreActiveSection();
     },
 
+    bindThemeToggle() {
+      const toggleBtn = document.getElementById('dashboardThemeToggleBtn');
+      const icon = document.getElementById('dashboardThemeIcon');
+      const text = document.getElementById('dashboardThemeText');
+
+      const applyTheme = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+
+        if (icon) {
+          icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+        if (text) {
+          text.textContent = theme === 'dark' ? 'Light' : 'Dark';
+        }
+      };
+
+      const currentTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('theme') || 'dark';
+      applyTheme(currentTheme);
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          const active = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          applyTheme(active);
+        });
+      }
+    },
+
     bindSidebarToggle() {
       const toggleBtn = document.getElementById('sidebarToggle');
       const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const closeBtn = document.getElementById('sidebarCloseBtn');
+
+      const setSidebarState = (isOpen) => {
+        if (!sidebar) return;
+        sidebar.classList.toggle('active', isOpen);
+        sidebar.classList.toggle('show', isOpen);
+        if (backdrop) backdrop.classList.toggle('active', isOpen);
+        document.body.classList.toggle('sidebar-open', isOpen);
+      };
 
       if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener('click', () => {
-          sidebar.classList.toggle('active');
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const willOpen = !sidebar.classList.contains('active') && !sidebar.classList.contains('show');
+          setSidebarState(willOpen);
         });
       }
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => setSidebarState(false));
+      }
+
+      if (backdrop) {
+        backdrop.addEventListener('click', () => setSidebarState(false));
+      }
+
+      // Automatically close sidebar on mobile when navigating
+      document.querySelectorAll('#sidebar nav a, #sidebar .sidebar-bottom a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 991) {
+            setSidebarState(false);
+          }
+        });
+      });
     },
 
     bindSectionNavigation() {
@@ -76,6 +135,7 @@
         bookings: 'Booking Records',
         users: 'Customer Accounts',
         contacts: 'Support & Inquiries',
+        subscribers: 'Newsletter Subscribers',
         reports: 'Analytics & Reports'
       };
 
@@ -118,6 +178,22 @@
         customerSearch.addEventListener('input', (e) => {
           const query = customerSearch.value.toLowerCase().trim();
           const rows = customerTbody.querySelectorAll('tr');
+
+          rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+          });
+        });
+      }
+
+      // Subscriber search
+      const subscriberSearch = document.getElementById('subscriberSearch');
+      const subscriberTbody = document.getElementById('subscriberTableBody');
+
+      if (subscriberSearch && subscriberTbody) {
+        subscriberSearch.addEventListener('input', (e) => {
+          const query = subscriberSearch.value.toLowerCase().trim();
+          const rows = subscriberTbody.querySelectorAll('tr.subscriber-row');
 
           rows.forEach(row => {
             const text = row.textContent.toLowerCase();

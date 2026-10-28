@@ -52,6 +52,7 @@ urlpatterns = [
     path('admin-logout/', views.admin_logout, name='admin_logout'),
 
     path('subscribe/', views.subscribe, name='subscribe'),
+    path('delete-subscriber/<int:id>/', views.delete_subscriber, name='delete_subscriber'),
 
     path('book-event/<int:event_id>/',views.book_event, name='book_event'),
 

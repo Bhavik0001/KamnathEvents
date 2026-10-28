@@ -21,8 +21,8 @@
   overflow: hidden;
   border-radius: 16px;
   background: var(--bg-surface, #ffffff);
-  border: 1px solid var(--border-subtle, #e2e8f0);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 2px solid var(--brand-primary, #F84464) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 0 28px rgba(248, 68, 100, 0.22);
   position: relative;
   animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -49,7 +49,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #e11d48, #f43f5e, #fb7185);
+  background: linear-gradient(90deg, #C4242B 0%, #F84464 25%, #FF6584 50%, #F84464 75%, #C4242B 100%);
 }
 
 .booking-express-pill {
@@ -60,11 +60,15 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: #fff1f2;
-  color: #e11d48;
+  background: rgba(248, 68, 100, 0.12);
+  color: #F84464;
   padding: 4px 10px;
   border-radius: 9999px;
-  border: 1px solid #fecdd3;
+  border: 1px solid rgba(248, 68, 100, 0.35);
+}
+
+.booking-express-pill i {
+  color: #F84464;
 }
 
 .booking-ssl-badge {
@@ -73,11 +77,15 @@
   gap: 5px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: #047857;
-  background: #ecfdf5;
+  color: #F84464;
+  background: rgba(248, 68, 100, 0.1);
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid #a7f3d0;
+  border: 1px solid rgba(248, 68, 100, 0.3);
+}
+
+.booking-ssl-badge i {
+  color: #F84464;
 }
 
 .booking-checkout-body {
@@ -286,39 +294,42 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: #047857;
   background: #ecfdf5;
   border: 1px solid #a7f3d0;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
 .ticket-badge-pending {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: #b45309;
   background: #fffbeb;
   border: 1px solid #fde68a;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
 .ticket-badge-cancelled {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: #b91c1c;
   background: #fef2f2;
   border: 1px solid #fecaca;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
 /* Booking Alert Banner */
@@ -342,6 +353,121 @@
 .booking-alert-banner.pending {
   background: #fffbeb;
   border-color: #fde68a;
+}
+
+/* My Bookings Ticket Cards */
+.my-tickets-hero {
+  background: var(--bg-surface);
+  border: var(--border-card, 1.5px solid #272B35);
+  border-radius: 20px;
+  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.65);
+}
+
+.my-ticket-card {
+  background: var(--bg-surface);
+  border: var(--border-card, 1.5px solid #272B35);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.badge-ticket-id {
+  background: var(--bg-subtle, #1C2029);
+  color: var(--text-muted, #94A3B8);
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  padding: 2px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.badge-ticket-passes {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: #2563EB;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+
+.ticket-date-text {
+  font-size: 0.72rem;
+  color: var(--text-muted, #94A3B8);
+  white-space: nowrap;
+}
+
+.ticket-thumb-img {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  flex-shrink: 0;
+}
+
+.ticket-event-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  line-height: 1.25;
+  color: var(--text-primary, #FFFFFF);
+}
+
+.ticket-event-meta {
+  font-size: 0.76rem;
+  color: var(--text-muted, #94A3B8);
+  line-height: 1.35;
+}
+
+.ticket-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  margin-top: auto;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.ticket-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-ticket-download {
+  font-size: 0.8rem !important;
+  padding: 6px 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+}
+
+.btn-ticket-cancel {
+  font-size: 0.8rem !important;
+  padding: 6px 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
 }
 
 /* ==========================================================================
@@ -375,28 +501,147 @@
     padding: 10px 14px;
     font-size: 0.85rem;
   }
+
+  .my-tickets-title {
+    font-size: 1.2rem !important;
+  }
+
+  .ticket-event-title {
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+  }
+
+  .ticket-price-val {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+  }
 }
 
 @media (max-width: 576px) {
-  .ticket-card-footer {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
+  .my-tickets-hero {
+    padding: 14px 14px !important;
+    margin-bottom: 12px !important;
+    border-radius: 14px !important;
   }
 
-  .ticket-card-footer > div:last-child {
+  .my-tickets-hero h1,
+  .my-tickets-title {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 3px !important;
+    letter-spacing: -0.01em;
+  }
+
+  .my-tickets-hero p {
+    font-size: 0.76rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .my-tickets-hero .btn-brand {
+    font-size: 0.78rem !important;
+    padding: 6px 14px !important;
     width: 100%;
-    display: flex;
-    gap: 8px;
-  }
-
-  .ticket-card-footer > div:last-child a,
-  .ticket-card-footer > div:last-child button {
-    flex: 1;
     text-align: center;
     justify-content: center;
-    padding: 8px 12px;
-    font-size: 0.82rem;
+    margin-top: 10px !important;
+  }
+
+  /* Compact Ticket Card on Mobile */
+  .my-ticket-card {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .ticket-header-row {
+    margin-bottom: 8px !important;
+  }
+
+  .badge-ticket-id {
+    font-size: 0.68rem !important;
+    padding: 2px 5px !important;
+  }
+
+  .badge-ticket-passes {
+    font-size: 0.68rem !important;
+    padding: 2px 5px !important;
+  }
+
+  .ticket-date-text {
+    font-size: 0.68rem !important;
+  }
+
+  .ticket-thumb-img {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 7px !important;
+  }
+
+  /* Refined, softer title size & weight */
+  .ticket-event-title {
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 2px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em;
+  }
+
+  .ticket-event-meta {
+    font-size: 0.68rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .ticket-card-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding-top: 8px !important;
+  }
+
+  .ticket-card-footer .ticket-price-info {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+  }
+
+  .ticket-card-footer .ticket-price-info span.text-muted {
+    font-size: 0.66rem !important;
+  }
+
+  /* Refined, decreased price size */
+  .ticket-card-footer .ticket-price-info div.fw-bold,
+  .ticket-price-val {
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+  }
+
+  .ticket-price-val small {
+    font-size: 0.68rem !important;
+    font-weight: 400 !important;
+  }
+
+  .ticket-actions-group {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  .btn-ticket-download {
+    flex: 1 !important;
+    padding: 7px 10px !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .btn-ticket-cancel {
+    flex: 0 0 auto !important;
+    min-width: 64px !important;
+    padding: 7px 12px !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
+    justify-content: center !important;
   }
 }
 
@@ -451,121 +696,159 @@ html.dark .ticket-badge-cancelled {
 /* Dark Theme Express Checkout Dialog Overrides */
 [data-theme="dark"] .booking-checkout-dialog,
 html.dark .booking-checkout-dialog {
-  background: #111827 !important;
-  color: #f9fafb !important;
-  border-color: #374151 !important;
-  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+  background: #14171E !important;
+  color: #FFFFFF !important;
+  border: 2px solid var(--brand-primary, #F84464) !important;
+  border-color: #F84464 !important;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.95), 0 0 35px rgba(248, 68, 100, 0.3) !important;
 }
 
 [data-theme="dark"] .booking-checkout-header,
 html.dark .booking-checkout-header {
-  background: #1f2937 !important;
-  border-bottom-color: #374151 !important;
+  background: #14171E !important;
+  border-bottom-color: rgba(248, 68, 100, 0.25) !important;
 }
 
 [data-theme="dark"] .booking-checkout-body,
 html.dark .booking-checkout-body {
-  background: #111827 !important;
-  color: #f9fafb !important;
+  background: #14171E !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .booking-event-card,
 html.dark .booking-event-card {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
+  background: #1C2029 !important;
+  border-color: rgba(248, 68, 100, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .booking-event-icon,
+html.dark .booking-event-icon {
+  background: linear-gradient(135deg, rgba(248, 68, 100, 0.22) 0%, rgba(248, 68, 100, 0.08) 100%) !important;
+  border-color: rgba(248, 68, 100, 0.45) !important;
+  color: #F84464 !important;
+  box-shadow: 0 0 12px rgba(248, 68, 100, 0.18) !important;
 }
 
 [data-theme="dark"] .booking-event-title,
 html.dark .booking-event-title {
-  color: #f9fafb !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .booking-event-meta,
 html.dark .booking-event-meta {
-  color: #9ca3af !important;
+  color: #CBD5E1 !important;
 }
 
 [data-theme="dark"] .booking-attendee-card,
 html.dark .booking-attendee-card {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
+  background: #1C2029 !important;
+  border-color: rgba(248, 68, 100, 0.22) !important;
 }
 
 [data-theme="dark"] .booking-card-label,
 html.dark .booking-card-label {
-  color: #9ca3af !important;
+  color: #94A3B8 !important;
+}
+
+[data-theme="dark"] .attendee-avatar,
+html.dark .attendee-avatar {
+  background: rgba(248, 68, 100, 0.16) !important;
+  border-color: rgba(248, 68, 100, 0.35) !important;
+  color: #F84464 !important;
 }
 
 [data-theme="dark"] .attendee-name,
 html.dark .attendee-name {
-  color: #f9fafb !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .attendee-email,
 html.dark .attendee-email {
-  color: #9ca3af !important;
+  color: #94A3B8 !important;
 }
 
 [data-theme="dark"] .booking-quantity-box,
 html.dark .booking-quantity-box {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
+  background: #1C2029 !important;
+  border-color: rgba(248, 68, 100, 0.22) !important;
+}
+
+[data-theme="dark"] .booking-quantity-box .text-dark,
+html.dark .booking-quantity-box .text-dark {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .booking-quantity-box .text-muted,
+html.dark .booking-quantity-box .text-muted {
+  color: #94A3B8 !important;
 }
 
 [data-theme="dark"] .booking-stepper,
 html.dark .booking-stepper {
-  background: #111827 !important;
-  border-color: #4b5563 !important;
+  background: #14171E !important;
+  border-color: rgba(248, 68, 100, 0.35) !important;
 }
 
 [data-theme="dark"] .stepper-btn,
 html.dark .stepper-btn {
-  color: #f9fafb !important;
+  color: #F84464 !important;
 }
 
 [data-theme="dark"] .stepper-btn:hover,
 html.dark .stepper-btn:hover {
-  background: rgba(225, 29, 72, 0.25) !important;
-  color: #fb7185 !important;
+  background: rgba(248, 68, 100, 0.25) !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .stepper-count,
 html.dark .stepper-count {
-  color: #f9fafb !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .booking-price-summary,
 html.dark .booking-price-summary {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
+  background: #1C2029 !important;
+  border-color: rgba(248, 68, 100, 0.25) !important;
 }
 
 [data-theme="dark"] .booking-price-summary .text-dark,
 html.dark .booking-price-summary .text-dark {
-  color: #f9fafb !important;
+  color: #FFFFFF !important;
 }
 
 [data-theme="dark"] .booking-price-summary .text-secondary,
 html.dark .booking-price-summary .text-secondary {
-  color: #9ca3af !important;
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .booking-price-summary .text-muted,
+html.dark .booking-price-summary .text-muted {
+  color: #94A3B8 !important;
+}
+
+[data-theme="dark"] .booking-price-summary .border-top,
+html.dark .booking-price-summary .border-top {
+  border-color: rgba(248, 68, 100, 0.2) !important;
 }
 
 [data-theme="dark"] .booking-guarantee-note,
 html.dark .booking-guarantee-note {
-  color: #9ca3af !important;
+  color: #CBD5E1 !important;
 }
 
 [data-theme="dark"] .booking-modal-close-btn,
 html.dark .booking-modal-close-btn {
-  background: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #d1d5db !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(248, 68, 100, 0.3) !important;
+  color: #F84464 !important;
 }
 
 [data-theme="dark"] .booking-modal-close-btn:hover,
 html.dark .booking-modal-close-btn:hover {
-  background: #4b5563 !important;
-  color: #fb7185 !important;
+  background: rgba(248, 68, 100, 0.22) !important;
+  color: #FFFFFF !important;
+  border-color: #F84464 !important;
 }
 
 

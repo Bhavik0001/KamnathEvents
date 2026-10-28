@@ -304,7 +304,7 @@
       // Determine active theme (from attribute, localStorage, or system preference)
       const currentTheme = document.documentElement.getAttribute('data-theme') ||
         localStorage.getItem('ke_theme') ||
-        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        'dark';
 
       this.applyTheme(currentTheme, false);
 
@@ -389,13 +389,37 @@
         }
 
         const card = e.target.closest('.event-card, .spotlight-card');
-        if (!card) return;
+        if (!card) {
+          // Clicking outside any card clears active hover highlight
+          document.querySelectorAll('.event-card.card-active, .spotlight-card.card-active, .event-card.selected, .spotlight-card.selected').forEach(c => {
+            c.classList.remove('card-active', 'selected', 'is-selected');
+          });
+          return;
+        }
 
         // Ensure we didn't click inside a modal itself
-        if (card.closest('#eventDetailsModal') || card.closest('#bookingConfirmModal')) return;
+        if (card.closest('#eventDetailsModal') || card.closest('#bookingConfirmModal') || card.closest('.modal-backdrop-custom')) return;
 
-        e.preventDefault();
-        this.open(card);
+        // Check if card was already active/selected
+        const wasActive = card.classList.contains('card-active') || card.classList.contains('selected');
+
+        // Remove active/hover state from all other cards
+        document.querySelectorAll('.event-card, .spotlight-card').forEach(c => {
+          if (c !== card) {
+            c.classList.remove('card-active', 'selected', 'is-selected');
+          }
+        });
+
+        // Activate hover effect on clicked card
+        card.classList.add('card-active', 'selected', 'is-selected');
+
+        // Open smooth outward expanding image lightbox
+        if (window.openImageExpander) {
+          window.openImageExpander(card);
+        } else if (wasActive || e.detail >= 2) {
+          e.preventDefault();
+          this.open(card);
+        }
       });
     },
 

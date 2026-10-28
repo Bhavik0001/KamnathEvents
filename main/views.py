@@ -115,11 +115,18 @@ def dashboard(request):
     bookings = Booking.objects.select_related(
         "user",
         "event"
-    ).order_by("-id")
+    ).order_by("id")
+
+    recent_bookings = Booking.objects.select_related(
+        "user",
+        "event"
+    ).order_by("id")
 
     users = User.objects.annotate(
         total_bookings=Count("booking")
-    ).order_by("-id")
+    ).order_by("id")
+
+    subscribers = Subscribe.objects.all().order_by("id")
 
     # ==========================
     # DASHBOARD COUNTS
@@ -129,6 +136,7 @@ def dashboard(request):
     total_bookings = Booking.objects.count()
     total_customers = User.objects.count()
     new_inquiries = Contact.objects.count()
+    total_subscribers = Subscribe.objects.count()
 
     # ==========================
     # REPORTS
@@ -160,13 +168,16 @@ def dashboard(request):
         "categories": categories,
         "contacts": contacts,
         "bookings": bookings,
+        "recent_bookings": recent_bookings,
         "users": users,
+        "subscribers": subscribers,
 
         # Dashboard
         "total_events": total_events,
         "total_bookings": total_bookings,
         "total_customers": total_customers,
         "new_inquiries": new_inquiries,
+        "total_subscribers": total_subscribers,
 
         # Reports
         "total_booking_value": total_booking_value,
@@ -302,7 +313,7 @@ def index(request):
     ensure_default_events()
     events = Event.objects.all().select_related("category").annotate(
         total_bookings=Count("booking")
-    ).order_by("-total_bookings", "-id")[:8]
+    ).order_by("-total_bookings", "-id")[:6]
     spotlight_events = events[:4]
     categories = Category.objects.annotate(
         event_count=Count("event")
@@ -604,6 +615,17 @@ def delete_category(request, id):
                 pass
 
     return redirect("/dashboard/?section=categories")
+
+
+def delete_subscriber(request, id):
+    if not is_admin_authenticated(request):
+        return redirect("admin_login")
+
+    subscriber = Subscribe.objects.filter(id=id).first()
+    if subscriber:
+        subscriber.delete()
+
+    return redirect("/dashboard/?section=subscribers")
 
 
 # ==========================
