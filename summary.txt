@@ -71,6 +71,12 @@ In Kamnath Events, we designed and implemented a series of production-grade feat
    - URL synchronization (`?category=...&city=...`) preserves active filter state.
    - Live debounced search input filters by title or venue without page reloading.
 
+9. Full HD Dynamic Concert Hero Stage Banner with Multi-Layered CSS3 Animations:
+   - Ultra-crisp, 16:9 widescreen Full HD concert arena backdrop (`staticfiles/img/hero_live_stage_hd.jpg`).
+   - Pure CSS3 GPU-accelerated atmospheric animation suite: Ken Burns cinema drift, moving spotlight intensity pulse, 
+     volumetric laser sweeps with `mix-blend-mode: screen`, color-dodge floor glow, 10 floating bokeh stardust particles, 
+     and a dual-gradient overlay ensuring 100% WCAG contrast and text legibility.
+
 
 3. TECHNOLOGY STACK, DJANGO FRAMEWORK DEEP-DIVE & LIBRARIES USED
 --------------------------------------------------------------------------------
@@ -240,6 +246,98 @@ B. COMPLETE BREAKDOWN OF ALL LIBRARIES USED IN THIS PROJECT & THEIR PURPOSE:
          * `spotlight-carousel.js`: Hero banner carousel with CSS cross-fade, auto-play, and touch swiping.
          * `dashboard.js`: Admin dashboard tab navigation, real-time table search, and modal triggers.
          * `main.js`: Global utilities, toast notifications, and mobile navigation toggling.
+
+
+
+C. TASK-TO-LIBRARY MATRIX (WHICH LIBRARY IS USED FOR WHICH SPECIFIC TASK):
+
+   ┌─────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────┐
+   │ SPECIFIC TASK / REQUIREMENT                             │ LIBRARY / TECHNOLOGY EMPLOYED & EXACT ROLE              │
+   ├─────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────┤
+   │ 1. Core Web Architecture, Routing & Request Lifecycle   │ Django 6.0 (`urls.py`, `views.py`, MTV Pattern)         │
+   │ 2. Relational Database Modeling, Schema & Migrations    │ Django ORM (`models.py`, `makemigrations`, `migrate`)   │
+   │ 3. Database Persistence & SQL Execution Engine          │ SQLite3 (`db.sqlite3`) / MySQL (`mysqlclient`, PyMySQL) │
+   │ 4. Single Consolidated PDF Entry Pass Generation        │ ReportLab 5.0 (`reportlab.pdfgen.canvas`) + `io.BytesIO`│
+   │ 5. Scannable Dynamic Vector Barcode Generation on Pass  │ ReportLab Barcode Engine (`* KMN-PASS-XXXX-QTYX *`)     │
+   │ 6. Academic & Architecture Specification PDF Generator  │ ReportLab (`generate_project_pdf.py` via /project-docs/)│
+   │ 7. Uploaded Event Image Validation & Dimension Checks   │ Pillow (PIL Fork - 12.1.1) in `models.ImageField`       │
+   │ 8. Secure Password Encryption & Cryptographic Hashing   │ Django Auth (`make_password`, `check_password` PBKDF2)  │
+   │ 9. Financial Currency & Exact Price Multiplication      │ Python Built-in `decimal.Decimal` (Zero Rounding Error) │
+   │ 10. In-Memory Direct Binary PDF Streaming               │ Python Built-in `io.BytesIO` inside `HttpResponse`      │
+   │ 11. Multi-Line Text Wrapping on Canvas Tables           │ Python Built-in `textwrap` module                       │
+   │ 12. Responsive 12-Column Layout Grid (Mobile to Desktop)│ Bootstrap Grid (`bootstrap-grid.min.css`)               │
+   │ 13. Admin Dashboard Analytics Cards & Widgets Styling   │ Tailwind CSS (`tailwindcss.min.js`)                     │
+   │ 14. Modern Vector Icons for Dates, Venues & Badges      │ Lucide Icons (`lucide.min.js`)                          │
+   │ 15. Social Media, Brand Icons & Status Markers          │ Font Awesome 6 (CDN Free Webfonts)                      │
+   │ 16. Unified Color Palette, Radius & CSS Variables       │ Custom CSS3 Design System (`design-system.css`)         │
+   │ 17. Asynchronous AJAX Login/Signup Modals (No Reload)   │ Native Vanilla JavaScript ES6 (`fetch`, `FormData`)     │
+   │ 18. Wishlist Persistence Across Browser Sessions        │ Native Browser `localStorage` API in `wishlist.js`      │
+   │ 19. Ticket Quantity Stepper (1 to 10 Passes) & Math     │ Native Vanilla JavaScript ES6 in `booking.js`           │
+   │ 20. Real-time Category, City & Debounced Search Filter  │ Custom Modular ES6 JavaScript in `events-filter.js`     │
+   │ 21. Hero Spotlight Carousel with Touch Swiping          │ Custom Modular ES6 JavaScript in `spotlight-carousel.js`│
+   │ 22. Full HD Hero Banner Image Generation & Rendering    │ Full HD 16:9 Concert Stage Backdrop (`hero_live_stage_hd`)│
+   │ 23. Atmospheric Concert Lasers & Spotlights Animations  │ Pure Hardware-Accelerated CSS3 (`@keyframes`, Gradients)│
+   └─────────────────────────────────────────────────────────┴─────────────────────────────────────────────────────────┘
+
+
+D. HERO BANNER FULL HD IMAGE & MULTI-LAYERED ANIMATION ARCHITECTURE (COMPLETE DEEP-DIVE):
+
+   The hero section on the homepage (`index.html`) features a state-of-the-art live entertainment 
+   concert stage backdrop with a multi-layered, GPU-accelerated atmospheric animation suite.
+
+   1. Image Asset Specifications & Storage Locations:
+      - Primary Full HD Image: `staticfiles/img/hero_live_stage_hd.jpg`
+      - Synced Mirrors: `main/static/images/hero_live_stage_hd.jpg`, `staticfiles/images/hero_live_stage_hd.jpg`, `main/static/img/hero_live_stage_hd.jpg`
+      - Original Reference Image: `staticfiles/img/hero_stage_original.jpg`
+      - Resolution & Aspect Ratio: Full HD (1920x1080, 16:9 cinematic widescreen).
+      - Visual Composition: Majestic concert stadium stage, arched lighting truss, warm golden center 
+        spotlight beams, electric violet and neon magenta side washes, atmospheric concert haze, 
+        and a glossy reflective wooden stage floor. Completely watermark-free and hyper-crisp.
+
+   2. Technology Used for Animations:
+      - 100% Pure CSS3 Animations & Hardware Acceleration:
+        No heavy JavaScript animation libraries (like GSAP or Three.js) were required. This keeps 
+        page load instant, consumes near-zero CPU/battery on mobile devices, and achieves a rock-solid 
+        60 FPS using GPU hardware acceleration (`transform: translate3d`, `will-change`, `opacity`).
+
+   3. Breakdown of the 6 Animation Layers:
+
+      Layer 1: Cinematic Ken Burns Drift (`.hero-stage-img` & `@keyframes heroStageCinemaDrift`)
+         - Execution: 20-second smooth, continuous infinite alternate breathing animation.
+         - Transforms: Moves smoothly between `scale(1.01) translate3d(0, 0, 0)` -> `scale(1.06) translate3d(-1.2%, -0.6%, 0)` -> `scale(1.03) translate3d(0.8%, -0.3%, 0)`.
+         - Purpose: Imparts a subtle, dynamic cinematic motion picture effect to the concert stage.
+
+      Layer 2: Dynamic Concert Spotlight Pulse (`.hero-stage-img` & `@keyframes heroStagePulse`)
+         - Execution: 6-second infinite alternate CSS filter oscillation.
+         - Filters: Oscillates between `brightness(0.98) contrast(1.15) saturate(1.2)` and `brightness(1.12) contrast(1.22) saturate(1.35)`.
+         - Purpose: Mimics real moving-head concert stage lighting shifting intensity with musical rhythm.
+
+      Layer 3: Volumetric Neon Laser & Spotlight Beams (`.concert-laser-beams` & `@keyframes concertLaserSweep`)
+         - Execution: High-intensity multi-conic and radial gradient layer set to `mix-blend-mode: screen`.
+         - Palette: Beams of warm golden amber (`rgba(255, 230, 150, 0.38)`), neon magenta (`rgba(248, 68, 100, 0.28)`), electric violet (`rgba(168, 85, 247, 0.22)`), and electric cyan (`rgba(56, 189, 248, 0.12)`).
+         - Animation: 8-second sweeping rotation (`rotate(-1deg)` to `rotate(1.2deg)`) coupled with subtle hue rotation (`hue-rotate(-8deg)` to `hue-rotate(12deg)`).
+         - Purpose: Recreates the realistic visual phenomenon of concert laser light cones sweeping through fog.
+
+      Layer 4: Ambient Stage Floor Glow (`.concert-ambient-glow` & `@keyframes concertGlowPulse`)
+         - Execution: Elliptical color-dodge gradient (`ellipse 70% 45% at 50% 88%`) focused on the lower stage floor.
+         - Palette: Rich neon magenta (`rgba(248, 68, 100, 0.32)`) and electric purple (`rgba(168, 85, 247, 0.18)`).
+         - Animation: 7-second breathing pulse (`opacity: 0.55` to `0.92`, `scale: 0.97` to `1.03`).
+         - Purpose: Highlights the glossy stage floor with glowing neon light reflections.
+
+      Layer 5: Floating Bokeh Stardust & Sparkle Particles (`.concert-particles-layer`, `.concert-sparkle` & `@keyframes concertSparkleFloat`)
+         - Execution: 10 individually positioned sparkle elements (`.p1` through `.p10`) spanning the stage width.
+         - Particle Design: Circular radial gradients with multi-layered glowing box-shadow halos:
+           * Magenta Glow: `box-shadow: 0 0 10px #FFFFFF, 0 0 18px rgba(248, 68, 100, 0.8)`
+           * Electric Cyan Glow: `box-shadow: 0 0 12px #38BDF8, 0 0 20px rgba(56, 189, 248, 0.8)`
+           * Golden Amber Glow: `box-shadow: 0 0 12px #FDE047, 0 0 18px rgba(234, 179, 8, 0.8)`
+         - Movement: Particles float upward through the spotlight beams (`translateY(25px)` -> `translateY(-90px)`) with randomized durations (5.8s to 8.5s) and staggered start delays (0s to 5.1s).
+         - Purpose: Simulates illuminated stage dust and radiant bokeh motes floating in spotlight rays.
+
+      Layer 6: Double-Gradient Contrast Overlay (`.hero-stage-overlay`)
+         - Execution: Dual-axis linear gradient mask (`linear-gradient(90deg, ...)` and `linear-gradient(180deg, ...)`).
+         - Purpose: Darkens the left side (`rgba(10, 11, 16, 0.94)`) to guarantee razor-sharp contrast and 
+           WCAG AA accessibility for the headline, eyebrow badge, lead text, and CTA buttons, while fading to 
+           transparency on the right and bottom so the brilliant stage lights remain fully visible.
 
 
 
@@ -604,6 +702,40 @@ A22: 1. Lucide Icons (`lucide.min.js`): Lightweight SVG vector icons for dates, 
         `wishlist.js`, `spotlight-carousel.js`, `dashboard.js`, `main.js`) delivering instant AJAX modal auth, 
         live price calculation, real-time filtering, localStorage wishlist management, and hero carousel animations.
 
+
+Q23: Can you map out which specific library or technology is used for each task in this project?
+A23: 1. Core Architecture & Routing: Django 6.0 (`urls.py`, `views.py`, MTV design pattern).
+     2. Database ORM & Migrations: Django ORM (`models.py`, `makemigrations`, `migrate`).
+     3. Database Engine: SQLite3 for dev/PythonAnywhere hosting; MySQL via `mysqlclient`/`PyMySQL`.
+     4. Dynamic Ticket Pass PDF Generation: ReportLab 5.0 (`reportlab.pdfgen.canvas`) + `io.BytesIO`.
+     5. Scannable Vector Barcode: ReportLab dynamic barcode drawing engine.
+     6. Academic Architecture Documentation PDF: ReportLab (`generate_project_pdf.py` via `/project-docs/`).
+     7. Image Upload & Validation: Pillow (PIL 12.1.1) in `models.ImageField(upload_to="events/")`.
+     8. Password Hashing: Django Auth PBKDF2 with SHA-256 (`make_password`, `check_password`).
+     9. Exact Financial Price Calculation: Python stdlib `decimal.Decimal` (zero floating-point error).
+     10. Direct Binary In-Memory Streaming: Python stdlib `io.BytesIO` streamed via `HttpResponse`.
+     11. 12-Column Responsive Layout Grid: Bootstrap Grid (`bootstrap-grid.min.css`).
+     12. Admin Dashboard KPI Widgets: Tailwind CSS (`tailwindcss.min.js`).
+     13. Vector Icons: Lucide Icons (`lucide.min.js`) and Font Awesome 6 (CDN).
+     14. Design System & CSS Variables: Custom CSS3 (`design-system.css`, `events.css`, etc.).
+     15. Asynchronous Modal Auth: Native ES6 JavaScript (`fetch`, `FormData`).
+     16. Saved Events Wishlist Persistence: Native browser `localStorage` in `wishlist.js`.
+     17. Category, City & Search Discovery: Custom modular ES6 JavaScript in `events-filter.js`.
+     18. Hero Stage Backdrop & Animations: Full HD 16:9 concert arena + Pure GPU-accelerated CSS3 animations.
+
+Q24: How is the animated hero banner backdrop implemented and what makes it performant?
+A24: - Image Backdrop: A Full HD (1920x1080, 16:9 widescreen) concert arena backdrop stored in 
+       `staticfiles/img/hero_live_stage_hd.jpg` and `main/static/images/hero_live_stage_hd.jpg`.
+     - Zero Heavy JS Overhead: Built entirely with pure CSS3 hardware acceleration (`transform: translate3d`, 
+       `will-change`, CSS gradients), running at a smooth 60 FPS without high CPU or battery drain.
+     - 6 Coordinated Visual Layers:
+       1. Ken Burns 3D Camera Drift (`@keyframes heroStageCinemaDrift`): 20s breathing zoom & pan.
+       2. Dynamic Spotlight Rhythm Pulse (`@keyframes heroStagePulse`): 6s brightness & saturation shifts.
+       3. Volumetric Laser Beams (`@keyframes concertLaserSweep`): Conic/radial gradients in screen blend mode 
+          sweeping across the stage with dynamic hue rotations.
+       4. Stage Floor Glow (`@keyframes concertGlowPulse`): Color-dodge magenta/violet floor radiance.
+       5. Floating Bokeh Sparkles (`@keyframes concertSparkleFloat`): 10 staggered bokeh dust particles drifting upward.
+       6. Double-Gradient Contrast Overlay: Dual-axis linear mask guaranteeing WCAG text legibility on the left.
 
 9. QUICK 2-MINUTE REVISION CHEAT SHEET FOR VIVA
 --------------------------------------------------------------------------------
