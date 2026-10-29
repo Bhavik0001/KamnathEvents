@@ -29,8 +29,13 @@
     currentUnitPrice: 0,
     currentQuantity: 1,
     isSubmitting: false,
+    initialized: false,
+    _lastPromptTime: 0,
 
     init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
       this.modal = document.getElementById('bookingConfirmModal');
       this.btnConfirmAction = document.getElementById('btnConfirmBookingAction');
       this.btnConfirmTextElem = document.getElementById('btnConfirmBookingText');
@@ -96,6 +101,10 @@
     },
 
     promptLogin(eventId, eventTitle) {
+      const now = Date.now();
+      if (now - this._lastPromptTime < 1000) return;
+      this._lastPromptTime = now;
+
       const authModal = document.getElementById('authModal');
       if (authModal) {
         authModal.classList.add('active');

@@ -32,6 +32,14 @@
     show(message, type = 'success', duration = 4000) {
       this.init();
 
+      // Deduplication: prevent stacking identical messages simultaneously
+      const activeToasts = this.container.querySelectorAll('.toast-item');
+      for (let i = 0; i < activeToasts.length; i++) {
+        if (activeToasts[i].textContent && activeToasts[i].textContent.includes(message)) {
+          return;
+        }
+      }
+
       const toast = document.createElement('div');
       toast.className = `toast-item ${type}`;
 
